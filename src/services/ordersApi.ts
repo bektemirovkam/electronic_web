@@ -17,4 +17,8 @@ export const ordersApi = {
     const { data } = await axios.patch(`/orders/${id}`, formData);
     return data;
   },
+  deleteOrder: async (id: number): Promise<boolean> => {
+    const { data } = await axios.delete(`/orders/${id}`);
+    return data;
+  },
 };

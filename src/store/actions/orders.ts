@@ -116,6 +116,29 @@ export const updateOrder =
     }
   };
 
+export const deleteOrder =
+  (id: number): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(ordersActions.setOrdersLoading(true));
+      const response = await ordersApi.deleteOrder(id);
+      if (response) {
+        dispatch(
+          ordersActions.setActionStatusSuccess(ActionStatusEnum.SUCCESS)
+        );
+        dispatch(getOrders());
+      } else {
+        dispatch(ordersActions.setActionStatusSuccess(ActionStatusEnum.ERROR));
+        dispatch(ordersActions.setOrdersError("Ошибка при удалении заявки"));
+      }
+    } catch (error) {
+      console.log("deleteOrder ===> ", error);
+      dispatch(ordersActions.setOrdersError("Ошибка сети, попробуйте еще раз"));
+    } finally {
+      dispatch(ordersActions.setOrdersLoading(false));
+    }
+  };
+
 export type OrdersActionTypes = ReturnType<
   ActionsCreatorsTypes<typeof ordersActions>
 >;

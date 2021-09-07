@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, Typography, Card } from "antd";
+import { Layout, Typography, BackTop } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -7,13 +7,22 @@ import {
   getOrdersListState,
   getOrdersLoadingState,
 } from "../../store/selectors/orders";
-import { DirectionType, SortByOrdersFieldsType } from "../../types";
-import { getOrders } from "../../store/actions/orders";
+import {
+  DirectionType,
+  OrdersQueryFilterType,
+  OrderType,
+  SortByOrdersFieldsType,
+} from "../../types";
+import {
+  deleteOrder,
+  getOrders,
+  ordersActions,
+} from "../../store/actions/orders";
 import { AppPreloader, OrderItem } from "../../components";
+import { useHistory, useLocation } from "react-router-dom";
 
 const { Content } = Layout;
 const { Text } = Typography;
-const { Meta } = Card;
 
 const OrdersPage = () => {
   const [searchText, setSearchText] = React.useState<string>("");
@@ -22,11 +31,20 @@ const OrdersPage = () => {
   const [direction, setDirection] = React.useState<DirectionType>("asc");
   const [sortBy, setSortBy] = React.useState<SortByOrdersFieldsType>("title");
 
-  const orders = useSelector(getOrdersListState(searchText));
+  const useQuery = () => {
+    return new URLSearchParams(useLocation().search);
+  };
+  const query = useQuery();
+
+  const orders = useSelector(
+    getOrdersListState(searchText, query.get("filter") as OrdersQueryFilterType)
+  );
+
   const ordersLoading = useSelector(getOrdersLoadingState);
   const ordersError = useSelector(getOrdersErrorState);
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const fetchData = React.useCallback(() => {
     dispatch(getOrders());
@@ -36,9 +54,22 @@ const OrdersPage = () => {
     dispatch(getOrders());
   }, [dispatch]);
 
+  const handleDeleteOrder = (id: number) => {
+    const answer = window.confirm("Вы уверены что хотите удалить заявку?");
+    if (answer) {
+      dispatch(deleteOrder(id));
+    }
+  };
+
+  const handleViewOrder = (order: OrderType) => {
+    dispatch(ordersActions.setCurrentOrder(order));
+    history.push(`orders/${order.id}`);
+  };
+
   if (ordersLoading) {
     return <AppPreloader size="large" />;
   }
+
   return (
     <Content className="content">
       {ordersError && (
@@ -47,14 +78,19 @@ const OrdersPage = () => {
         </div>
       )}
       <div className="orders">
-        {true &&
-          [
-            1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3,
-            4, 5, 1, 2, 3, 4, 5,
-          ].map((order) => {
-            return <OrderItem />;
+        {orders &&
+          orders.map((order) => {
+            return (
+              <OrderItem
+                key={String(order.id)}
+                onDelete={handleDeleteOrder}
+                onView={handleViewOrder}
+                order={order}
+              />
+            );
           })}
       </div>
+      <BackTop />
     </Content>
   );
 };

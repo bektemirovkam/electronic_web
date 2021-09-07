@@ -102,7 +102,7 @@ export type OrderType = {
   actualDate: string;
   title: string;
   description: string;
-  orderStatus: OrderStatusEnum;
+  orderStatus: "NEW" | "ARCHIVED" | "DELETED";
   customerId: number;
   price?: string;
   deadline?: string;
@@ -168,6 +168,7 @@ export type OtpFormDataType = {
   otp: string;
 };
 
+export type OrdersQueryFilterType = "active" | "deleted" | "archived" | null;
 export type SortByOrdersFieldsType = "title" | "price" | "creationDate";
 export type DirectionType = "asc" | "desc";
 
