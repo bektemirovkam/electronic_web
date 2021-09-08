@@ -1,4 +1,4 @@
-import { CategoryType } from "./../../types";
+import { ActionStatusEnum, CategoryType } from "./../../types";
 import { ThunkAction } from "redux-thunk";
 import { ActionsCreatorsTypes } from "../../types";
 import { AppStateType } from "../store";
@@ -25,6 +25,18 @@ export const categoriesActions = {
       payload: { errorMessage },
     } as const;
   },
+  setCategoryActionStatus: (categoryActionStatus: ActionStatusEnum) => {
+    return {
+      type: "SET_CATEGORIES_ACTION_STATUS",
+      payload: { categoryActionStatus },
+    } as const;
+  },
+  setCurrentCategory: (currentCategory: CategoryType) => {
+    return {
+      type: "SET_CURRENT_CATEGORY",
+      payload: { currentCategory },
+    } as const;
+  },
 };
 
 export type CategoriesActionTypes = ReturnType<
@@ -46,6 +58,133 @@ export const getAllCategories = (): ThunkAcionType => async (dispatch) => {
     dispatch(categoriesActions.setIsLoadingCategories(false));
   }
 };
+
+export const deleteAllCategories = (): ThunkAcionType => async (dispatch) => {
+  try {
+    dispatch(categoriesActions.setIsLoadingCategories(true));
+    const response = await categoriesApi.deleteAllCategories();
+    if (response) {
+      dispatch(
+        categoriesActions.setCategoryActionStatus(ActionStatusEnum.SUCCESS)
+      );
+    } else {
+      dispatch(
+        categoriesActions.setCategoryActionStatus(ActionStatusEnum.ERROR)
+      );
+    }
+  } catch (error) {
+    dispatch(
+      categoriesActions.setCategoriesErrorMessage(
+        "Ошибка сети, попробуйте еще раз"
+      )
+    );
+  } finally {
+    dispatch(categoriesActions.setIsLoadingCategories(false));
+  }
+};
+
+export const addCategory =
+  (categoryList: CategoryType[]): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(categoriesActions.setIsLoadingCategories(true));
+      const response = await categoriesApi.addCategory(categoryList);
+      if (response) {
+        dispatch(
+          categoriesActions.setCategoryActionStatus(ActionStatusEnum.SUCCESS)
+        );
+      } else {
+        dispatch(
+          categoriesActions.setCategoryActionStatus(ActionStatusEnum.ERROR)
+        );
+      }
+    } catch (error) {
+      dispatch(
+        categoriesActions.setCategoriesErrorMessage(
+          "Ошибка сети, попробуйте еще раз"
+        )
+      );
+    } finally {
+      dispatch(categoriesActions.setIsLoadingCategories(false));
+    }
+  };
+
+export const getCategoryById =
+  (id: number): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(categoriesActions.setIsLoadingCategories(true));
+      const categoryList = await categoriesApi.getCategoryById(id);
+
+      if (categoryList.length === 0) {
+        dispatch(
+          categoriesActions.setCategoriesErrorMessage("Категория не найдена")
+        );
+      } else {
+        dispatch(categoriesActions.setCurrentCategory(categoryList[0]));
+      }
+    } catch (error) {
+      dispatch(
+        categoriesActions.setCategoriesErrorMessage(
+          "Ошибка сети, попробуйте еще раз"
+        )
+      );
+    } finally {
+      dispatch(categoriesActions.setIsLoadingCategories(false));
+    }
+  };
+
+export const deleteCategoryById =
+  (id: number): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(categoriesActions.setIsLoadingCategories(true));
+      const response = await categoriesApi.deleteCategoryById(id);
+      if (response) {
+        dispatch(
+          categoriesActions.setCategoryActionStatus(ActionStatusEnum.SUCCESS)
+        );
+      } else {
+        dispatch(
+          categoriesActions.setCategoryActionStatus(ActionStatusEnum.ERROR)
+        );
+      }
+    } catch (error) {
+      dispatch(
+        categoriesActions.setCategoriesErrorMessage(
+          "Ошибка сети, попробуйте еще раз"
+        )
+      );
+    } finally {
+      dispatch(categoriesActions.setIsLoadingCategories(false));
+    }
+  };
+
+export const updateCategoryById =
+  (category: CategoryType, id: number): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(categoriesActions.setIsLoadingCategories(true));
+      const response = await categoriesApi.updateCategoryById(category, id);
+      if (response) {
+        dispatch(
+          categoriesActions.setCategoryActionStatus(ActionStatusEnum.SUCCESS)
+        );
+      } else {
+        dispatch(
+          categoriesActions.setCategoryActionStatus(ActionStatusEnum.ERROR)
+        );
+      }
+    } catch (error) {
+      dispatch(
+        categoriesActions.setCategoriesErrorMessage(
+          "Ошибка сети, попробуйте еще раз"
+        )
+      );
+    } finally {
+      dispatch(categoriesActions.setIsLoadingCategories(false));
+    }
+  };
 
 type ThunkAcionType = ThunkAction<
   Promise<void>,

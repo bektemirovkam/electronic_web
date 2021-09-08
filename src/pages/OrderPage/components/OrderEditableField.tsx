@@ -1,21 +1,20 @@
 import { Form, Input, Typography } from "antd";
 import React from "react";
-import { Controller, Control, FieldError } from "react-hook-form";
-import { addOrderFormData } from "../../../types";
+import { Controller } from "react-hook-form";
+import { addOrderFormData, EditableFieldPropsType } from "../../../types";
 
 const { Text } = Typography;
 
-type OrderEditableFieldPropsType = {
-  editMode: boolean;
-  fieldName: "title" | "price" | "deadline" | "description" | "customerId";
-  control: Control<addOrderFormData, object>;
-  error: FieldError | undefined;
-  defaultValue?: string;
-  isTextArea?: boolean;
-  placeholder?: string;
-};
+type FieldsNameType =
+  | "title"
+  | "price"
+  | "deadline"
+  | "description"
+  | "customerId";
 
-const OrderEditableField: React.FC<OrderEditableFieldPropsType> = ({
+const OrderEditableField: React.FC<
+  EditableFieldPropsType<addOrderFormData, FieldsNameType>
+> = ({
   placeholder,
   editMode,
   fieldName,

@@ -1,3 +1,5 @@
+import { Control, FieldError } from "react-hook-form";
+
 export type CategoryType = {
   id: number;
   name: string;
@@ -17,6 +19,7 @@ export type ContactsType = {
 };
 
 export enum ContractorTypesEnum {
+  UNKNOWN = "UNKNOWN",
   SUPPLIER = "SUPPLIER",
   CUSTOMER = "CUSTOMER",
 }
@@ -122,6 +125,11 @@ export type addOrderFormData = {
   customerId?: number;
 };
 
+export type addCategoryFormData = {
+  name: string;
+  parentId?: number;
+};
+
 export type OrderCategoryInType = {
   // при добавлении категории в заявку
   categoryId: number;
@@ -169,6 +177,7 @@ export type OtpFormDataType = {
 };
 
 export type OrdersQueryFilterType = "active" | "deleted" | "archived" | null;
+export type CategoryQueryFilterType = "deleted" | null;
 export type SortByOrdersFieldsType = "title" | "price" | "creationDate";
 export type DirectionType = "asc" | "desc";
 
@@ -186,6 +195,17 @@ export type stableSortType<T> = {
 
 export type descendingComparatorType<T, S> = {
   (a: T, b: T, sortBy: S): number;
+};
+
+export type EditableFieldPropsType<T, F> = {
+  editMode: boolean;
+  fieldName: F;
+  control: Control<T, object>;
+  error: FieldError | undefined;
+  defaultValue?: string;
+  isTextArea?: boolean;
+  placeholder?: string;
+  currentValue?: string;
 };
 
 export type MessageType = {
