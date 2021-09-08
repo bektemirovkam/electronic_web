@@ -150,4 +150,14 @@ body {
   &__header {
     display: inline-block;
   }
+  &__select-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  &__select {
+    width: 40%;
+  }
+  &__select-title {
+    margin: 10px 0;
+  }
 }

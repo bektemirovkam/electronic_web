@@ -125,11 +125,6 @@ export type addOrderFormData = {
   customerId?: number;
 };
 
-export type addCategoryFormData = {
-  name: string;
-  parentId?: number;
-};
-
 export type OrderCategoryInType = {
   // при добавлении категории в заявку
   categoryId: number;

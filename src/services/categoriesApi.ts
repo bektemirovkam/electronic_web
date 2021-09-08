@@ -26,11 +26,11 @@ export const categoriesApi = {
     const { data } = await axios.delete<Boolean>(`categories/${id}`);
     return data;
   },
-  updateCategoryById: async (
-    category: CategoryType,
-    id: number
-  ): Promise<Boolean> => {
-    const { data } = await axios.patch<Boolean>(`categories/${id}`, category);
+  updateCategoryById: async (category: CategoryType): Promise<Boolean> => {
+    const { data } = await axios.patch<Boolean>(
+      `categories/${category.id}`,
+      category
+    );
     return data;
   },
 };

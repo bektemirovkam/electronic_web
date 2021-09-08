@@ -25,10 +25,10 @@ export const categoriesActions = {
       payload: { errorMessage },
     } as const;
   },
-  setCategoryActionStatus: (categoryActionStatus: ActionStatusEnum) => {
+  setCategoriesActionStatus: (categoriesActionStatus: ActionStatusEnum) => {
     return {
       type: "SET_CATEGORIES_ACTION_STATUS",
-      payload: { categoryActionStatus },
+      payload: { categoriesActionStatus },
     } as const;
   },
   setCurrentCategory: (currentCategory: CategoryType) => {
@@ -37,11 +37,42 @@ export const categoriesActions = {
       payload: { currentCategory },
     } as const;
   },
+  setCategoryInEditProcess: (categoryInProcessEdit: number | null) => {
+    return {
+      type: "SET_CATEGORY_IN_EDIT_PROCESS",
+      payload: { categoryInProcessEdit },
+    } as const;
+  },
+  replaceCategory: (category: CategoryType) => {
+    return {
+      type: "REPLACE_CATEGORY",
+      payload: { category },
+    } as const;
+  },
+  removeCategory: (id: number) => {
+    return {
+      type: "REMOVE_CATEGORY",
+      payload: { id },
+    } as const;
+  },
+  clearCategories: () => {
+    return {
+      type: "CLEAR_CATEGORIES",
+    } as const;
+  },
+  addNewCategory: (category: CategoryType) => {
+    return {
+      type: "ADD_NEW_CATEGORY",
+      payload: { category },
+    } as const;
+  },
 };
 
 export type CategoriesActionTypes = ReturnType<
   ActionsCreatorsTypes<typeof categoriesActions>
 >;
+
+//TODO: как то проверять пришли ли данные без ошибки
 
 export const getAllCategories = (): ThunkAcionType => async (dispatch) => {
   try {
@@ -59,17 +90,19 @@ export const getAllCategories = (): ThunkAcionType => async (dispatch) => {
   }
 };
 
+// TODO: опасный метод
 export const deleteAllCategories = (): ThunkAcionType => async (dispatch) => {
   try {
     dispatch(categoriesActions.setIsLoadingCategories(true));
     const response = await categoriesApi.deleteAllCategories();
     if (response) {
       dispatch(
-        categoriesActions.setCategoryActionStatus(ActionStatusEnum.SUCCESS)
+        categoriesActions.setCategoriesActionStatus(ActionStatusEnum.SUCCESS)
       );
+      dispatch(categoriesActions.clearCategories());
     } else {
       dispatch(
-        categoriesActions.setCategoryActionStatus(ActionStatusEnum.ERROR)
+        categoriesActions.setCategoriesActionStatus(ActionStatusEnum.ERROR)
       );
     }
   } catch (error) {
@@ -83,19 +116,30 @@ export const deleteAllCategories = (): ThunkAcionType => async (dispatch) => {
   }
 };
 
+// TODO:
+// тут будет приходить не CategoryType а только name и parentID
 export const addCategory =
   (categoryList: CategoryType[]): ThunkAcionType =>
   async (dispatch) => {
     try {
       dispatch(categoriesActions.setIsLoadingCategories(true));
       const response = await categoriesApi.addCategory(categoryList);
+      // TODO: поэтому тут должна возвращаться не boolean а CategoryType
       if (response) {
         dispatch(
-          categoriesActions.setCategoryActionStatus(ActionStatusEnum.SUCCESS)
+          categoriesActions.setCategoriesActionStatus(ActionStatusEnum.SUCCESS)
         );
+
+        dispatch(categoriesActions.addNewCategory(categoryList[0]));
       } else {
         dispatch(
-          categoriesActions.setCategoryActionStatus(ActionStatusEnum.ERROR)
+          categoriesActions.setCategoriesActionStatus(ActionStatusEnum.ERROR)
+        );
+        //// TODO: Нужно???? Скорее всего нет, т.к. обрабатывается Alertom ActionStatus
+        dispatch(
+          categoriesActions.setCategoriesErrorMessage(
+            "Не получилось добавить категорию, попробуйте еще раз"
+          )
         );
       }
     } catch (error) {
@@ -108,7 +152,7 @@ export const addCategory =
       dispatch(categoriesActions.setIsLoadingCategories(false));
     }
   };
-
+//TODO: Нужно????
 export const getCategoryById =
   (id: number): ThunkAcionType =>
   async (dispatch) => {
@@ -142,11 +186,18 @@ export const deleteCategoryById =
       const response = await categoriesApi.deleteCategoryById(id);
       if (response) {
         dispatch(
-          categoriesActions.setCategoryActionStatus(ActionStatusEnum.SUCCESS)
+          categoriesActions.setCategoriesActionStatus(ActionStatusEnum.SUCCESS)
         );
+        dispatch(categoriesActions.removeCategory(id));
       } else {
         dispatch(
-          categoriesActions.setCategoryActionStatus(ActionStatusEnum.ERROR)
+          categoriesActions.setCategoriesActionStatus(ActionStatusEnum.ERROR)
+        );
+        //// TODO: Нужно???? Скорее всего нет, т.к. обрабатывается Alertom ActionStatus
+        dispatch(
+          categoriesActions.setCategoriesErrorMessage(
+            "Не получилось удалить категорию, попробуйте еще раз"
+          )
         );
       }
     } catch (error) {
@@ -161,18 +212,25 @@ export const deleteCategoryById =
   };
 
 export const updateCategoryById =
-  (category: CategoryType, id: number): ThunkAcionType =>
+  (category: CategoryType): ThunkAcionType =>
   async (dispatch) => {
     try {
-      dispatch(categoriesActions.setIsLoadingCategories(true));
-      const response = await categoriesApi.updateCategoryById(category, id);
+      dispatch(categoriesActions.setCategoryInEditProcess(category.id));
+      const response = await categoriesApi.updateCategoryById(category);
       if (response) {
         dispatch(
-          categoriesActions.setCategoryActionStatus(ActionStatusEnum.SUCCESS)
+          categoriesActions.setCategoriesActionStatus(ActionStatusEnum.SUCCESS)
         );
+        dispatch(categoriesActions.replaceCategory(category));
       } else {
         dispatch(
-          categoriesActions.setCategoryActionStatus(ActionStatusEnum.ERROR)
+          categoriesActions.setCategoriesActionStatus(ActionStatusEnum.ERROR)
+        );
+        //// TODO: Нужно???? Скорее всего нет, т.к. обрабатывается Alertom ActionStatus
+        dispatch(
+          categoriesActions.setCategoriesErrorMessage(
+            "Не получилось обновить категорию, попробуйте еще раз"
+          )
         );
       }
     } catch (error) {
@@ -182,7 +240,7 @@ export const updateCategoryById =
         )
       );
     } finally {
-      dispatch(categoriesActions.setIsLoadingCategories(false));
+      dispatch(categoriesActions.setCategoryInEditProcess(null));
     }
   };
 

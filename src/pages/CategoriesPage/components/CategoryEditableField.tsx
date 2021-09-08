@@ -32,6 +32,8 @@ const CategoryEditableField: React.FC<CategoryEditablePropsType> = ({
         validateStatus={error ? "error" : "success"}
         help={error}
         className="input"
+        required
+        tooltip="Обязательное поле"
       >
         <Input
           placeholder={placeholder}

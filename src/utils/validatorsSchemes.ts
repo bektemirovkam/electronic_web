@@ -51,10 +51,3 @@ export const customerProfileSchema = yup.object().shape({
     .typeError("Введите корректный номер телефона")
     .required("Обязательное поле"),
 });
-
-export const categorySchema = yup.object().shape({
-  name: yup.string().required("Обязательное поле"),
-  parentId: yup
-    .number()
-    .typeError("Родительский идентификатор должен быть числом"),
-});
