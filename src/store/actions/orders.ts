@@ -107,18 +107,11 @@ export const updateOrder =
         dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.SUCCESS));
         dispatch(getOrders());
       } else {
-        dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.ERROR));
-        dispatch(
-          ordersActions.setOrdersErrorMessage(
-            "Ошибка при редактировании заявки"
-          )
-        );
+        showError("Ошибка при редактировании заявки", dispatch);
       }
     } catch (error) {
       console.log("updateOrder ===> ", error);
-      dispatch(
-        ordersActions.setOrdersErrorMessage("Ошибка сети, попробуйте еще раз")
-      );
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
     } finally {
       dispatch(ordersActions.setOrdersLoading(true));
     }
