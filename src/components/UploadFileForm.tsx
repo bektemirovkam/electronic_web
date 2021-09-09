@@ -42,7 +42,7 @@ const UploadFileForm = () => {
   const handleChange = ({ fileList }: { fileList: UploadFile[] }) =>
     setFileList(fileList);
 
-  console.log("fileList", fileList);
+  // console.log("fileList", fileList);
 
   return (
     <>

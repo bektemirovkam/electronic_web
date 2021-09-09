@@ -1,5 +1,5 @@
 import { axios } from "../api/axios";
-import { CategoryType } from "../types";
+import { AddCategoryFormData, CategoryType } from "../types";
 
 export const categoriesApi = {
   //categories
@@ -11,8 +11,8 @@ export const categoriesApi = {
     const { data } = await axios.delete<Boolean>("categories");
     return data;
   },
-  addCategory: async (categoryList: CategoryType[]): Promise<Boolean> => {
-    const { data } = await axios.post<Boolean>("categories", categoryList);
+  addCategory: async (formData: AddCategoryFormData): Promise<Boolean> => {
+    const { data } = await axios.post<Boolean>("categories", formData);
     return data;
   },
 

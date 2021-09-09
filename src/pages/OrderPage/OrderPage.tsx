@@ -13,22 +13,26 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   ActionStatusEnum,
-  addOrderFormData,
+  AddOrderFormData,
   OrderStatusEnum,
 } from "../../types";
 import { orderSchema } from "../../utils/validatorsSchemes";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
 
 import {
   getCurrentOrderState,
   getOrderActionStatusState,
-  getOrdersErrorState,
+  getOrdersErrorMessageState,
   getOrdersLoadingState,
 } from "../../store/selectors/orders";
-import { ordersActions, updateOrder } from "../../store/actions/orders";
-import { AppPreloader, UploadFileForm } from "../../components";
+import {
+  getFullOrderInfo,
+  ordersActions,
+  updateOrder,
+} from "../../store/actions/orders";
+import { AppAlert, AppPreloader, UploadFileForm } from "../../components";
 import { formatDate, formatStringToDate } from "../../utils/formatDate";
 
 import img1 from "../../assets/images/1.jpg";
@@ -48,19 +52,21 @@ const OrderPage = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<addOrderFormData>({
+  } = useForm<AddOrderFormData>({
     resolver: yupResolver(orderSchema),
   });
 
   const order = useSelector(getCurrentOrderState);
   const orderActionStatus = useSelector(getOrderActionStatusState);
-  const orderError = useSelector(getOrdersErrorState);
+  const orderError = useSelector(getOrdersErrorMessageState);
   const orderLoadingState = useSelector(getOrdersLoadingState);
+
+  const { id }: { id?: string } = useParams();
 
   const dispatch = useDispatch();
 
   const clearState = () => {
-    dispatch(ordersActions.setActionStatusSuccess(ActionStatusEnum.NEVER));
+    dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.NEVER));
   };
 
   const toggleEditMode = () => {
@@ -71,6 +77,7 @@ const OrderPage = () => {
   };
 
   React.useEffect(() => {
+    dispatch(getFullOrderInfo(Number(id)));
     return () => {
       clearState();
     };
@@ -123,92 +130,91 @@ const OrderPage = () => {
     </Button>,
   ];
 
-  if (orderLoadingState || !order) {
+  if (orderLoadingState) {
     return <AppPreloader />;
   }
 
   return (
     <Content className="content">
-      {orderActionStatus !== ActionStatusEnum.NEVER && (
-        <Alert
-          message={
-            orderActionStatus === ActionStatusEnum.ERROR
-              ? orderError
-              : "Изменения сохранены"
-          }
-          type={
-            orderActionStatus === ActionStatusEnum.ERROR ? "error" : "success"
-          }
-          closable
-          onClose={clearState}
-        />
-      )}
-      <div className="page-header">
-        <PageHeader
-          ghost={false}
-          onBack={goBack}
-          title={
-            <OrderEditableField
-              defaultValue={order.title}
-              editMode={editMode}
-              control={control}
-              error={errors.title}
-              fieldName="title"
-              placeholder="Заголовок"
-            />
-          }
-          extra={editMode ? editActionsButtons : actionsButtons}
-        >
-          <Descriptions size="small" column={3}>
-            <Descriptions.Item label="Создана">
-              {formatDate(formatStringToDate(order.creationDate))}
-            </Descriptions.Item>
-            <Descriptions.Item label="Автор">
-              <NavLink to="/">Создатель</NavLink>
-            </Descriptions.Item>
-            <Descriptions.Item label="Сроки">
-              <OrderEditableField
-                defaultValue={order.deadline}
-                editMode={editMode}
-                control={control}
-                error={errors.title}
-                fieldName="deadline"
-                placeholder="Сроки"
-              />
-            </Descriptions.Item>
+      <AppAlert
+        onClose={clearState}
+        errorMessage={orderError}
+        status={orderActionStatus}
+      />
+      {order && (
+        <>
+          <div className="page-header">
+            <PageHeader
+              ghost={false}
+              onBack={goBack}
+              title={
+                <OrderEditableField
+                  defaultValue={order.title}
+                  editMode={editMode}
+                  control={control}
+                  error={errors.title}
+                  fieldName="title"
+                  placeholder="Заголовок"
+                />
+              }
+              extra={editMode ? editActionsButtons : actionsButtons}
+            >
+              <Descriptions size="small" column={3}>
+                <Descriptions.Item label="Создана">
+                  {order.creationDate}
+                </Descriptions.Item>
+                <Descriptions.Item label="Автор">
+                  <NavLink to="/">Создатель</NavLink>
+                </Descriptions.Item>
+                <Descriptions.Item label="Сроки">
+                  <OrderEditableField
+                    defaultValue={order.deadline}
+                    editMode={editMode}
+                    control={control}
+                    error={errors.title}
+                    fieldName="deadline"
+                    placeholder="Сроки"
+                  />
+                </Descriptions.Item>
 
-            <Descriptions.Item label="Закроется">
-              {formatDate(formatStringToDate(order.actualDate))}
-            </Descriptions.Item>
-            <Descriptions.Item label="Номер заявки">
-              {order.number}
-            </Descriptions.Item>
-            <Descriptions.Item label="Чаты">
-              <NavLink to="/">Чаты</NavLink>
-            </Descriptions.Item>
-          </Descriptions>
-        </PageHeader>
-      </div>
-      <div className="order__body">
-        <Card>
-          <Divider>Описание</Divider>
-          <p>
-            <OrderEditableField
-              defaultValue={order.description}
-              editMode={editMode}
-              control={control}
-              error={errors.description}
-              fieldName="description"
-              placeholder="Описание"
-              isTextArea
-            />
-          </p>
-          <Divider>Категории</Divider>
-          <p></p>
-          <Divider>Фото</Divider>
-          {editMode ? <UploadFileForm /> : <OrderImagesList images={images} />}
-        </Card>
-      </div>
+                <Descriptions.Item label="Закроется">
+                  {order.actualDate}
+                </Descriptions.Item>
+                <Descriptions.Item label="Номер заявки">
+                  {order.id}
+                </Descriptions.Item>
+                <Descriptions.Item label="Чаты">
+                  <NavLink to="/">Чаты</NavLink>
+                </Descriptions.Item>
+              </Descriptions>
+            </PageHeader>
+          </div>
+          <div className="order__body">
+            <Card>
+              <Divider>Описание</Divider>
+              <p>
+                <OrderEditableField
+                  defaultValue={order.description}
+                  editMode={editMode}
+                  control={control}
+                  error={errors.description}
+                  fieldName="description"
+                  placeholder="Описание"
+                  isTextArea
+                />
+              </p>
+              <Divider>Категории</Divider>
+              <p></p>
+              <Divider>Фото</Divider>
+              {editMode ? (
+                <UploadFileForm />
+              ) : (
+                <OrderImagesList images={images} />
+              )}
+            </Card>
+          </div>
+        </>
+      )}
     </Content>
   );
 };

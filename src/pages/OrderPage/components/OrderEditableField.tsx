@@ -1,7 +1,7 @@
 import { Form, Input, Typography } from "antd";
 import React from "react";
 import { Controller } from "react-hook-form";
-import { addOrderFormData, EditableFieldPropsType } from "../../../types";
+import { AddOrderFormData, EditableFieldPropsType } from "../../../types";
 
 const { Text } = Typography;
 
@@ -13,7 +13,7 @@ type FieldsNameType =
   | "customerId";
 
 const OrderEditableField: React.FC<
-  EditableFieldPropsType<addOrderFormData, FieldsNameType>
+  EditableFieldPropsType<AddOrderFormData, FieldsNameType>
 > = ({
   placeholder,
   editMode,

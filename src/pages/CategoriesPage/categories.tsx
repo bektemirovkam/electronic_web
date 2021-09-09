@@ -247,8 +247,26 @@ const categories = [
   },
   {
     id: 42,
-    name: "Электротехнический крепеж",
-    isDeleted: false,
+    name: "Удаленная категория 1",
+    isDeleted: true,
+    parentId: 30,
+  },
+  {
+    id: 141,
+    name: "Удаленная категория 2",
+    isDeleted: true,
+    parentId: 30,
+  },
+  {
+    id: 142,
+    name: "Удаленная категория 3",
+    isDeleted: true,
+    parentId: 30,
+  },
+  {
+    id: 143,
+    name: "Удаленная категория 4",
+    isDeleted: true,
     parentId: 30,
   },
 ];

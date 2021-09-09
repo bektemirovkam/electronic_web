@@ -1,14 +1,5 @@
 import React, { ChangeEvent } from "react";
-import {
-  Layout,
-  Typography,
-  Empty,
-  Collapse,
-  Button,
-  List,
-  Select,
-  Alert,
-} from "antd";
+import { Layout, Typography, Empty, Collapse, Button, List } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -25,19 +16,13 @@ import {
   getAllCategories,
   updateCategoryById,
 } from "../../store/actions/categories";
-import { AppPreloader } from "../../components";
-import { useLocation } from "react-router-dom";
-import {
-  ActionStatusEnum,
-  CategoryQueryFilterType,
-  CategoryType,
-} from "../../types";
-import { CategoryEditableField } from "./components";
+import { AppAlert, AppPreloader, SelectParentCategory } from "../../components";
+import { ActionStatusEnum, CategoryType } from "../../types";
+import { MainCategoryActions, CategoryEditableField } from "./components";
 
 const { Content } = Layout;
 const { Text } = Typography;
 const { Panel } = Collapse;
-const { Option } = Select;
 
 const CategoriesPage = () => {
   const [editableCategory, setEditableCategory] =
@@ -52,9 +37,17 @@ const CategoriesPage = () => {
   const categoryInEditProcess = useSelector(getCategoryInProcessEditState);
   const categoriesActionStatus = useSelector(getCategoriesActionStatusState);
 
+  const clearState = React.useCallback(() => {
+    dispatch(
+      categoriesActions.setCategoriesActionStatus(ActionStatusEnum.NEVER)
+    );
+    dispatch(categoriesActions.setCategoriesErrorMessage(null));
+  }, [dispatch]);
+
   React.useEffect(() => {
     dispatch(getAllCategories());
-  }, [dispatch]);
+    return () => clearState();
+  }, [dispatch, clearState]);
 
   const onRemove = (id: number) => {
     const answer = window.confirm("Вы действительно хотите удалить категорию?");
@@ -93,45 +86,18 @@ const CategoriesPage = () => {
     });
   };
 
-  const clearState = () => {
-    dispatch(
-      categoriesActions.setCategoriesActionStatus(ActionStatusEnum.NEVER)
-    );
-  };
-
   if (categoriesLoading) {
     return <AppPreloader size="large" />;
   }
 
   return (
     <Content className="content">
-      {categoriesActionStatus !== ActionStatusEnum.NEVER && (
-        <Alert
-          message={
-            categoriesActionStatus === ActionStatusEnum.ERROR
-              ? categoriesError
-              : "Изменения сохранены"
-          }
-          type={
-            categoriesActionStatus === ActionStatusEnum.ERROR
-              ? "error"
-              : "success"
-          }
-          closable
-          onClose={clearState}
-        />
-      )}
-      <Alert
-        message={"Ошибка сети, попробуйте еще раз"}
-        type={"error"}
-        closable
+      <AppAlert
         onClose={clearState}
+        errorMessage={categoriesError}
+        successMessage={"Изменения сохранены"}
+        status={categoriesActionStatus}
       />
-      {categoriesError && (
-        <div className="error">
-          <Text type="danger">{categoriesError}</Text>
-        </div>
-      )}
       {mainCategories && mainCategories.length > 0 ? (
         <Collapse accordion>
           {mainCategories.map((mainCat) => {
@@ -153,42 +119,14 @@ const CategoriesPage = () => {
                 }
                 key={mainCat.id}
                 extra={
-                  <div className="categories__actions">
-                    {editableCategory?.id === mainCat.id ? (
-                      <Button
-                        onClick={onSave}
-                        disabled={editableCategory?.name.length === 0}
-                      >
-                        Сохранить
-                      </Button>
-                    ) : (
-                      <>
-                        <Button
-                          className="categories__btn"
-                          onClick={(
-                            e: React.MouseEvent<HTMLElement, MouseEvent>
-                          ) => {
-                            e.stopPropagation();
-                            onEdit(mainCat);
-                          }}
-                        >
-                          Редактировать
-                        </Button>
-                        <Button
-                          className="categories__btn"
-                          onClick={(
-                            e: React.MouseEvent<HTMLElement, MouseEvent>
-                          ) => {
-                            e.stopPropagation();
-                            onRemove(mainCat.id);
-                          }}
-                          danger
-                        >
-                          Удалить
-                        </Button>
-                      </>
-                    )}
-                  </div>
+                  <MainCategoryActions
+                    editMode={editableCategory?.id === mainCat.id}
+                    disabledBtn={editableCategory?.name.length === 0}
+                    onSave={onSave}
+                    onEdit={onEdit}
+                    category={mainCat}
+                    onRemove={onRemove}
+                  />
                 }
               >
                 {subCategories && (
@@ -249,28 +187,13 @@ const CategoriesPage = () => {
                                     onChange={onCategoryNameChange}
                                   />
                                   {editableCategory?.id === item.id && (
-                                    <div className="categories__select-wrapper">
-                                      <Text className="categories__select-title">
-                                        Выберите родительскую категорию
-                                      </Text>
-                                      <Select
-                                        defaultValue={item.id}
-                                        onChange={handleChangeParentId}
-                                        className="categories__select"
-                                      >
-                                        {mainCategories &&
-                                          mainCategories.map((mainCat) => {
-                                            return (
-                                              <Option
-                                                value={mainCat.id}
-                                                key={mainCat.id}
-                                              >
-                                                {mainCat.name}
-                                              </Option>
-                                            );
-                                          })}
-                                      </Select>
-                                    </div>
+                                    <SelectParentCategory
+                                      mainCategories={mainCategories}
+                                      handleChangeParentId={
+                                        handleChangeParentId
+                                      }
+                                      item={item}
+                                    />
                                   )}
                                 </>
                               )}

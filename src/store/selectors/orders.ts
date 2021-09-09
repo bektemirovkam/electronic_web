@@ -184,8 +184,8 @@ export const getOrdersListState =
 export const getOrdersLoadingState = (state: AppStateType) =>
   getOrdersState(state).ordersLoading;
 
-export const getOrdersErrorState = (state: AppStateType) =>
-  getOrdersState(state).ordersError;
+export const getOrdersErrorMessageState = (state: AppStateType) =>
+  getOrdersState(state).errorMessage;
 
 export const getNewOrderSpecializationState = (state: AppStateType) =>
   getOrdersState(state).newOrderSpecialization;

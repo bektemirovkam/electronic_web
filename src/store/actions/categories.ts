@@ -1,8 +1,13 @@
-import { ActionStatusEnum, CategoryType } from "./../../types";
+import {
+  ActionStatusEnum,
+  AddCategoryFormData,
+  CategoryType,
+} from "./../../types";
 import { ThunkAction } from "redux-thunk";
 import { ActionsCreatorsTypes } from "../../types";
 import { AppStateType } from "../store";
 import { categoriesApi } from "../../services/categoriesApi";
+import { Dispatch } from "redux";
 
 export const categoriesActions = {
   setAllCategories: (categories: CategoryType[]) => {
@@ -19,7 +24,7 @@ export const categoriesActions = {
       },
     } as const;
   },
-  setCategoriesErrorMessage: (errorMessage: string) => {
+  setCategoriesErrorMessage: (errorMessage: string | null) => {
     return {
       type: "SET_CATEGORIES_ERROR_MESSAGE",
       payload: { errorMessage },
@@ -72,6 +77,11 @@ export type CategoriesActionTypes = ReturnType<
   ActionsCreatorsTypes<typeof categoriesActions>
 >;
 
+const showError = (text: string, dispatch: Dispatch) => {
+  dispatch(categoriesActions.setCategoriesActionStatus(ActionStatusEnum.ERROR));
+  dispatch(categoriesActions.setCategoriesErrorMessage(text));
+};
+
 //TODO: как то проверять пришли ли данные без ошибки
 
 export const getAllCategories = (): ThunkAcionType => async (dispatch) => {
@@ -80,11 +90,8 @@ export const getAllCategories = (): ThunkAcionType => async (dispatch) => {
     const categories = await categoriesApi.getAllCategories();
     dispatch(categoriesActions.setAllCategories(categories));
   } catch (error) {
-    dispatch(
-      categoriesActions.setCategoriesErrorMessage(
-        "Ошибка сети, попробуйте еще раз"
-      )
-    );
+    console.log("getAllCategories...", error);
+    showError("Ошибка сети, попробуйте еще раз", dispatch);
   } finally {
     dispatch(categoriesActions.setIsLoadingCategories(false));
   }
@@ -101,16 +108,14 @@ export const deleteAllCategories = (): ThunkAcionType => async (dispatch) => {
       );
       dispatch(categoriesActions.clearCategories());
     } else {
-      dispatch(
-        categoriesActions.setCategoriesActionStatus(ActionStatusEnum.ERROR)
+      showError(
+        "Не удалось удалить все категории, попробуйте еще раз",
+        dispatch
       );
     }
   } catch (error) {
-    dispatch(
-      categoriesActions.setCategoriesErrorMessage(
-        "Ошибка сети, попробуйте еще раз"
-      )
-    );
+    console.log("deleteAllCategories...", error);
+    showError("Ошибка сети, попробуйте еще раз", dispatch);
   } finally {
     dispatch(categoriesActions.setIsLoadingCategories(false));
   }
@@ -118,36 +123,37 @@ export const deleteAllCategories = (): ThunkAcionType => async (dispatch) => {
 
 // TODO:
 // тут будет приходить не CategoryType а только name и parentID
-export const addCategory =
-  (categoryList: CategoryType[]): ThunkAcionType =>
+export const createCategory =
+  (formData: AddCategoryFormData): ThunkAcionType =>
   async (dispatch) => {
     try {
       dispatch(categoriesActions.setIsLoadingCategories(true));
-      const response = await categoriesApi.addCategory(categoryList);
+      const response = await categoriesApi.addCategory({
+        name: formData.name,
+        parentId: Number(formData.parentId),
+      });
       // TODO: поэтому тут должна возвращаться не boolean а CategoryType
       if (response) {
         dispatch(
           categoriesActions.setCategoriesActionStatus(ActionStatusEnum.SUCCESS)
         );
-
-        dispatch(categoriesActions.addNewCategory(categoryList[0]));
-      } else {
         dispatch(
-          categoriesActions.setCategoriesActionStatus(ActionStatusEnum.ERROR)
+          categoriesActions.addNewCategory({
+            id: 123,
+            isDeleted: false,
+            name: formData.name,
+            parentId: formData.parentId,
+          })
         );
-        //// TODO: Нужно???? Скорее всего нет, т.к. обрабатывается Alertom ActionStatus
-        dispatch(
-          categoriesActions.setCategoriesErrorMessage(
-            "Не получилось добавить категорию, попробуйте еще раз"
-          )
+      } else {
+        showError(
+          "Не получилось добавить категорию, попробуйте еще раз",
+          dispatch
         );
       }
     } catch (error) {
-      dispatch(
-        categoriesActions.setCategoriesErrorMessage(
-          "Ошибка сети, попробуйте еще раз"
-        )
-      );
+      console.log("addCategory...", error);
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
     } finally {
       dispatch(categoriesActions.setIsLoadingCategories(false));
     }
@@ -161,18 +167,13 @@ export const getCategoryById =
       const categoryList = await categoriesApi.getCategoryById(id);
 
       if (categoryList.length === 0) {
-        dispatch(
-          categoriesActions.setCategoriesErrorMessage("Категория не найдена")
-        );
+        showError("Категория не найдена", dispatch);
       } else {
         dispatch(categoriesActions.setCurrentCategory(categoryList[0]));
       }
     } catch (error) {
-      dispatch(
-        categoriesActions.setCategoriesErrorMessage(
-          "Ошибка сети, попробуйте еще раз"
-        )
-      );
+      console.log("getCategoryById...", error);
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
     } finally {
       dispatch(categoriesActions.setIsLoadingCategories(false));
     }
@@ -190,22 +191,14 @@ export const deleteCategoryById =
         );
         dispatch(categoriesActions.removeCategory(id));
       } else {
-        dispatch(
-          categoriesActions.setCategoriesActionStatus(ActionStatusEnum.ERROR)
-        );
-        //// TODO: Нужно???? Скорее всего нет, т.к. обрабатывается Alertom ActionStatus
-        dispatch(
-          categoriesActions.setCategoriesErrorMessage(
-            "Не получилось удалить категорию, попробуйте еще раз"
-          )
+        showError(
+          "Не получилось удалить категорию, попробуйте еще раз",
+          dispatch
         );
       }
     } catch (error) {
-      dispatch(
-        categoriesActions.setCategoriesErrorMessage(
-          "Ошибка сети, попробуйте еще раз"
-        )
-      );
+      console.log("deleteCategoryById...", error);
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
     } finally {
       dispatch(categoriesActions.setIsLoadingCategories(false));
     }
@@ -223,22 +216,14 @@ export const updateCategoryById =
         );
         dispatch(categoriesActions.replaceCategory(category));
       } else {
-        dispatch(
-          categoriesActions.setCategoriesActionStatus(ActionStatusEnum.ERROR)
-        );
-        //// TODO: Нужно???? Скорее всего нет, т.к. обрабатывается Alertom ActionStatus
-        dispatch(
-          categoriesActions.setCategoriesErrorMessage(
-            "Не получилось обновить категорию, попробуйте еще раз"
-          )
+        showError(
+          "Не получилось обновить категорию, попробуйте еще раз",
+          dispatch
         );
       }
     } catch (error) {
-      dispatch(
-        categoriesActions.setCategoriesErrorMessage(
-          "Ошибка сети, попробуйте еще раз"
-        )
-      );
+      console.log("updateCategoryById...", error);
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
     } finally {
       dispatch(categoriesActions.setCategoryInEditProcess(null));
     }

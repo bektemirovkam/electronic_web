@@ -7,6 +7,11 @@ export type CategoryType = {
   parentId: number;
 };
 
+export type AddCategoryFormData = {
+  name: string;
+  parentId: number;
+};
+
 export type CoordinatesType = {
   coordinatesLatitude: string;
   coordinatesLongitude: string;
@@ -111,13 +116,28 @@ export type OrderType = {
   deadline?: string;
 };
 
+export type OrderFullInfoType = {
+  id: number;
+  creationDate: number;
+  actualDate: number;
+  deadline?: string;
+  title: string;
+  description: string;
+  totalSum: number;
+  orderStatus: "NEW" | "ARCHIVED" | "DELETED";
+  customerId: number;
+  categories: OrderCategoryOutType[];
+  contractors: OrderContractorOutType[];
+  attachments: OrderAttachmentOutType[];
+};
+
 export enum OrderStatusEnum {
   NEW = "NEW",
   ARCHIVED = "ARCHIVED",
   DELETED = "DELETED",
 }
 
-export type addOrderFormData = {
+export type AddOrderFormData = {
   title: string;
   price: string;
   deadline: string;
@@ -172,7 +192,6 @@ export type OtpFormDataType = {
 };
 
 export type OrdersQueryFilterType = "active" | "deleted" | "archived" | null;
-export type CategoryQueryFilterType = "deleted" | null;
 export type SortByOrdersFieldsType = "title" | "price" | "creationDate";
 export type DirectionType = "asc" | "desc";
 

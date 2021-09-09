@@ -12,10 +12,11 @@ import {
   OrderCreatePage,
   OrdersPage,
   SuppliersPage,
+  OrderPage,
+  SupplierCreatePage,
+  CategoryCreatePage,
+  DeletedCategoriesPage,
 } from "../pages";
-import OrderPage from "../pages/OrderPage/OrderPage";
-import SupplierCreatePage from "../pages/SupplierCreatePage/SupplierCreatePage";
-import CategoryCreatePage from "../pages/CategoryCreatePage/CategoryCreatePage";
 
 const MainLayout = () => {
   return (
@@ -57,6 +58,10 @@ const MainLayout = () => {
 
             <Route exact path="/categories">
               <CategoriesPage />
+            </Route>
+
+            <Route exact path="/categories/deleted">
+              <DeletedCategoriesPage />
             </Route>
 
             <Route exact path="/categories/create">

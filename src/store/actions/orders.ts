@@ -1,6 +1,7 @@
 import {
   ActionStatusEnum,
-  addOrderFormData,
+  AddOrderFormData,
+  OrderFullInfoType,
   OrderType,
   StateSpecializationType,
 } from "./../../types";
@@ -8,6 +9,7 @@ import { ThunkAction } from "redux-thunk";
 import { ActionsCreatorsTypes } from "../../types";
 import { AppStateType } from "../store";
 import { ordersApi } from "../../services/ordersApi";
+import { Dispatch } from "redux";
 
 export const ordersActions = {
   setOrders: (orders: OrderType[]) => {
@@ -22,10 +24,10 @@ export const ordersActions = {
       payload: { ordersLoading },
     } as const;
   },
-  setOrdersError: (ordersError: string) => {
+  setOrdersErrorMessage: (errorMessage: string | null) => {
     return {
       type: "SET_ORDERS_ERROR",
-      payload: { ordersError },
+      payload: { errorMessage },
     } as const;
   },
   setOrderSpecialization: (newOrderSpecialization: StateSpecializationType) => {
@@ -45,18 +47,23 @@ export const ordersActions = {
       payload: specializationName,
     } as const;
   },
-  setActionStatusSuccess: (orderActionStatus: ActionStatusEnum) => {
+  setOrderActionStatus: (orderActionStatus: ActionStatusEnum) => {
     return {
       type: "SET_ORDER_ACTION_STATUS",
       payload: { orderActionStatus },
     } as const;
   },
-  setCurrentOrder: (currentOrder: OrderType) => {
+  setCurrentOrder: (currentOrder: OrderFullInfoType) => {
     return {
       type: "SET_CURRENT_ORDER",
       payload: { currentOrder },
     } as const;
   },
+};
+
+const showError = (text: string, dispatch: Dispatch) => {
+  dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.ERROR));
+  dispatch(ordersActions.setOrdersErrorMessage(text));
 };
 
 export const getOrders = (): ThunkAcionType => async (dispatch) => {
@@ -66,51 +73,52 @@ export const getOrders = (): ThunkAcionType => async (dispatch) => {
     dispatch(ordersActions.setOrders(orders));
   } catch (error) {
     console.log("getOrders ===> ", error);
-    dispatch(ordersActions.setOrdersError("Ошибка сети, попробуйте еще раз"));
+    showError("Ошибка сети, попробуйте еще раз", dispatch);
   } finally {
     dispatch(ordersActions.setOrdersLoading(false));
   }
 };
 
+// TODO: возвращаться должно не boolean а FullOrderInfo
 export const createOrder =
-  (formData: addOrderFormData): ThunkAcionType =>
+  (formData: AddOrderFormData): ThunkAcionType =>
   async (dispatch) => {
     try {
       const response = await ordersApi.createOrder(formData);
       if (response) {
-        dispatch(
-          ordersActions.setActionStatusSuccess(ActionStatusEnum.SUCCESS)
-        );
+        dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.SUCCESS));
         dispatch(getOrders());
       } else {
-        dispatch(ordersActions.setActionStatusSuccess(ActionStatusEnum.ERROR));
+        showError("Не удалось создать заявку, попробуйте еще раз", dispatch);
       }
     } catch (error) {
       console.log("createOrder ===> ", error);
-      dispatch(ordersActions.setOrdersError("Ошибка сети, попробуйте еще раз"));
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
     }
   };
 
 export const updateOrder =
-  (formData: addOrderFormData, id: number): ThunkAcionType =>
+  (formData: AddOrderFormData, id: number): ThunkAcionType =>
   async (dispatch) => {
     try {
       dispatch(ordersActions.setOrdersLoading(true));
       const response = await ordersApi.updateOrder(formData, id);
       if (response) {
-        dispatch(
-          ordersActions.setActionStatusSuccess(ActionStatusEnum.SUCCESS)
-        );
+        dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.SUCCESS));
         dispatch(getOrders());
       } else {
-        dispatch(ordersActions.setActionStatusSuccess(ActionStatusEnum.ERROR));
+        dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.ERROR));
         dispatch(
-          ordersActions.setOrdersError("Ошибка при редактировании заявки")
+          ordersActions.setOrdersErrorMessage(
+            "Ошибка при редактировании заявки"
+          )
         );
       }
     } catch (error) {
       console.log("updateOrder ===> ", error);
-      dispatch(ordersActions.setOrdersError("Ошибка сети, попробуйте еще раз"));
+      dispatch(
+        ordersActions.setOrdersErrorMessage("Ошибка сети, попробуйте еще раз")
+      );
     } finally {
       dispatch(ordersActions.setOrdersLoading(true));
     }
@@ -123,17 +131,38 @@ export const deleteOrder =
       dispatch(ordersActions.setOrdersLoading(true));
       const response = await ordersApi.deleteOrder(id);
       if (response) {
-        dispatch(
-          ordersActions.setActionStatusSuccess(ActionStatusEnum.SUCCESS)
-        );
+        dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.SUCCESS));
         dispatch(getOrders());
       } else {
-        dispatch(ordersActions.setActionStatusSuccess(ActionStatusEnum.ERROR));
-        dispatch(ordersActions.setOrdersError("Ошибка при удалении заявки"));
+        dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.ERROR));
+        dispatch(
+          ordersActions.setOrdersErrorMessage("Ошибка при удалении заявки")
+        );
       }
     } catch (error) {
       console.log("deleteOrder ===> ", error);
-      dispatch(ordersActions.setOrdersError("Ошибка сети, попробуйте еще раз"));
+      dispatch(
+        ordersActions.setOrdersErrorMessage("Ошибка сети, попробуйте еще раз")
+      );
+    } finally {
+      dispatch(ordersActions.setOrdersLoading(false));
+    }
+  };
+
+export const getFullOrderInfo =
+  (id: number): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(ordersActions.setOrdersLoading(true));
+      const orders = await ordersApi.getFullOrderInfo(id);
+      if (orders.length === 0) {
+        showError("Заявка не найдена", dispatch);
+      } else {
+        dispatch(ordersActions.setCurrentOrder(orders[0]));
+      }
+    } catch (error) {
+      console.log("getFullOrderInfo ===> ", error);
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
     } finally {
       dispatch(ordersActions.setOrdersLoading(false));
     }

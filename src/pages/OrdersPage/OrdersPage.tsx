@@ -3,11 +3,13 @@ import { Layout, Typography, BackTop } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
-  getOrdersErrorState,
+  getOrderActionStatusState,
+  getOrdersErrorMessageState,
   getOrdersListState,
   getOrdersLoadingState,
 } from "../../store/selectors/orders";
 import {
+  ActionStatusEnum,
   DirectionType,
   OrdersQueryFilterType,
   OrderType,
@@ -18,7 +20,7 @@ import {
   getOrders,
   ordersActions,
 } from "../../store/actions/orders";
-import { AppPreloader, OrderItem } from "../../components";
+import { AppAlert, AppPreloader, OrderItem } from "../../components";
 import { useHistory, useLocation } from "react-router-dom";
 
 const { Content } = Layout;
@@ -39,14 +41,15 @@ const OrdersPage = () => {
   const orders = useSelector(
     getOrdersListState(searchText, query.get("filter") as OrdersQueryFilterType)
   );
-
   const ordersLoading = useSelector(getOrdersLoadingState);
-  const ordersError = useSelector(getOrdersErrorState);
+  const ordersError = useSelector(getOrdersErrorMessageState);
+  const orderActionStatus = useSelector(getOrderActionStatusState);
 
   const dispatch = useDispatch();
   const history = useHistory();
 
   const fetchData = React.useCallback(() => {
+    // для кнопки обновить
     dispatch(getOrders());
   }, [dispatch]);
 
@@ -62,8 +65,12 @@ const OrdersPage = () => {
   };
 
   const handleViewOrder = (order: OrderType) => {
-    dispatch(ordersActions.setCurrentOrder(order));
     history.push(`orders/${order.id}`);
+  };
+
+  const clearState = () => {
+    dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.NEVER));
+    dispatch(ordersActions.setOrdersErrorMessage(null));
   };
 
   if (ordersLoading) {
@@ -72,11 +79,11 @@ const OrdersPage = () => {
 
   return (
     <Content className="content">
-      {ordersError && (
-        <div className="error">
-          <Text type="danger">{ordersError}</Text>
-        </div>
-      )}
+      <AppAlert
+        onClose={clearState}
+        errorMessage={ordersError}
+        status={orderActionStatus}
+      />
       <div className="orders">
         {orders &&
           orders.map((order) => {

@@ -2,16 +2,17 @@ import {
   ActionStatusEnum,
   OrderType,
   StateSpecializationType,
+  OrderFullInfoType,
 } from "../../types";
 import { OrdersActionTypes } from "../actions/orders";
 
 const initialState = {
   orders: null as OrderType[] | null,
   ordersLoading: false,
-  ordersError: null as string | null,
+  errorMessage: null as string | null,
   newOrderSpecialization: {} as StateSpecializationType,
   orderActionStatus: ActionStatusEnum.NEVER,
-  currentOrder: null as OrderType | null,
+  currentOrder: null as OrderFullInfoType | null,
 };
 
 type initStateType = typeof initialState;
