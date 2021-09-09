@@ -48,7 +48,7 @@ const DeletedCategoriesPage = () => {
         successMessage={"Изменения сохранены"}
         status={categoriesActionStatus}
       />
-      {deletedCategories.length === 0 ? (
+      {deletedCategories && deletedCategories.length === 0 ? (
         <Empty />
       ) : (
         <Card>
