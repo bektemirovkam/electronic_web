@@ -51,10 +51,8 @@ const CategoryCreatePage = () => {
   });
 
   React.useEffect(() => {
-    dispatch(getAllCategories());
-
     return () => clearState();
-  }, [clearState, dispatch]);
+  }, [clearState]);
 
   if (categoriesLoading) {
     return <AppPreloader />;

@@ -153,19 +153,19 @@ body {
     align-items: center;
     justify-content: center;
   }
-  &__deadline-input {
+  &__comment-input {
     flex: 1;
     margin-right: 15px;
     margin-bottom: 10px;
   }
-  &__price-input {
+  &__totalsum-input {
     flex: 1;
     margin-bottom: 10px;
   }
   &__descr-input {
     margin-bottom: 10px;
   }
-  &__price-field {
+  &__totalsum-field {
     display: flex;
     flex-direction: column;
   }

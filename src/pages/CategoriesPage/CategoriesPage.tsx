@@ -45,9 +45,8 @@ const CategoriesPage = () => {
   }, [dispatch]);
 
   React.useEffect(() => {
-    dispatch(getAllCategories());
     return () => clearState();
-  }, [dispatch, clearState]);
+  }, [clearState]);
 
   const onRemove = (id: number) => {
     const answer = window.confirm("Вы действительно хотите удалить категорию?");

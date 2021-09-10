@@ -128,23 +128,18 @@ export const createCategory =
   async (dispatch) => {
     try {
       dispatch(categoriesActions.setIsLoadingCategories(true));
-      const response = await categoriesApi.addCategory({
-        name: formData.name,
-        parentId: Number(formData.parentId),
-      });
-      // TODO: поэтому тут должна возвращаться не boolean а CategoryType
-      if (response) {
+      const createdCategory = await categoriesApi.addCategory([
+        {
+          name: formData.name,
+          parentId: Number(formData.parentId),
+        },
+      ]);
+
+      if (createdCategory.length > 0) {
         dispatch(
           categoriesActions.setCategoriesActionStatus(ActionStatusEnum.SUCCESS)
         );
-        dispatch(
-          categoriesActions.addNewCategory({
-            id: 123,
-            isDeleted: false,
-            name: formData.name,
-            parentId: formData.parentId,
-          })
-        );
+        dispatch(categoriesActions.addNewCategory(createdCategory[0]));
       } else {
         showError(
           "Не получилось добавить категорию, попробуйте еще раз",

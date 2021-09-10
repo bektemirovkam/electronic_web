@@ -14,19 +14,29 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 
 import { AppAlert, AppPreloader, UploadFileForm } from "../../components";
-import { ordersActions } from "../../store/actions/orders";
-import { ActionStatusEnum, AddOrderFormData } from "../../types";
+import { createOrder, ordersActions } from "../../store/actions/orders";
 import {
+  ActionStatusEnum,
+  DescriptionOrderFormData,
+  OrderStatusEnum,
+} from "../../types";
+import {
+  getCurrentOrderState,
   getOrderActionStatusState,
   getOrdersErrorMessageState,
   getOrdersLoadingState,
 } from "../../store/selectors/orders";
 import { orderSchema } from "../../utils/validatorsSchemes";
-import { getCategoriesTreeDataState } from "../../store/selectors/categories";
+import {
+  getCategoriesActionStatusState,
+  getCategoriesErrorMessageState,
+  getCategoriesTreeDataState,
+} from "../../store/selectors/categories";
 import {
   categoriesActions,
   getAllCategories,
 } from "../../store/actions/categories";
+import { useHistory } from "react-router-dom";
 
 const { Content } = Layout;
 const { Text, Title } = Typography;
@@ -35,43 +45,76 @@ const { SHOW_ALL } = TreeSelect;
 const OrderCreatePage = () => {
   const {
     control,
+    reset,
     handleSubmit,
     formState: { errors },
-  } = useForm<AddOrderFormData>({
+  } = useForm<DescriptionOrderFormData>({
     resolver: yupResolver(orderSchema),
   });
 
-  const [selectedCategories, setSelectedCategories] = React.useState([]);
+  const [selectedCategories, setSelectedCategories] = React.useState<number[]>(
+    []
+  );
 
   const orderActionStatus = useSelector(getOrderActionStatusState);
   const orderError = useSelector(getOrdersErrorMessageState);
   const orderLoadingState = useSelector(getOrdersLoadingState);
+  const currentOrder = useSelector(getCurrentOrderState);
+
   const categoriesTree = useSelector(getCategoriesTreeDataState);
+  const categoriesError = useSelector(getCategoriesErrorMessageState);
+  const categoriesActionStatus = useSelector(getCategoriesActionStatusState);
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
-  React.useEffect(() => {
-    dispatch(getAllCategories());
-  }, []);
-
-  const clearOrderState = () => {
+  const clearOrderState = React.useCallback(() => {
     dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.NEVER));
     dispatch(ordersActions.setOrdersErrorMessage(null));
-  };
-  const clearCategoriesState = () => {
+  }, [dispatch]);
+  const clearCategoriesState = React.useCallback(() => {
     dispatch(
       categoriesActions.setCategoriesActionStatus(ActionStatusEnum.NEVER)
     );
     dispatch(categoriesActions.setCategoriesErrorMessage(null));
-  };
+  }, [dispatch]);
 
-  const handleSelectCategories = (value: never[]) => {
+  React.useEffect(() => {
+    return () => {
+      clearOrderState();
+      clearCategoriesState();
+    };
+  }, [clearCategoriesState, clearOrderState]);
+
+  React.useEffect(() => {
+    if (currentOrder && orderActionStatus === ActionStatusEnum.SUCCESS) {
+      history.push(`/orders/${currentOrder.id}`);
+    }
+  }, [currentOrder, history, orderActionStatus]);
+
+  const handleSelectCategories = (value: number[]) => {
     setSelectedCategories(value);
   };
 
   const onSubmit = handleSubmit((formData) => {
-    console.log(formData);
-    console.log(selectedCategories);
+    const categories = selectedCategories.map((categoryId) => ({
+      categoryId,
+    }));
+
+    const newOrder = {
+      title: formData.title,
+      description: formData.description,
+      comment: formData.comment,
+      totalSum: formData.totalSum,
+      orderStatus: OrderStatusEnum.NEW,
+      contractors: [],
+      attachments: [] as [],
+      customerId: 1,
+      categories,
+    };
+
+    dispatch(createOrder(newOrder));
+    reset();
   });
 
   if (orderLoadingState) {
@@ -88,9 +131,8 @@ const OrderCreatePage = () => {
       />
       <AppAlert
         onClose={clearCategoriesState}
-        errorMessage={orderError}
-        successMessage={"Заявка сохранена"}
-        status={orderActionStatus}
+        errorMessage={categoriesError}
+        status={categoriesActionStatus}
       />
       <Card className="form">
         <Title level={3} className="title">
@@ -127,16 +169,16 @@ const OrderCreatePage = () => {
             }}
             render={({ field: { onChange, value } }) => (
               <Form.Item
-                validateStatus={errors.deadline ? "error" : "success"}
-                help={errors.deadline?.message}
-                className="order__deadline-input input"
+                validateStatus={errors.comment ? "error" : "success"}
+                help={errors.comment?.message}
+                className="order__comment-input input"
                 required
               >
                 <Text className="subtitle">Сроки</Text>
                 <Input placeholder="Сроки" value={value} onChange={onChange} />
               </Form.Item>
             )}
-            name="deadline"
+            name="comment"
             defaultValue=""
           />
 
@@ -147,19 +189,19 @@ const OrderCreatePage = () => {
             }}
             render={({ field: { onChange, value } }) => (
               <Form.Item
-                validateStatus={errors.price ? "error" : "success"}
-                help={errors.price?.message}
-                className="input order__price-input"
+                validateStatus={errors.totalSum ? "error" : "success"}
+                help={errors.totalSum?.message}
+                className="input order__totalsum-input"
                 required
               >
-                <div className="order__price-field">
+                <div className="order__totalsum-field">
                   <Text className="subtitle">Цена (тг)</Text>
                   <InputNumber value={value} onChange={onChange} />
                 </div>
               </Form.Item>
             )}
-            name="price"
-            defaultValue=""
+            name="totalSum"
+            defaultValue={0}
           />
         </div>
 

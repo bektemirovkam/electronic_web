@@ -105,24 +105,23 @@ export type ActionsCreatorsTypes<T> = T extends { [key: string]: infer U }
 
 export type OrderType = {
   id: number;
-  number: string;
   creationDate: string;
   actualDate: string;
   title: string;
   description: string;
   orderStatus: "NEW" | "ARCHIVED" | "DELETED";
   customerId: number;
-  price?: string;
-  deadline?: string;
+  totalSum?: string;
+  comment?: string;
 };
 
 export type OrderFullInfoType = {
   id: number;
   creationDate: number;
   actualDate: number;
-  deadline?: string;
+  comment?: string;
   title: string;
-  description: string;
+  description?: string;
   totalSum: number;
   orderStatus: "NEW" | "ARCHIVED" | "DELETED";
   customerId: number;
@@ -139,10 +138,21 @@ export enum OrderStatusEnum {
 
 export type AddOrderFormData = {
   title: string;
-  price: string;
-  deadline: string;
-  description: string;
-  customerId?: number;
+  description?: string;
+  comment: string;
+  totalSum: number;
+  orderStatus: "NEW" | "ARCHIVED" | "DELETED";
+  categories: OrderCategoryInType[];
+  contractors: OrderContractorInType[] | [];
+  attachments: OrderAttachmentInType[];
+  customerId: number;
+};
+
+export type DescriptionOrderFormData = {
+  title: string;
+  description?: string;
+  comment: string;
+  totalSum: number;
 };
 
 export type OrderCategoryInType = {
@@ -154,6 +164,7 @@ export type OrderCategoryOutType = {
   // при получении категорий у заявки
   categoryId: number;
   categoryName: string;
+  parentId: number;
 };
 
 export type OrderContractorInType = {
@@ -192,10 +203,10 @@ export type OtpFormDataType = {
 };
 
 export type OrdersQueryFilterType = "active" | "deleted" | "archived" | null;
-export type SortByOrdersFieldsType = "title" | "price" | "creationDate";
+export type SortByOrdersFieldsType = "title" | "totalSum" | "creationDate";
 export type DirectionType = "asc" | "desc";
 
-export type getComparatorType<T, D, S> = {
+export type GetComparatorType<T, D, S> = {
   (direction: D, sortBy: S): ComparatorType<T>;
 };
 
@@ -203,11 +214,11 @@ export type ComparatorType<T> = {
   (a: T, b: T): number;
 };
 
-export type stableSortType<T> = {
+export type StableSortType<T> = {
   (array: T[], comparator: ComparatorType<T>): T[];
 };
 
-export type descendingComparatorType<T, S> = {
+export type DescendingComparatorType<T, S> = {
   (a: T, b: T, sortBy: S): number;
 };
 
@@ -216,8 +227,9 @@ export type EditableFieldPropsType<T, F> = {
   fieldName: F;
   control: Control<T, object>;
   error: FieldError | undefined;
-  defaultValue?: string;
+  defaultValue?: string | number;
   isTextArea?: boolean;
+  isNumberInput?: boolean;
   placeholder?: string;
   currentValue?: string;
 };

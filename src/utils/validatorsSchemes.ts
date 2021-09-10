@@ -2,11 +2,11 @@ import * as yup from "yup";
 
 export const orderSchema = yup.object().shape({
   title: yup.string().required("Обязательное поле"),
-  price: yup
+  totalSum: yup
     .number()
     .typeError("Введите корректную цену")
     .required("Обязательное поле"),
-  deadline: yup.string().required("Обязательное поле"),
+  comment: yup.string().required("Обязательное поле"),
   description: yup.string(),
 });
 

@@ -48,6 +48,11 @@ const OrdersPage = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
+  const clearState = React.useCallback(() => {
+    dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.NEVER));
+    dispatch(ordersActions.setOrdersErrorMessage(null));
+  }, [dispatch]);
+
   const fetchData = React.useCallback(() => {
     // для кнопки обновить
     dispatch(getOrders());
@@ -55,7 +60,10 @@ const OrdersPage = () => {
 
   React.useEffect(() => {
     dispatch(getOrders());
-  }, [dispatch]);
+    return () => {
+      clearState();
+    };
+  }, [dispatch, clearState]);
 
   const handleDeleteOrder = (id: number) => {
     const answer = window.confirm("Вы уверены что хотите удалить заявку?");
@@ -68,11 +76,6 @@ const OrdersPage = () => {
     history.push(`orders/${order.id}`);
   };
 
-  const clearState = () => {
-    dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.NEVER));
-    dispatch(ordersActions.setOrdersErrorMessage(null));
-  };
-
   if (ordersLoading) {
     return <AppPreloader size="large" />;
   }
@@ -82,6 +85,7 @@ const OrdersPage = () => {
       <AppAlert
         onClose={clearState}
         errorMessage={ordersError}
+        successMessage="Заяка успешно удалена"
         status={orderActionStatus}
       />
       <div className="orders">

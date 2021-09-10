@@ -1,19 +1,17 @@
-import { Form, Input, Typography } from "antd";
+import { Form, Input, InputNumber, Typography } from "antd";
 import React from "react";
 import { Controller } from "react-hook-form";
-import { AddOrderFormData, EditableFieldPropsType } from "../../../types";
+import {
+  DescriptionOrderFormData,
+  EditableFieldPropsType,
+} from "../../../types";
 
 const { Text } = Typography;
 
-type FieldsNameType =
-  | "title"
-  | "price"
-  | "deadline"
-  | "description"
-  | "customerId";
+type FieldsNameType = "title" | "totalSum" | "comment" | "description";
 
 const OrderEditableField: React.FC<
-  EditableFieldPropsType<AddOrderFormData, FieldsNameType>
+  EditableFieldPropsType<DescriptionOrderFormData, FieldsNameType>
 > = ({
   placeholder,
   editMode,
@@ -22,6 +20,7 @@ const OrderEditableField: React.FC<
   error,
   defaultValue,
   isTextArea = false,
+  isNumberInput = false,
 }) => {
   if (editMode) {
     return (
@@ -38,6 +37,12 @@ const OrderEditableField: React.FC<
           >
             {isTextArea ? (
               <Input.TextArea
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+              />
+            ) : isNumberInput ? (
+              <InputNumber
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}

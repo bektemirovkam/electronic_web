@@ -1,13 +1,13 @@
 import {
-  descendingComparatorType,
+  DescendingComparatorType,
   DirectionType,
-  getComparatorType,
+  GetComparatorType,
   OrderType,
   SortByOrdersFieldsType,
-  stableSortType,
+  StableSortType,
 } from "../types";
 
-export const getOrderComparator: getComparatorType<
+export const getOrderComparator: GetComparatorType<
   OrderType,
   DirectionType,
   SortByOrdersFieldsType
@@ -18,12 +18,12 @@ export const getOrderComparator: getComparatorType<
     : (a, b) => -descendingOrderComparator(a, b, sortBy);
 };
 
-export const descendingOrderComparator: descendingComparatorType<
+export const descendingOrderComparator: DescendingComparatorType<
   OrderType,
   SortByOrdersFieldsType
 > = (a, b, sortBy) => {
   // сортировщик
-  if (sortBy === "price") {
+  if (sortBy === "totalSum") {
     //@ts-ignore
     if (b[sortBy] < a[sortBy]) {
       return -1;
@@ -38,7 +38,7 @@ export const descendingOrderComparator: descendingComparatorType<
   }
 };
 
-export const stableOrderSort: stableSortType<OrderType> = (
+export const stableOrderSort: StableSortType<OrderType> = (
   array,
   comparator
 ) => {

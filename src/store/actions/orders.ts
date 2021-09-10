@@ -30,33 +30,34 @@ export const ordersActions = {
       payload: { errorMessage },
     } as const;
   },
-  setOrderSpecialization: (newOrderSpecialization: StateSpecializationType) => {
-    return {
-      type: "SET_NEW_ORDER_SPECIALIZATION",
-      payload: newOrderSpecialization,
-    } as const;
-  },
-  clearOrderSpecialization: () => {
-    return {
-      type: "CLEAR_ORDER_SPECIALIZATION",
-    } as const;
-  },
-  removeOrderSpecializationItem: (specializationName: string) => {
-    return {
-      type: "REMOVE_ORDER_SPECIALIZATION_ITEM",
-      payload: specializationName,
-    } as const;
-  },
   setOrderActionStatus: (orderActionStatus: ActionStatusEnum) => {
     return {
       type: "SET_ORDER_ACTION_STATUS",
       payload: { orderActionStatus },
     } as const;
   },
-  setCurrentOrder: (currentOrder: OrderFullInfoType) => {
+  setCurrentOrder: (currentOrder: OrderFullInfoType | null) => {
     return {
       type: "SET_CURRENT_ORDER",
       payload: { currentOrder },
+    } as const;
+  },
+  replaceOrder: (order: OrderType) => {
+    return {
+      type: "REPLACE_ORDER",
+      payload: { order },
+    } as const;
+  },
+  removeOrder: (id: number) => {
+    return {
+      type: "REMOVE_ORDER",
+      payload: { id },
+    } as const;
+  },
+  addNewOrder: (order: OrderType) => {
+    return {
+      type: "ADD_NEW_ORDER",
+      payload: { order },
     } as const;
   },
 };
@@ -79,15 +80,14 @@ export const getOrders = (): ThunkAcionType => async (dispatch) => {
   }
 };
 
-// TODO: возвращаться должно не boolean а FullOrderInfo
 export const createOrder =
   (formData: AddOrderFormData): ThunkAcionType =>
   async (dispatch) => {
     try {
-      const response = await ordersApi.createOrder(formData);
-      if (response) {
+      const orders = await ordersApi.createOrder(formData);
+      if (orders.length > 0) {
         dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.SUCCESS));
-        dispatch(getOrders());
+        dispatch(ordersActions.setCurrentOrder(orders[0]));
       } else {
         showError("Не удалось создать заявку, попробуйте еще раз", dispatch);
       }
@@ -98,22 +98,24 @@ export const createOrder =
   };
 
 export const updateOrder =
-  (formData: AddOrderFormData, id: number): ThunkAcionType =>
+  (order: AddOrderFormData, id: number): ThunkAcionType =>
   async (dispatch) => {
     try {
       dispatch(ordersActions.setOrdersLoading(true));
-      const response = await ordersApi.updateOrder(formData, id);
+      const response = await ordersApi.updateOrder(order, id);
       if (response) {
         dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.SUCCESS));
-        dispatch(getOrders());
       } else {
-        showError("Ошибка при редактировании заявки", dispatch);
+        showError(
+          "Не удалось сохранить изменения, попробуйте еще раз",
+          dispatch
+        );
       }
     } catch (error) {
       console.log("updateOrder ===> ", error);
       showError("Ошибка сети, попробуйте еще раз", dispatch);
     } finally {
-      dispatch(ordersActions.setOrdersLoading(true));
+      dispatch(ordersActions.setOrdersLoading(false));
     }
   };
 
@@ -125,18 +127,14 @@ export const deleteOrder =
       const response = await ordersApi.deleteOrder(id);
       if (response) {
         dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.SUCCESS));
-        dispatch(getOrders());
+        dispatch(ordersActions.removeOrder(id));
+        dispatch(ordersActions.setCurrentOrder(null));
       } else {
-        dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.ERROR));
-        dispatch(
-          ordersActions.setOrdersErrorMessage("Ошибка при удалении заявки")
-        );
+        showError("Не удалось удалить заявку, попробуйте еще раз", dispatch);
       }
     } catch (error) {
       console.log("deleteOrder ===> ", error);
-      dispatch(
-        ordersActions.setOrdersErrorMessage("Ошибка сети, попробуйте еще раз")
-      );
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
     } finally {
       dispatch(ordersActions.setOrdersLoading(false));
     }

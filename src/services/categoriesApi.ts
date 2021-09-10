@@ -11,8 +11,10 @@ export const categoriesApi = {
     const { data } = await axios.delete<Boolean>("categories");
     return data;
   },
-  addCategory: async (formData: AddCategoryFormData): Promise<Boolean> => {
-    const { data } = await axios.post<Boolean>("categories", formData);
+  addCategory: async (
+    formData: AddCategoryFormData[]
+  ): Promise<CategoryType[]> => {
+    const { data } = await axios.post<CategoryType[]>("categories", formData);
     return data;
   },
 

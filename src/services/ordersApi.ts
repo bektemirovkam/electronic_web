@@ -8,8 +8,10 @@ export const ordersApi = {
     const { data } = await axios.get<OrderType[]>("orders");
     return data;
   },
-  createOrder: async (formData: AddOrderFormData): Promise<boolean> => {
-    const { data } = await axios.post<boolean>("orders", formData);
+  createOrder: async (
+    formData: AddOrderFormData
+  ): Promise<OrderFullInfoType[]> => {
+    const { data } = await axios.post<OrderFullInfoType[]>("orders", formData);
     return data;
   },
 
@@ -20,14 +22,17 @@ export const ordersApi = {
     return data;
   },
   deleteOrder: async (orderId: number): Promise<boolean> => {
-    const { data } = await axios.delete(`/orders/${orderId}`);
+    const { data } = await axios.delete<boolean>(`/orders/${orderId}`);
     return data;
   },
   updateOrder: async (
-    formData: AddOrderFormData,
-    orderId: number
-  ): Promise<boolean> => {
-    const { data } = await axios.patch(`/orders/${orderId}`, formData);
+    order: AddOrderFormData,
+    id: number
+  ): Promise<OrderFullInfoType[]> => {
+    const { data } = await axios.patch<OrderFullInfoType[]>(
+      `/orders/${id}`,
+      order
+    );
     return data;
   },
 

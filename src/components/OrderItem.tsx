@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Menu, Dropdown, Button } from "antd";
 import { EllipsisOutlined } from "@ant-design/icons";
 import { OrderType } from "../types";
-import { formatDate, formatStringToDate } from "../utils/formatDate";
+import { formatDate } from "../utils/formatDate";
 import classNames from "classnames";
 
 type DropMenuPropsType = {
@@ -76,8 +76,8 @@ const OrderItem: React.FC<OrderItemPropsType> = ({
         title={order.title}
       >
         <p className="order__date">
-          {formatDate(formatStringToDate(order.creationDate))} -{" "}
-          {formatDate(formatStringToDate(order.actualDate))}
+          {formatDate(Number(order.creationDate))} -{" "}
+          {formatDate(Number(order.actualDate))}
         </p>
         <p className="order__descr">{order.description}</p>
       </Card>
