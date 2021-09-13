@@ -35,26 +35,6 @@ export enum ContractorStatusEnum {
   BANNED = "BANNED",
 }
 
-export type CustomerFormDataType = {
-  name: string;
-  phoneNumber: string;
-  description: string;
-  location: string;
-  webSite: string;
-  eMail: string;
-  address: string;
-};
-
-export type SupplierFormDataType = {
-  name: string;
-  location: string;
-  description: string;
-  webSite?: string;
-  eMail?: string;
-  address?: string;
-  phoneNumber?: string;
-};
-
 export type ContractorType = {
   id: number;
   isDeleted: boolean;
@@ -68,6 +48,45 @@ export type ContractorType = {
   contractorStatus: ContractorStatusEnum;
 };
 
+export type ContractorFullInfoType = {
+  id: number;
+  isDeleted: boolean;
+  name: string;
+  contactName: string;
+  phoneNumber: string;
+  description: string;
+  location: string;
+  coordinates: CoordinatesType;
+  contacts: ContactsType;
+  contractorType: ContractorTypesEnum;
+  categories: ContractorCategoryOutType[];
+  photos: ContractorPhotoOutType[];
+  rating: number;
+};
+
+export type AddContractorFormDataType = {
+  name: string;
+  contactName: string;
+  phoneNumber: string;
+  description: string;
+  location: string;
+  coordinates: CoordinatesType;
+  contacts: ContactsType;
+  contractorType: ContractorTypesEnum;
+  categories: ContractorCategoryInType[];
+  photos: ContractorPhotoInType[];
+  rating: number;
+};
+export type SupplierDescrFormDataType = {
+  name: string;
+  phoneNumber: string;
+  contactName: string;
+  location: string;
+  webSite: string;
+  eMail: string;
+  address: string;
+  description?: string;
+};
 export type ContractorCategoryInType = {
   // при добавлении категории контрагента
   categoryId: number;

@@ -6,14 +6,12 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import { AppHeader, AppSideBar } from "../components";
 import {
   CategoriesPage,
-  CustomerCreatePage,
-  CustomersPage,
+  ContractorCreatePage,
+  ContractorsPage,
   HomePage,
   OrderCreatePage,
   OrdersPage,
-  SuppliersPage,
   OrderPage,
-  SupplierCreatePage,
   CategoryCreatePage,
   DeletedCategoriesPage,
 } from "../pages";
@@ -41,19 +39,11 @@ const MainLayout = () => {
               <OrderPage />
             </Route>
 
-            <Route exact path="/customers">
-              <CustomersPage />
+            <Route exact path="/contractors">
+              <ContractorsPage />
             </Route>
-            <Route exact path="/customers/create">
-              <CustomerCreatePage />
-            </Route>
-
-            <Route exact path="/suppliers">
-              <SuppliersPage />
-            </Route>
-
-            <Route exact path="/suppliers/create">
-              <SupplierCreatePage />
+            <Route exact path="/contractors/create">
+              <ContractorCreatePage />
             </Route>
 
             <Route exact path="/categories">

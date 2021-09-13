@@ -50,7 +50,19 @@ body {
   width: 40%;
   margin: 0 auto;
 }
-
+.map {
+  height: 100%;
+  div {
+    height: 100%;
+  }
+}
+.map-btn {
+  margin: 20px 0;
+}
+.radio-group {
+  margin: 20px 0;
+  display: block;
+}
 .header {
   display: flex;
   align-items: center;

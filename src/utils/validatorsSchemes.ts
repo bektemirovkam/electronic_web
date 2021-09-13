@@ -19,6 +19,7 @@ export const supplierSchema = yup.object().shape({
     .required("Обязательное поле"),
   description: yup.string(),
   address: yup.string().required("Обязательное поле"),
+  contactName: yup.string().required("Обязательное поле"),
   webSite: yup.string(),
   eMail: yup.string().email("Введите корректный e-mail"),
 });

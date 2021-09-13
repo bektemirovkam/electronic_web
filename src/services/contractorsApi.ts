@@ -1,15 +1,20 @@
 import { axios } from "../api/axios";
-import { ContractorType } from "../types";
+import { AddContractorFormDataType, ContractorFullInfoType } from "../types";
 
 export const contractorsApi = {
-  createContractor: async (formData: ContractorType): Promise<boolean> => {
-    const { data } = await axios.post<boolean>("contractors", formData);
+  createContractor: async (
+    formData: AddContractorFormDataType
+  ): Promise<ContractorFullInfoType[]> => {
+    const { data } = await axios.post<ContractorFullInfoType[]>(
+      "contractors",
+      formData
+    );
     return data;
   },
   updateContractor: async (
-    formData: ContractorType,
+    formData: ContractorFullInfoType,
     id: number
-  ): Promise<boolean> => {
+  ): Promise<ContractorFullInfoType[]> => {
     const { data } = await axios.patch(`/contractors/${id}`, formData);
     return data;
   },

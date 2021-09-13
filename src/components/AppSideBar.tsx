@@ -47,27 +47,25 @@ const AppSideBar = () => {
             </Menu.Item>
           </SubMenu>
 
-          <SubMenu key="sub3" icon={<NotificationOutlined />} title="Заказчики">
-            <Menu.Item key="/customers">
-              <NavLink to="/customers">Все заказчики</NavLink>
+          <SubMenu
+            key="sub3"
+            icon={<NotificationOutlined />}
+            title="Контрагенты"
+          >
+            <Menu.Item key="/customcontractorsers">
+              <NavLink to="/contractors">Все контрагенты</NavLink>
             </Menu.Item>
-            <Menu.Item key="/customers/create">
-              <NavLink to="/customers/create">Создать заказчика</NavLink>
+            <Menu.Item key="/contractors?filter=customers">
+              <NavLink to="/contractors?filter=customers">Заказчики</NavLink>
             </Menu.Item>
-            <Menu.Item key="/customers?filter=banned">
-              <NavLink to="/customers?filter=banned">Забаненные</NavLink>
+            <Menu.Item key="/contractors?filter=supplier">
+              <NavLink to="/contractors?filter=supplier">Поставщики</NavLink>
             </Menu.Item>
-          </SubMenu>
-
-          <SubMenu key="sub2" icon={<LaptopOutlined />} title="Поставщики">
-            <Menu.Item key="/suppliers">
-              <NavLink to="/suppliers">Все поставщики</NavLink>
+            <Menu.Item key="/contractors?filter=banned">
+              <NavLink to="/contractors?filter=banned">Забаненные</NavLink>
             </Menu.Item>
-            <Menu.Item key="/suppliers/create">
-              <NavLink to="/suppliers/create">Создать поставщика</NavLink>
-            </Menu.Item>
-            <Menu.Item key="/suppliers?filter=banned">
-              <NavLink to="/suppliers?filter=banned">Забаненные</NavLink>
+            <Menu.Item key="/contractors/create">
+              <NavLink to="/contractors/create">Создать контрагента</NavLink>
             </Menu.Item>
           </SubMenu>
 
