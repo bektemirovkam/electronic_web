@@ -1,16 +1,16 @@
-import { Form, Input, InputNumber, Typography } from "antd";
+import { Form, Input, Typography } from "antd";
 import React from "react";
 import { Controller } from "react-hook-form";
 import {
-  DescriptionOrderFormData,
   EditableFieldPropsType,
-  OrderFieldsNameType,
+  SupplierDescrFormDataType,
+  SupplierFieldsNameType,
 } from "../../../types";
 
 const { Text } = Typography;
 
-const OrderEditableField: React.FC<
-  EditableFieldPropsType<DescriptionOrderFormData, OrderFieldsNameType>
+const ContractorEditableField: React.FC<
+  EditableFieldPropsType<SupplierDescrFormDataType, SupplierFieldsNameType>
 > = ({
   placeholder,
   editMode,
@@ -19,7 +19,7 @@ const OrderEditableField: React.FC<
   error,
   defaultValue,
   isTextArea = false,
-  isNumberInput = false,
+  maxLength,
 }) => {
   if (editMode) {
     return (
@@ -40,27 +40,22 @@ const OrderEditableField: React.FC<
                 value={value}
                 onChange={onChange}
               />
-            ) : isNumberInput ? (
-              <InputNumber
-                placeholder={placeholder}
-                value={value}
-                onChange={onChange}
-              />
             ) : (
               <Input
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
+                maxLength={maxLength}
               />
             )}
           </Form.Item>
         )}
         name={fieldName}
-        defaultValue={defaultValue}
+        defaultValue={defaultValue as string}
       />
     );
   }
   return <Text>{defaultValue}</Text>;
 };
 
-export default OrderEditableField;
+export default React.memo(ContractorEditableField);

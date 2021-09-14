@@ -12,6 +12,7 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 import { AppAlert, AppPreloader, UploadFileForm } from "../../components";
 import { createOrder, ordersActions } from "../../store/actions/orders";
@@ -32,11 +33,7 @@ import {
   getCategoriesErrorMessageState,
   getCategoriesTreeDataState,
 } from "../../store/selectors/categories";
-import {
-  categoriesActions,
-  getAllCategories,
-} from "../../store/actions/categories";
-import { useHistory } from "react-router-dom";
+import { categoriesActions } from "../../store/actions/categories";
 
 const { Content } = Layout;
 const { Text, Title } = Typography;

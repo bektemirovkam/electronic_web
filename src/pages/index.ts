@@ -3,6 +3,7 @@ export { default as OrdersPage } from "./OrdersPage/OrdersPage";
 export { default as OrderCreatePage } from "./OrderCreatePage/OrderCreatePage";
 export { default as OrderPage } from "./OrderPage/OrderPage";
 export { default as ContractorsPage } from "./ContractorsPage/ContractorsPage";
+export { default as ContractorPage } from "./ContractorPage/ContractorPage";
 export { default as ContractorCreatePage } from "./ContractorCreatePage/ContractorCreatePage";
 export { default as AuthPage } from "./AuthPage/AuthPage";
 export { default as CategoriesPage } from "./CategoriesPage/CategoriesPage";

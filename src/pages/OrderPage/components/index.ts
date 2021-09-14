@@ -1,2 +1,2 @@
 export { default as OrderEditableField } from "./OrderEditableField";
-export { default as OrderImagesList } from "./OrderImagesList";
+export { default as OrderInfoBody } from "./OrderInfoBody";

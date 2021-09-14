@@ -102,9 +102,12 @@ export const updateOrder =
   async (dispatch) => {
     try {
       dispatch(ordersActions.setOrdersLoading(true));
-      const response = await ordersApi.updateOrder(order, id);
-      if (response) {
+      const orders = await ordersApi.updateOrder(order, id);
+      if (orders) {
+        // if (orders.length > 0) {
         dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.SUCCESS));
+        // dispatch(ordersActions.setCurrentOrder(orders[0]))
+        //TODO: не возвращается OrderFullInfoType[]
       } else {
         showError(
           "Не удалось сохранить изменения, попробуйте еще раз",

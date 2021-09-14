@@ -1,3 +1,4 @@
+import React from "react";
 import {
   withScriptjs,
   withGoogleMap,
@@ -6,17 +7,38 @@ import {
   WithGoogleMapProps,
   WithScriptjsProps,
 } from "react-google-maps";
+import { CoordinatesType } from "../types";
+
+type AppMapPropsType = {
+  handleSelectCoords: (latLng: google.maps.LatLng | null) => void;
+  marker: CoordinatesType | null;
+};
 
 const AppMap: React.ComponentClass<
-  WithGoogleMapProps & WithScriptjsProps,
-  any
+  WithGoogleMapProps & WithScriptjsProps & AppMapPropsType
 > = withScriptjs(
-  withGoogleMap(() => {
+  withGoogleMap(({ handleSelectCoords, marker }) => {
+    const onMapClick = (
+      e: google.maps.MouseEvent | google.maps.IconMouseEvent
+    ) => {
+      handleSelectCoords(e.latLng);
+    };
+
     return (
       <GoogleMap
-        defaultZoom={8}
-        defaultCenter={{ lat: -34.397, lng: 150.644 }}
-      />
+        defaultZoom={7}
+        defaultCenter={{ lat: 51.2146889644867, lng: 68.80153486533352 }}
+        onClick={onMapClick}
+      >
+        {marker && (
+          <Marker
+            position={{
+              lat: Number(marker.coordinatesLatitude),
+              lng: Number(marker.coordinatesLongitude),
+            }}
+          />
+        )}
+      </GoogleMap>
     );
   })
 );

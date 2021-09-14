@@ -14,6 +14,7 @@ import {
   OrderPage,
   CategoryCreatePage,
   DeletedCategoriesPage,
+  ContractorPage,
 } from "../pages";
 
 const MainLayout = () => {
@@ -44,6 +45,9 @@ const MainLayout = () => {
             </Route>
             <Route exact path="/contractors/create">
               <ContractorCreatePage />
+            </Route>
+            <Route path="/contractors/:id">
+              <ContractorPage />
             </Route>
 
             <Route exact path="/categories">

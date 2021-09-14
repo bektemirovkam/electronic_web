@@ -6,3 +6,4 @@ export { default as UploadFileForm } from "./UploadFileForm";
 export { default as AppAlert } from "./AppAlert";
 export { default as SelectParentCategory } from "./SelectParentCategory";
 export { default as AppMap } from "./AppMap";
+export { default as ContractorItem } from "./ContractorItem";

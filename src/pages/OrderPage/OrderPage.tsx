@@ -1,28 +1,17 @@
 import React from "react";
-import {
-  Layout,
-  PageHeader,
-  Button,
-  Descriptions,
-  Divider,
-  Card,
-  Image,
-  Alert,
-  TreeSelect,
-} from "antd";
+import { Layout, PageHeader, Button, Descriptions } from "antd";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+
+import { orderSchema } from "../../utils/validatorsSchemes";
+import { NavLink, useHistory, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+
 import {
   ActionStatusEnum,
-  AddOrderFormData,
   DescriptionOrderFormData,
   OrderStatusEnum,
 } from "../../types";
-import { orderSchema } from "../../utils/validatorsSchemes";
-import { NavLink, useHistory, useLocation, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { PlusOutlined } from "@ant-design/icons";
-
 import {
   getCurrentOrderState,
   getOrderActionStatusState,
@@ -35,21 +24,19 @@ import {
   ordersActions,
   updateOrder,
 } from "../../store/actions/orders";
-import { AppAlert, AppPreloader, UploadFileForm } from "../../components";
+import { AppAlert, AppPreloader } from "../../components";
 
 import img1 from "../../assets/images/1.jpg";
 import img2 from "../../assets/images/2.jpg";
 import img3 from "../../assets/images/3.jpg";
 import img4 from "../../assets/images/4.jpg";
 import img5 from "../../assets/images/5.jpg";
-import { OrderEditableField, OrderImagesList } from "./components";
+import { OrderEditableField, OrderInfoBody } from "./components";
 import { getCategoriesTreeDataState } from "../../store/selectors/categories";
-import { getAllCategories } from "../../store/actions/categories";
 
 const images = [img1, img2, img3, img4, img5];
 
 const { Content } = Layout;
-const { SHOW_ALL } = TreeSelect;
 
 const OrderPage = () => {
   const [editMode, setEditMode] = React.useState(false);
@@ -137,9 +124,9 @@ const OrderPage = () => {
 
   const goBack = () => window.history.back();
 
-  const handleSelectCategories = (value: number[]) => {
+  const handleSelectCategories = React.useCallback((value: number[]) => {
     setSelectedCategories(value);
-  };
+  }, []);
 
   const handleDeleteOrder = () => {
     const answer = window.confirm("Вы уверены что хотите удалить заявку?");
@@ -254,42 +241,16 @@ const OrderPage = () => {
               </Descriptions>
             </PageHeader>
           </div>
-          <div className="order__body">
-            <Card>
-              <Divider>Описание</Divider>
-              <OrderEditableField
-                defaultValue={order.description}
-                editMode={editMode}
-                control={control}
-                error={errors.description}
-                fieldName="description"
-                placeholder="Описание"
-                isTextArea
-              />
-              <Divider>Категории</Divider>
-              {categoriesTree && (
-                <TreeSelect
-                  treeData={categoriesTree}
-                  value={selectedCategories}
-                  onChange={handleSelectCategories}
-                  treeCheckable={true}
-                  showCheckedStrategy={SHOW_ALL}
-                  placeholder={
-                    editMode ? "Выберите категории заявки" : "Категории"
-                  }
-                  style={{ width: "100%", marginBottom: 10 }}
-                  // maxTagCount={5}
-                  disabled={!editMode}
-                />
-              )}
-              <Divider>Фото</Divider>
-              {editMode ? (
-                <UploadFileForm />
-              ) : (
-                <OrderImagesList images={images} />
-              )}
-            </Card>
-          </div>
+          <OrderInfoBody
+            categoriesTree={categoriesTree}
+            selectedCategories={selectedCategories}
+            handleSelectCategories={handleSelectCategories}
+            editMode={editMode}
+            defaultValue={order.description}
+            error={errors.description}
+            images={images}
+            control={control}
+          />
         </>
       )}
     </Content>

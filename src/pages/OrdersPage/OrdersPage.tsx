@@ -85,7 +85,7 @@ const OrdersPage = () => {
       <AppAlert
         onClose={clearState}
         errorMessage={ordersError}
-        successMessage="Заяка успешно удалена"
+        successMessage="Заявка успешно удалена"
         status={orderActionStatus}
       />
       <div className="orders">

@@ -49,15 +49,23 @@ body {
 .form {
   width: 40%;
   margin: 0 auto;
+  &__input {
+    margin-bottom: 15px;
+  }
 }
 .map {
-  height: 100%;
+  height: 90%;
   div {
     height: 100%;
   }
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
 .map-btn {
-  margin: 20px 0;
+  margin: 10px 0;
 }
 .radio-group {
   margin: 20px 0;
@@ -96,7 +104,10 @@ body {
     border-right: 0;
   }
 }
-
+.align-center {
+  display: flex;
+  align-items: center;
+}
 .content {
   padding: 24px;
   margin: 0;
@@ -162,7 +173,6 @@ body {
   }
   &__numeric-fields {
     display: flex;
-    align-items: center;
     justify-content: center;
   }
   &__comment-input {
@@ -220,5 +230,24 @@ body {
   }
   &__save-btn {
     margin-top: 10px;
+  }
+}
+
+.contractors {
+  padding: 20px;
+}
+.contractor {
+  margin-bottom: 15px;
+  &__SUPPLIER {
+    background-color: #e6fffb;
+  }
+  &__CUSTOMER {
+    background-color: #bae7ff;
+  }
+  &__deleted {
+    background-color: #ffccc7;
+  }
+  &__body {
+    padding: 24px;
   }
 }

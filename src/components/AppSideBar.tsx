@@ -61,8 +61,8 @@ const AppSideBar = () => {
             <Menu.Item key="/contractors?filter=supplier">
               <NavLink to="/contractors?filter=supplier">Поставщики</NavLink>
             </Menu.Item>
-            <Menu.Item key="/contractors?filter=banned">
-              <NavLink to="/contractors?filter=banned">Забаненные</NavLink>
+            <Menu.Item key="/contractors?filter=deleted">
+              <NavLink to="/contractors?filter=deleted">Удаленные</NavLink>
             </Menu.Item>
             <Menu.Item key="/contractors/create">
               <NavLink to="/contractors/create">Создать контрагента</NavLink>
@@ -86,4 +86,4 @@ const AppSideBar = () => {
   );
 };
 
-export default AppSideBar;
+export default React.memo(AppSideBar);

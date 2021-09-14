@@ -6,7 +6,7 @@ import {
 import { ContractorsActionTypes } from "../actions/contractors";
 
 const initialState = {
-  contractors: null as ContractorType[] | null,
+  contractors: null as ContractorType[] | null | undefined,
   currentContractor: null as ContractorFullInfoType | null,
   contractorsLoading: false,
   contractorsActionStatus: ActionStatusEnum.NEVER,
@@ -29,6 +29,13 @@ const contractorsReducer = (
         ...state,
         ...action.payload,
       };
+    }
+
+    case "REMOVE_CONTRACTOR": {
+      return {
+        ...state,
+        contractors: state.contractors?.filter((contractor) => contractor.id !== action.payload.contractorId),
+      }
     }
     default:
       return state;

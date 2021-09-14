@@ -92,6 +92,16 @@ export type ContractorCategoryInType = {
   categoryId: number;
 };
 
+export type SupplierFieldsNameType =
+  | "name"
+  | "phoneNumber"
+  | "contactName"
+  | "location"
+  | "webSite"
+  | "eMail"
+  | "address"
+  | "description";
+
 export type ContractorCategoryOutType = {
   // при получении категорий контрагента
   categoryId: number;
@@ -154,6 +164,11 @@ export enum OrderStatusEnum {
   ARCHIVED = "ARCHIVED",
   DELETED = "DELETED",
 }
+export type OrderFieldsNameType =
+  | "title"
+  | "totalSum"
+  | "comment"
+  | "description";
 
 export type AddOrderFormData = {
   title: string;
@@ -222,6 +237,11 @@ export type OtpFormDataType = {
 };
 
 export type OrdersQueryFilterType = "active" | "deleted" | "archived" | null;
+export type ContractorsQueryFilterType =
+  | "customers"
+  | "supplier"
+  | "deleted"
+  | null;
 export type SortByOrdersFieldsType = "title" | "totalSum" | "creationDate";
 export type DirectionType = "asc" | "desc";
 
@@ -245,12 +265,13 @@ export type EditableFieldPropsType<T, F> = {
   editMode: boolean;
   fieldName: F;
   control: Control<T, object>;
-  error: FieldError | undefined;
+  error?: FieldError;
   defaultValue?: string | number;
   isTextArea?: boolean;
   isNumberInput?: boolean;
   placeholder?: string;
   currentValue?: string;
+  maxLength?: number;
 };
 
 export type MessageType = {

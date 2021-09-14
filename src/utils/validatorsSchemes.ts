@@ -13,7 +13,7 @@ export const orderSchema = yup.object().shape({
 export const supplierSchema = yup.object().shape({
   name: yup.string().required("Обязательное поле"),
   location: yup.string().required("Обязательное поле"),
-  phoneNumber: yup
+  phoneNumber: yup //TODO:  сделать валидацию
     .number()
     .typeError("Введите корректный номер телефона")
     .required("Обязательное поле"),
