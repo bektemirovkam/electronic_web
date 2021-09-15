@@ -3,8 +3,8 @@ import React from "react";
 import { Layout, Menu, Affix } from "antd";
 import {
   UserOutlined,
-  LaptopOutlined,
-  NotificationOutlined,
+  ClusterOutlined,
+  GroupOutlined,
 } from "@ant-design/icons";
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -28,7 +28,7 @@ const AppSideBar = () => {
           className="sidebar__menu"
           selectedKeys={currentLocation}
         >
-          <SubMenu key="sub1" icon={<UserOutlined />} title="Заявки">
+          <SubMenu key="sub1" icon={<GroupOutlined />} title="Заявки">
             <Menu.Item key="/orders">
               <NavLink to="/orders">Все заявки</NavLink>
             </Menu.Item>
@@ -47,11 +47,7 @@ const AppSideBar = () => {
             </Menu.Item>
           </SubMenu>
 
-          <SubMenu
-            key="sub3"
-            icon={<NotificationOutlined />}
-            title="Контрагенты"
-          >
+          <SubMenu key="sub3" icon={<UserOutlined />} title="Контрагенты">
             <Menu.Item key="/customcontractorsers">
               <NavLink to="/contractors">Все контрагенты</NavLink>
             </Menu.Item>
@@ -69,7 +65,7 @@ const AppSideBar = () => {
             </Menu.Item>
           </SubMenu>
 
-          <SubMenu key="sub4" icon={<NotificationOutlined />} title="Категории">
+          <SubMenu key="sub4" icon={<ClusterOutlined />} title="Категории">
             <Menu.Item key="/categories">
               <NavLink to="/categories">Все категории</NavLink>
             </Menu.Item>

@@ -1,1 +1,1 @@
-export { default as ContractorDescrForm } from "./ContractorDescrForm";
+export { default as SupplierDescrForm } from "./SupplierDescrForm";

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getContractorsActionStatusState,
   getContractorsErrorMessage,
-  getContractorsListState,
+  getFilteredContractorsListState,
   getContractorsLoadingState,
 } from "../../store/selectors/contractors";
 import { useHistory, useLocation } from "react-router-dom";
@@ -40,7 +40,7 @@ const ContractorsPage = () => {
   const contractorsActionStatus = useSelector(getContractorsActionStatusState);
   const contractorsLoading = useSelector(getContractorsLoadingState);
   const contractors = useSelector(
-    getContractorsListState(
+    getFilteredContractorsListState(
       searchText,
       query.get("filter") as ContractorsQueryFilterType
     )

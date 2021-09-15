@@ -87,6 +87,12 @@ export type SupplierDescrFormDataType = {
   address: string;
   description?: string;
 };
+export type CustomerDescrFormDataType = {
+  name: string;
+  phoneNumber: string;
+  contactName: string;
+  location: string;
+};
 export type ContractorCategoryInType = {
   // при добавлении категории контрагента
   categoryId: number;
@@ -101,6 +107,11 @@ export type SupplierFieldsNameType =
   | "eMail"
   | "address"
   | "description";
+export type CustomerFieldsNameType =
+  | "name"
+  | "phoneNumber"
+  | "contactName"
+  | "location";
 
 export type ContractorCategoryOutType = {
   // при получении категорий контрагента

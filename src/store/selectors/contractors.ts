@@ -1,16 +1,23 @@
+import { createSelector } from "reselect";
 import { ContractorTypesEnum } from "./../../types";
 import { ContractorsQueryFilterType } from "../../types";
 import { AppStateType } from "./../store";
+
 const getContractorsState = (state: AppStateType) => state.contractors;
+
+const getContractorsListState = (state: AppStateType) =>
+  state.contractors.contractors;
 
 export const getCurrentContractorState = (state: AppStateType) =>
   getContractorsState(state).currentContractor;
 
-export const getContractorsListState =
-  (searchText: string, filter: ContractorsQueryFilterType) =>
-  (state: AppStateType) =>
-    getContractorsState(state)
-      .contractors?.filter((contractor) => {
+export const getFilteredContractorsListState = (
+  searchText: string,
+  filter: ContractorsQueryFilterType
+) =>
+  createSelector([getContractorsListState], (contractors) => {
+    return contractors
+      ?.filter((contractor) => {
         if (filter === "deleted") {
           return contractor.isDeleted;
         } else if (filter === "customers") {
@@ -23,9 +30,31 @@ export const getContractorsListState =
       ?.filter((contractor) =>
         contractor.name.toLowerCase().includes(searchText.toLowerCase())
       );
+  });
+
 export const getContractorsLoadingState = (state: AppStateType) =>
   getContractorsState(state).contractorsLoading;
 export const getContractorsActionStatusState = (state: AppStateType) =>
   getContractorsState(state).contractorsActionStatus;
 export const getContractorsErrorMessage = (state: AppStateType) =>
   getContractorsState(state).errorMessage;
+
+export const getContractorsCountState = createSelector(
+  [getFilteredContractorsListState("", null)],
+  (contractors) => contractors?.length
+);
+
+export const getCustomersCountState = createSelector(
+  [getFilteredContractorsListState("", "customers")],
+  (contractors) => contractors?.length
+);
+
+export const getSuppliersCountState = createSelector(
+  [getFilteredContractorsListState("", "supplier")],
+  (contractors) => contractors?.length
+);
+
+export const getDeletedContractorCountState = createSelector(
+  [getFilteredContractorsListState("", "deleted")],
+  (contractors) => contractors?.length
+);

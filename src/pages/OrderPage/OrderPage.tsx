@@ -201,7 +201,7 @@ const OrderPage = () => {
                   {order.creationDate}
                 </Descriptions.Item>
                 <Descriptions.Item label="Автор">
-                  <NavLink to="/customers">
+                  <NavLink to="/contractors/2">
                     {order.contractors?.length > 0
                       ? order.contractors[0].contractorName
                       : "Не известный заказчик"}

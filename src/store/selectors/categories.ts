@@ -1,4 +1,4 @@
-import categories from "../../pages/CategoriesPage/categories";
+import { createSelector } from "reselect";
 import { AppStateType } from "./../store";
 
 const getCategoriesState = (state: AppStateType) => state.categories;
@@ -12,15 +12,23 @@ export const getCategoriesErrorMessageState = (state: AppStateType) =>
 export const getCategoriesLoadingState = (state: AppStateType) =>
   getCategoriesState(state).isLoadingCategories;
 
-export const getMainCategoriesState = (state: AppStateType) =>
-  getAllCategoriesState(state)?.filter(
-    (category) => category.parentId === 0 && !category.isDeleted
-  );
+export const getMainCategoriesState = createSelector(
+  [getAllCategoriesState],
+  (categories) => {
+    return categories?.filter(
+      (category) => category.parentId === 0 && !category.isDeleted
+    );
+  }
+);
 
-export const getSubCategoriesState = (state: AppStateType) =>
-  getAllCategoriesState(state)?.filter(
-    (category) => category.parentId !== 0 && !category.isDeleted
-  );
+export const getSubCategoriesState = createSelector(
+  [getAllCategoriesState],
+  (categories) => {
+    return categories?.filter(
+      (category) => category.parentId !== 0 && !category.isDeleted
+    );
+  }
+);
 
 export const getDeletedCategoriesState = (state: AppStateType) =>
   getAllCategoriesState(state)?.filter((category) => category.isDeleted);
@@ -34,30 +42,30 @@ export const getCategoryInProcessEditState = (state: AppStateType) =>
 export const getCategoriesActionStatusState = (state: AppStateType) =>
   getCategoriesState(state).categoriesActionStatus;
 
-export const getCategoriesTreeDataState = (state: AppStateType) => {
-  const mainCategories = getMainCategoriesState(state);
-  const subCategories = getSubCategoriesState(state);
+export const getCategoriesTreeDataState = createSelector(
+  [getMainCategoriesState, getSubCategoriesState],
+  (mainCategories, subCategories) => {
+    if (mainCategories && subCategories) {
+      const tree = mainCategories.map((mainCat) => {
+        const subCats = subCategories
+          .filter((subCat) => subCat.parentId === mainCat.id)
+          .map((subCat) => {
+            return {
+              title: subCat.name,
+              value: subCat.id,
+              key: subCat.id,
+            };
+          });
+        return {
+          title: mainCat.name,
+          value: mainCat.id,
+          key: mainCat.id,
+          children: subCats,
+        };
+      });
+      return tree;
+    }
 
-  if (mainCategories && subCategories) {
-    const tree = mainCategories.map((mainCat) => {
-      const subCats = subCategories
-        .filter((subCat) => subCat.parentId === mainCat.id)
-        .map((subCat) => {
-          return {
-            title: subCat.name,
-            value: subCat.id,
-            key: subCat.id,
-          };
-        });
-      return {
-        title: mainCat.name,
-        value: mainCat.id,
-        key: mainCat.id,
-        children: subCats,
-      };
-    });
-    return tree;
+    return [];
   }
-
-  return [];
-};
+);

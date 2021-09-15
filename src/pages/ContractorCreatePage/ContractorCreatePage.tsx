@@ -2,15 +2,13 @@ import React from "react";
 import {
   Button,
   Card,
-  Form,
-  Input,
   Radio,
   Layout,
   Typography,
   TreeSelect,
   RadioChangeEvent,
 } from "antd";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -26,9 +24,10 @@ import {
   ContractorStatusEnum,
   ContractorTypesEnum,
   CoordinatesType,
+  CustomerDescrFormDataType,
   SupplierDescrFormDataType,
 } from "../../types";
-import { supplierSchema } from "../../utils/validatorsSchemes";
+import { customerSchema, supplierSchema } from "../../utils/validatorsSchemes";
 import {
   getCategoriesActionStatusState,
   getCategoriesErrorMessageState,
@@ -46,26 +45,33 @@ import {
   getContractorsLoadingState,
   getCurrentContractorState,
 } from "../../store/selectors/contractors";
-import { ContractorDescrForm } from "./components";
+import { SupplierDescrForm } from "./components";
+import CustomerDescrForm from "./components/CustomerDescrForm";
 
 const { Content } = Layout;
 const { Title } = Typography;
 const { SHOW_ALL } = TreeSelect;
 
 const ContractorCreatePage = () => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SupplierDescrFormDataType>({
-    resolver: yupResolver(supplierSchema),
-  });
-
   const [selectedCategories, setSelectedCategories] = React.useState<number[]>(
     []
   );
   const [registeringType, setRegisteringType] =
     React.useState<ContractorTypesEnum>(ContractorTypesEnum.SUPPLIER);
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<SupplierDescrFormDataType | CustomerDescrFormDataType>({
+    resolver: yupResolver(
+      registeringType === ContractorTypesEnum.SUPPLIER
+        ? supplierSchema
+        : customerSchema
+    ),
+  });
+
   const [showMap, setShowMap] = React.useState(false);
   const [latLng, setLatLng] = React.useState<CoordinatesType | null>(null);
 
@@ -121,11 +127,11 @@ const ContractorCreatePage = () => {
     }));
 
     const newContractor = {
-      // id: userId,
       name: formData.name,
       contactName: formData.contactName,
       phoneNumber: `7${String(formData.phoneNumber).slice(-10)}`,
-      description: formData.description,
+      //@ts-ignore
+      description: formData.description ? formData.description : "",
       location: formData.location,
       coordinates: latLng
         ? latLng
@@ -134,9 +140,12 @@ const ContractorCreatePage = () => {
             coordinatesLongitude: "",
           },
       contacts: {
-        address: formData.address,
-        webSite: formData.webSite,
-        eMail: formData.eMail,
+        //@ts-ignore
+        address: formData.address ? formData.address : "",
+        //@ts-ignore
+        webSite: formData.webSite ? formData.webSite : "",
+        //@ts-ignore
+        eMail: formData.eMail ? formData.eMail : "",
       },
       contractorType: registeringType,
       contractorStatus: ContractorStatusEnum.NEW, //TODO: мне указывать?
@@ -150,6 +159,7 @@ const ContractorCreatePage = () => {
   });
 
   const handleSelectRegType = (e: RadioChangeEvent) => {
+    reset();
     setRegisteringType(e.target.value);
   };
 
@@ -207,17 +217,23 @@ const ContractorCreatePage = () => {
         <Title level={3} className="title">
           Создание контрагента
         </Title>
-        <ContractorDescrForm control={control} errors={errors} />
-        <TreeSelect
-          treeData={categoriesTree}
-          value={selectedCategories}
-          onChange={handleSelectCategories}
-          treeCheckable={true}
-          showCheckedStrategy={SHOW_ALL}
-          placeholder={"Выберите категории контрагента"}
-          style={{ width: "100%", marginBottom: 10 }}
-          maxTagCount={5}
-        />
+        {registeringType === ContractorTypesEnum.SUPPLIER ? (
+          <SupplierDescrForm control={control} errors={errors} />
+        ) : (
+          <CustomerDescrForm control={control} errors={errors} />
+        )}
+        {registeringType === ContractorTypesEnum.SUPPLIER && (
+          <TreeSelect
+            treeData={categoriesTree}
+            value={selectedCategories}
+            onChange={handleSelectCategories}
+            treeCheckable={true}
+            showCheckedStrategy={SHOW_ALL}
+            placeholder={"Выберите категории контрагента"}
+            style={{ width: "100%", marginBottom: 10 }}
+            maxTagCount={5}
+          />
+        )}
 
         <Radio.Group
           onChange={handleSelectRegType}
@@ -227,19 +243,25 @@ const ContractorCreatePage = () => {
           <Radio value={ContractorTypesEnum.SUPPLIER}>Поставщик</Radio>
           <Radio value={ContractorTypesEnum.CUSTOMER}>Заказчик</Radio>
         </Radio.Group>
-        <Button
-          className="map-btn"
-          type="default"
-          onClick={toggleShowMap}
-          block
-        >
-          {latLng ? "Изменить координаты" : "Отметить на карте"}
-        </Button>
+        {registeringType === ContractorTypesEnum.SUPPLIER && (
+          <Button
+            className="map-btn"
+            type="default"
+            onClick={toggleShowMap}
+            block
+          >
+            {latLng ? "Изменить координаты" : "Отметить на карте"}
+          </Button>
+        )}
         <UploadFileForm />
         <Button
           className="order__save-btn"
           onClick={onSubmit}
-          disabled={Object.keys(errors).length > 0}
+          disabled={
+            Object.keys(errors).length > 0 ||
+            (registeringType === ContractorTypesEnum.SUPPLIER &&
+              selectedCategories.length === 0)
+          }
         >
           Сохранить
         </Button>

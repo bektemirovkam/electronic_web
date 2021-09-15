@@ -18,9 +18,10 @@ import {
   ContractorStatusEnum,
   ContractorTypesEnum,
   CoordinatesType,
+  CustomerDescrFormDataType,
   SupplierDescrFormDataType,
 } from "../../types";
-import { supplierSchema } from "../../utils/validatorsSchemes";
+import { customerSchema, supplierSchema } from "../../utils/validatorsSchemes";
 import { NavLink, useHistory, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -52,21 +53,24 @@ const { Content } = Layout;
 
 const ContractorPage = () => {
   const [editMode, setEditMode] = React.useState(false);
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SupplierDescrFormDataType>({
-    resolver: yupResolver(supplierSchema),
-  });
   const [selectedCategories, setSelectedCategories] = React.useState<number[]>(
     []
   );
-  // const [latLng, setLatLng] = React.useState<google.maps.LatLng | null>(null);
   const [latLng, setLatLng] = React.useState<CoordinatesType | null>(null);
   const [registeringType, setRegisteringType] =
     React.useState<ContractorTypesEnum>(ContractorTypesEnum.SUPPLIER);
   const [showMap, setShowMap] = React.useState(false);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SupplierDescrFormDataType | CustomerDescrFormDataType>({
+    resolver: yupResolver(
+      registeringType === ContractorTypesEnum.SUPPLIER
+        ? supplierSchema
+        : customerSchema
+    ),
+  });
 
   const contractor = useSelector(getCurrentContractorState);
   const contractorActionStatus = useSelector(getContractorsActionStatusState);
@@ -87,14 +91,14 @@ const ContractorPage = () => {
     dispatch(contractorActions.setCurrentContractor(null));
   }, [dispatch]);
 
-  const toggleEditMode = () => {
+  const toggleEditMode = React.useCallback(() => {
     setEditMode((prev) => {
       dispatch(
         contractorActions.setContractorsActionstatus(ActionStatusEnum.NEVER)
       );
       return !prev;
     });
-  };
+  }, [dispatch]);
 
   React.useEffect(() => {
     dispatch(getFullContractorInfo(Number(id)));
@@ -126,11 +130,11 @@ const ContractorPage = () => {
       }));
 
       const newContractor = {
-        // id: userId,
         name: formData.name,
         contactName: formData.contactName,
         phoneNumber: `7${String(formData.phoneNumber).slice(-10)}`,
-        description: formData.description,
+        //@ts-ignore
+        description: formData.description ? formData.description : "",
         location: formData.location,
         coordinates: latLng
           ? latLng
@@ -139,9 +143,12 @@ const ContractorPage = () => {
               coordinatesLongitude: "",
             },
         contacts: {
-          address: formData.address,
-          webSite: formData.webSite,
-          eMail: formData.eMail,
+          //@ts-ignore
+          address: formData.address ? formData.address : "",
+          //@ts-ignore
+          webSite: formData.webSite ? formData.webSite : "",
+          //@ts-ignore
+          eMail: formData.eMail ? formData.eMail : "",
         },
         contractorType: registeringType,
         contractorStatus: ContractorStatusEnum.NEW, //TODO: мне указывать?
@@ -165,12 +172,12 @@ const ContractorPage = () => {
     setSelectedCategories(value);
   }, []);
 
-  const handleDeleteContractor = () => {
+  const handleDeleteContractor = React.useCallback(() => {
     const answer = window.confirm("Вы уверены что хотите удалить контрагента?");
     if (answer && contractor) {
       dispatch(deleteContractor(contractor.id));
     }
-  };
+  }, [contractor, dispatch]);
 
   const handleSelectRegType = (e: RadioChangeEvent) => {
     setRegisteringType(e.target.value);
@@ -180,30 +187,46 @@ const ContractorPage = () => {
     setShowMap(!showMap);
   };
 
-  const handleSelectCoords = (latLng: google.maps.LatLng | null) => {
-    setLatLng({
-      coordinatesLatitude: String(latLng?.lat()),
-      coordinatesLongitude: String(latLng?.lng()),
-    });
+  const handleSelectCoords = React.useCallback(
+    (latLng: google.maps.LatLng | null) => {
+      setLatLng({
+        coordinatesLatitude: String(latLng?.lat()),
+        coordinatesLongitude: String(latLng?.lng()),
+      });
+    },
+    []
+  );
+
+  const getEditActionsButtons = () => {
+    return [
+      <Button key="1" onClick={onSubmit}>
+        Сохранить
+      </Button>,
+      <Button key="2" onClick={toggleEditMode} danger>
+        Отменить
+      </Button>,
+    ];
   };
 
-  const editActionsButtons = [
-    <Button key="1" onClick={onSubmit}>
-      Сохранить
-    </Button>,
-    <Button key="2" onClick={toggleEditMode} danger>
-      Отменить
-    </Button>,
-  ];
+  const getActionsButtons = () => {
+    return [
+      <Button key="3" onClick={toggleEditMode}>
+        Редактировать
+      </Button>,
+      <Button key="5" onClick={handleDeleteContractor} danger>
+        Удалить
+      </Button>,
+    ];
+  };
 
-  const actionsButtons = [
-    <Button key="3" onClick={toggleEditMode}>
-      Редактировать
-    </Button>,
-    <Button key="5" onClick={handleDeleteContractor} danger>
-      Удалить
-    </Button>,
-  ];
+  const editActionsButtons = React.useMemo(getEditActionsButtons, [
+    onSubmit,
+    toggleEditMode,
+  ]);
+  const actionButtons = React.useMemo(getActionsButtons, [
+    handleDeleteContractor,
+    toggleEditMode,
+  ]);
 
   if (showMap) {
     return (
@@ -259,7 +282,7 @@ const ContractorPage = () => {
                   placeholder="Название"
                 />
               }
-              extra={editMode ? editActionsButtons : actionsButtons}
+              extra={editMode ? editActionsButtons : actionButtons}
             >
               <Descriptions size="small" column={4}>
                 <Descriptions.Item label="Тип контрагента">
@@ -317,6 +340,7 @@ const ContractorPage = () => {
                     defaultValue={contractor.contacts.webSite}
                     editMode={editMode}
                     control={control}
+                    //@ts-ignore
                     error={errors.webSite}
                     fieldName="webSite"
                     placeholder="Сайт"
@@ -327,17 +351,18 @@ const ContractorPage = () => {
                     defaultValue={contractor.contacts.eMail}
                     editMode={editMode}
                     control={control}
+                    //@ts-ignore
                     error={errors.eMail}
                     fieldName="eMail"
                     placeholder="Почта"
                   />
                 </Descriptions.Item>
-
                 <Descriptions.Item label="Адрес">
                   <ContractorEditableField
                     defaultValue={contractor.contacts.address}
                     editMode={editMode}
                     control={control}
+                    //@ts-ignore
                     error={errors.address}
                     fieldName="address"
                     placeholder="Адрес"
@@ -346,7 +371,7 @@ const ContractorPage = () => {
 
                 <Descriptions.Item label="Телефон">
                   <ContractorEditableField
-                    defaultValue={contractor.phoneNumber}
+                    defaultValue={`+${contractor.phoneNumber}`}
                     editMode={editMode}
                     control={control}
                     error={errors.phoneNumber}
@@ -365,11 +390,13 @@ const ContractorPage = () => {
             defaultValue={contractor.description}
             editMode={editMode}
             control={control}
+            //@ts-ignore
             error={errors.description}
             categoriesTree={categoriesTree}
             selectedCategories={selectedCategories}
             handleSelectCategories={handleSelectCategories}
             images={images}
+            registeringType={registeringType}
           />
         </>
       )}

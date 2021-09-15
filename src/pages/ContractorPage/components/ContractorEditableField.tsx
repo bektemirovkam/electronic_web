@@ -2,6 +2,8 @@ import { Form, Input, Typography } from "antd";
 import React from "react";
 import { Controller } from "react-hook-form";
 import {
+  CustomerDescrFormDataType,
+  CustomerFieldsNameType,
   EditableFieldPropsType,
   SupplierDescrFormDataType,
   SupplierFieldsNameType,
@@ -10,7 +12,10 @@ import {
 const { Text } = Typography;
 
 const ContractorEditableField: React.FC<
-  EditableFieldPropsType<SupplierDescrFormDataType, SupplierFieldsNameType>
+  EditableFieldPropsType<
+    SupplierDescrFormDataType | CustomerDescrFormDataType,
+    SupplierFieldsNameType | CustomerFieldsNameType
+  >
 > = ({
   placeholder,
   editMode,

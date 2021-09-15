@@ -32,11 +32,8 @@ const AppHeader = () => {
           <Menu.Item key="orders">
             <NavLink to="/orders">Заявки</NavLink>
           </Menu.Item>
-          <Menu.Item key="customers">
-            <NavLink to="/customers">Заказчики</NavLink>
-          </Menu.Item>
-          <Menu.Item key="suppliers">
-            <NavLink to="/suppliers">Поставщики</NavLink>
+          <Menu.Item key="contractors">
+            <NavLink to="/contractors">Контрагенты</NavLink>
           </Menu.Item>
           <Menu.Item key="categories">
             <NavLink to="/categories">Категории</NavLink>

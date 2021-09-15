@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getOrderActionStatusState,
   getOrdersErrorMessageState,
-  getOrdersListState,
+  getFilteredOrdersListState,
   getOrdersLoadingState,
 } from "../../store/selectors/orders";
 import {
@@ -39,7 +39,10 @@ const OrdersPage = () => {
   const query = useQuery();
 
   const orders = useSelector(
-    getOrdersListState(searchText, query.get("filter") as OrdersQueryFilterType)
+    getFilteredOrdersListState(
+      searchText,
+      query.get("filter") as OrdersQueryFilterType
+    )
   );
   const ordersLoading = useSelector(getOrdersLoadingState);
   const ordersError = useSelector(getOrdersErrorMessageState);

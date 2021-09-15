@@ -16,6 +16,7 @@ export const supplierSchema = yup.object().shape({
   phoneNumber: yup //TODO:  сделать валидацию
     .number()
     .typeError("Введите корректный номер телефона")
+    .min(11, "Введите корректный номер телефона")
     .required("Обязательное поле"),
   description: yup.string(),
   address: yup.string().required("Обязательное поле"),
@@ -37,19 +38,14 @@ export const otpSchema = yup.object().shape({
     .max(4, "Введите корректный СМС-код"),
 });
 
-export const customerRegisterSchema = yup.object().shape({
+export const customerSchema = yup.object().shape({
   name: yup.string().required("Обязательное поле"),
   location: yup.string().required("Обязательное поле"),
-  description: yup.string().required("Обьязательное поле"),
-});
-
-export const customerProfileSchema = yup.object().shape({
-  name: yup.string().required("Обязательное поле"),
-  location: yup.string().required("Обязательное поле"),
-  description: yup.string().required("Обьязательное поле"),
+  contactName: yup.string().required("Обьязательное поле"),
   phoneNumber: yup
     .number()
     .typeError("Введите корректный номер телефона")
+    .min(11, "Введите корректный номер телефона")
     .required("Обязательное поле"),
 });
 

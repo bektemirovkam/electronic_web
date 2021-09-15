@@ -1,10 +1,11 @@
-import { Form, Input, Typography } from "antd";
 import React from "react";
-import { Control, Controller, FieldError } from "react-hook-form";
+import { Control, FieldError } from "react-hook-form";
 import {
+  CustomerDescrFormDataType,
   SupplierDescrFormDataType,
   SupplierFieldsNameType,
 } from "../../../types";
+import ContractorField from "./ContractorField";
 
 const fields = [
   {
@@ -40,59 +41,11 @@ const fields = [
   },
 ];
 
-type ContractorFieldPropsType = {
-  subtitle: string;
-  fieldName: SupplierFieldsNameType;
-  required: boolean;
-  maxLength?: number;
-  control?: Control<SupplierDescrFormDataType, object>;
-  error?: FieldError;
-  textArea?: boolean;
-  defaultValue?: string;
-};
-
-const { Text } = Typography;
-
-const ContractorField: React.FC<ContractorFieldPropsType> = ({
-  control,
-  error,
-  subtitle,
-  fieldName,
-  required = true,
-  maxLength,
-  textArea,
-  defaultValue,
-}) => {
-  const InputField = textArea ? Input.TextArea : Input;
-
-  return (
-    <Controller
-      control={control}
-      rules={{ required }}
-      render={({ field: { onChange, value } }) => (
-        <Form.Item
-          validateStatus={error ? "error" : "success"}
-          help={error?.message}
-          className="input form__input"
-          required={required}
-        >
-          <Text className="subtitle">{subtitle}</Text>
-          <InputField
-            placeholder={subtitle}
-            value={value}
-            onChange={onChange}
-            maxLength={maxLength}
-          />
-        </Form.Item>
-      )}
-      name={fieldName}
-      defaultValue={defaultValue}
-    />
-  );
-};
-
-type ContractorDescrFormPropsType = {
-  control?: Control<SupplierDescrFormDataType, object>;
+type SupplierDescrFormPropsType = {
+  control?: Control<
+    SupplierDescrFormDataType | CustomerDescrFormDataType,
+    object
+  >;
   errors: {
     name?: FieldError;
     phoneNumber?: FieldError;
@@ -105,7 +58,7 @@ type ContractorDescrFormPropsType = {
   };
 };
 
-const ContractorDescrForm: React.FC<ContractorDescrFormPropsType> = ({
+const SupplierDescrForm: React.FC<SupplierDescrFormPropsType> = ({
   control,
   errors,
 }) => {
@@ -130,4 +83,4 @@ const ContractorDescrForm: React.FC<ContractorDescrFormPropsType> = ({
   );
 };
 
-export default ContractorDescrForm;
+export default SupplierDescrForm;
