@@ -7,3 +7,4 @@ export { default as AppAlert } from "./AppAlert";
 export { default as SelectParentCategory } from "./SelectParentCategory";
 export { default as AppMap } from "./AppMap";
 export { default as ContractorItem } from "./ContractorItem";
+export { default as ImagesList } from "./ImagesList";

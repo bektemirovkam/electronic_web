@@ -20,21 +20,15 @@ import {
 } from "../../store/selectors/orders";
 import {
   deleteOrder,
-  getFullOrderInfo,
+  getOrderById,
   ordersActions,
   updateOrder,
 } from "../../store/actions/orders";
 import { AppAlert, AppPreloader } from "../../components";
 
-import img1 from "../../assets/images/1.jpg";
-import img2 from "../../assets/images/2.jpg";
-import img3 from "../../assets/images/3.jpg";
-import img4 from "../../assets/images/4.jpg";
-import img5 from "../../assets/images/5.jpg";
 import { OrderEditableField, OrderInfoBody } from "./components";
 import { getCategoriesTreeDataState } from "../../store/selectors/categories";
-
-const images = [img1, img2, img3, img4, img5];
+import { formatDate } from "../../utils/formatDate";
 
 const { Content } = Layout;
 
@@ -77,7 +71,7 @@ const OrderPage = () => {
   };
 
   React.useEffect(() => {
-    dispatch(getFullOrderInfo(Number(id)));
+    dispatch(getOrderById(Number(id)));
     return () => {
       clearState();
     };
@@ -113,7 +107,7 @@ const OrderPage = () => {
         totalSum: formData.totalSum,
         comment: formData.comment,
         contractors: order.contractors,
-        attachments: order.attachments,
+        attachments: [],
         customerId: 1,
         categories,
       };
@@ -198,7 +192,7 @@ const OrderPage = () => {
             >
               <Descriptions size="small" column={3}>
                 <Descriptions.Item label="Создана">
-                  {order.creationDate}
+                  {formatDate(order.creationDate)}
                 </Descriptions.Item>
                 <Descriptions.Item label="Автор">
                   <NavLink to="/contractors/2">
@@ -219,7 +213,7 @@ const OrderPage = () => {
                 </Descriptions.Item>
 
                 <Descriptions.Item label="Закроется">
-                  {order.actualDate}
+                  {formatDate(order.actualDate)}
                 </Descriptions.Item>
                 <Descriptions.Item label="Чаты">
                   <NavLink to="/">Чаты</NavLink>
@@ -248,8 +242,9 @@ const OrderPage = () => {
             editMode={editMode}
             defaultValue={order.description}
             error={errors.description}
-            images={images}
+            images={order.attachments}
             control={control}
+            orderId={order.id}
           />
         </>
       )}

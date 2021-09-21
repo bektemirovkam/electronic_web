@@ -1,15 +1,13 @@
-import {
-  ActionStatusEnum,
-  AddOrderFormData,
-  OrderFullInfoType,
-  OrderType,
-  StateSpecializationType,
-} from "./../../types";
+import { ActionStatusEnum, AddOrderFormData, OrderType } from "./../../types";
 import { ThunkAction } from "redux-thunk";
 import { ActionsCreatorsTypes } from "../../types";
 import { AppStateType } from "../store";
 import { ordersApi } from "../../services/ordersApi";
 import { Dispatch } from "redux";
+import { AttachmentOutType, AttachmentType } from "../../models/Attachments";
+import { attachmentsApi } from "../../services/attachmentsApi";
+
+// TODO: добавление/удаление вложений при создании и редактировании
 
 export const ordersActions = {
   setOrders: (orders: OrderType[]) => {
@@ -36,7 +34,7 @@ export const ordersActions = {
       payload: { orderActionStatus },
     } as const;
   },
-  setCurrentOrder: (currentOrder: OrderFullInfoType | null) => {
+  setCurrentOrder: (currentOrder: OrderType | null) => {
     return {
       type: "SET_CURRENT_ORDER",
       payload: { currentOrder },
@@ -58,6 +56,30 @@ export const ordersActions = {
     return {
       type: "ADD_NEW_ORDER",
       payload: { order },
+    } as const;
+  },
+  updateOrder: (order: OrderType) => {
+    return {
+      type: "UPDATE_ORDER",
+      payload: { order },
+    } as const;
+  },
+  setOrderImageUploading: (orderImageUploading: boolean) => {
+    return {
+      type: "SET_ORDER_IMAGE_UPLOADING",
+      payload: { orderImageUploading },
+    } as const;
+  },
+  addOrderImage: (image: AttachmentOutType) => {
+    return {
+      type: "ADD_ORDER_IMAGE",
+      payload: { image },
+    } as const;
+  },
+  removeOrderImage: (imageId: number) => {
+    return {
+      type: "REMOVE_ORDER_IMAGE",
+      payload: { imageId },
     } as const;
   },
 };
@@ -88,6 +110,7 @@ export const createOrder =
       if (orders.length > 0) {
         dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.SUCCESS));
         dispatch(ordersActions.setCurrentOrder(orders[0]));
+        dispatch(ordersActions.addNewOrder(orders[0]));
       } else {
         showError("Не удалось создать заявку, попробуйте еще раз", dispatch);
       }
@@ -103,11 +126,9 @@ export const updateOrder =
     try {
       dispatch(ordersActions.setOrdersLoading(true));
       const orders = await ordersApi.updateOrder(order, id);
-      if (orders) {
-        // if (orders.length > 0) {
+      if (orders.length > 0) {
         dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.SUCCESS));
-        // dispatch(ordersActions.setCurrentOrder(orders[0]))
-        //TODO: не возвращается OrderFullInfoType[]
+        dispatch(ordersActions.setCurrentOrder(orders[0]));
       } else {
         showError(
           "Не удалось сохранить изменения, попробуйте еще раз",
@@ -143,12 +164,12 @@ export const deleteOrder =
     }
   };
 
-export const getFullOrderInfo =
+export const getOrderById =
   (id: number): ThunkAcionType =>
   async (dispatch) => {
     try {
       dispatch(ordersActions.setOrdersLoading(true));
-      const orders = await ordersApi.getFullOrderInfo(id);
+      const orders = await ordersApi.getOrderById(id);
       if (orders.length === 0) {
         showError("Заявка не найдена", dispatch);
       } else {
@@ -159,6 +180,50 @@ export const getFullOrderInfo =
       showError("Ошибка сети, попробуйте еще раз", dispatch);
     } finally {
       dispatch(ordersActions.setOrdersLoading(false));
+    }
+  };
+
+export const addOrderImage =
+  (image: AttachmentType): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(ordersActions.setOrderImageUploading(true));
+      const imageOut = await attachmentsApi.addAttachment(image);
+
+      if (imageOut.length > 0) {
+        dispatch(ordersActions.addOrderImage(imageOut[0]));
+      } else {
+        showError(
+          "Не удалось загрузить вложение, попробуйте еще раз",
+          dispatch
+        );
+      }
+    } catch (error) {
+      console.log("addOrderImage ===> ", error);
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
+    } finally {
+      dispatch(ordersActions.setOrderImageUploading(false));
+    }
+  };
+
+export const removeOrderImage =
+  (imageId: number): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(ordersActions.setOrderImageUploading(true));
+
+      const response = await attachmentsApi.removeAttachment(imageId);
+
+      if (response) {
+        dispatch(ordersActions.removeOrderImage(imageId));
+      } else {
+        showError("Не удалось удалить вложение, попробуйте еще раз", dispatch);
+      }
+    } catch (error) {
+      console.log("getFullOrderInfo ===> ", error);
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
+    } finally {
+      dispatch(ordersActions.setOrderImageUploading(false));
     }
   };
 

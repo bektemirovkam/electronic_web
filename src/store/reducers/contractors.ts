@@ -1,13 +1,9 @@
-import {
-  ActionStatusEnum,
-  ContractorFullInfoType,
-  ContractorType,
-} from "./../../types";
+import { ActionStatusEnum, ContractorType } from "./../../types";
 import { ContractorsActionTypes } from "../actions/contractors";
 
 const initialState = {
   contractors: null as ContractorType[] | null | undefined,
-  currentContractor: null as ContractorFullInfoType | null,
+  currentContractor: null as ContractorType | null,
   contractorsLoading: false,
   contractorsActionStatus: ActionStatusEnum.NEVER,
   errorMessage: null as string | null,
@@ -34,8 +30,10 @@ const contractorsReducer = (
     case "REMOVE_CONTRACTOR": {
       return {
         ...state,
-        contractors: state.contractors?.filter((contractor) => contractor.id !== action.payload.contractorId),
-      }
+        contractors: state.contractors?.filter(
+          (contractor) => contractor.id !== action.payload.contractorId
+        ),
+      };
     }
     default:
       return state;

@@ -1,7 +1,6 @@
 import {
   ActionStatusEnum,
   AddContractorFormDataType,
-  ContractorFullInfoType,
   ContractorType,
 } from "./../../types";
 // import { ThunkAction } from "redux-thunk";
@@ -13,7 +12,7 @@ import { contractorsApi } from "../../services/contractorsApi";
 // import { AppStateType } from "../store";
 
 export const contractorActions = {
-  setCurrentContractor: (currentContractor: ContractorFullInfoType | null) => {
+  setCurrentContractor: (currentContractor: ContractorType | null) => {
     return {
       type: "SET_CURRENT_CONTRACTOR",
       payload: { currentContractor },
@@ -128,7 +127,7 @@ export const updateContractor =
           contractorActions.setContractorsActionstatus(ActionStatusEnum.SUCCESS)
         );
         // dispatch(contractorActions.setCurrentContractor(contractors[0]))
-        //TODO: сейчас приходит boolean вместо ContractorFullInfoType[]
+        //TODO: сейчас приходит boolean вместо ContractorType[]
       } else {
         showError(
           "Не удалось сохранить изменения, попробуйте еще раз",
@@ -143,14 +142,12 @@ export const updateContractor =
     }
   };
 
-export const getFullContractorInfo =
+export const getContractorById =
   (contractorId: number): ThunkAcionType =>
   async (dispatch) => {
     try {
       dispatch(contractorActions.setContractorsLoading(true));
-      const contractors = await contractorsApi.getFullContractorInfo(
-        contractorId
-      );
+      const contractors = await contractorsApi.getContractorById(contractorId);
       if (contractors.length === 0) {
         showError("Контрагент не найден", dispatch);
       } else {

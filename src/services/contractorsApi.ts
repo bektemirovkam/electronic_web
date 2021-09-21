@@ -1,9 +1,5 @@
 import { axios } from "../api/axios";
-import {
-  AddContractorFormDataType,
-  ContractorFullInfoType,
-  ContractorType,
-} from "../types";
+import { AddContractorFormDataType, ContractorType } from "../types";
 
 export const contractorsApi = {
   // contractors
@@ -13,8 +9,8 @@ export const contractorsApi = {
   },
   createContractor: async (
     formData: AddContractorFormDataType
-  ): Promise<ContractorFullInfoType[]> => {
-    const { data } = await axios.post<ContractorFullInfoType[]>(
+  ): Promise<ContractorType[]> => {
+    const { data } = await axios.post<ContractorType[]>(
       "contractors",
       formData
     );
@@ -26,7 +22,7 @@ export const contractorsApi = {
   updateContractor: async (
     formData: AddContractorFormDataType,
     id: number
-  ): Promise<ContractorFullInfoType[]> => {
+  ): Promise<ContractorType[]> => {
     const { data } = await axios.patch(`/contractors/${id}`, formData);
     return data;
   },
@@ -37,13 +33,13 @@ export const contractorsApi = {
     return data;
   },
 
-  // contractors/${id}/full
+  // contractors/${id}
 
-  getFullContractorInfo: async (
+  getContractorById: async (
     contractorId: number
-  ): Promise<ContractorFullInfoType[]> => {
-    const { data } = await axios.get<ContractorFullInfoType[]>(
-      `/contractors/${contractorId}/full`
+  ): Promise<ContractorType[]> => {
+    const { data } = await axios.get<ContractorType[]>(
+      `/contractors/${contractorId}`
     );
     return data;
   },

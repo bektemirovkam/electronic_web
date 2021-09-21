@@ -21,7 +21,6 @@ import {
 import {
   ActionStatusEnum,
   AddContractorFormDataType,
-  ContractorStatusEnum,
   ContractorTypesEnum,
   CoordinatesType,
   CustomerDescrFormDataType,
@@ -126,7 +125,7 @@ const ContractorCreatePage = () => {
       categoryId,
     }));
 
-    const newContractor = {
+    const newContractor: AddContractorFormDataType = {
       name: formData.name,
       contactName: formData.contactName,
       phoneNumber: `7${String(formData.phoneNumber).slice(-10)}`,
@@ -148,14 +147,10 @@ const ContractorCreatePage = () => {
         eMail: formData.eMail ? formData.eMail : "",
       },
       contractorType: registeringType,
-      contractorStatus: ContractorStatusEnum.NEW, //TODO: мне указывать?
       categories,
-      photos: [],
-      rating: 0,
+      attachments: [],
     };
-    dispatch(
-      createContractorProfile(newContractor as AddContractorFormDataType)
-    );
+    dispatch(createContractorProfile(newContractor));
   });
 
   const handleSelectRegType = (e: RadioChangeEvent) => {
@@ -253,7 +248,7 @@ const ContractorCreatePage = () => {
             {latLng ? "Изменить координаты" : "Отметить на карте"}
           </Button>
         )}
-        <UploadFileForm />
+        <UploadFileForm onChange={() => {}} isUploading={true} />
         <Button
           className="order__save-btn"
           onClick={onSubmit}

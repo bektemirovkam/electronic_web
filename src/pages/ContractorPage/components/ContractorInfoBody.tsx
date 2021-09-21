@@ -2,7 +2,9 @@ import { Card, Divider, TreeSelect, Image } from "antd";
 import { DataNode } from "antd/lib/tree";
 import React from "react";
 import { Control, FieldError } from "react-hook-form";
+import { baseURL } from "../../../api/axios";
 import { UploadFileForm } from "../../../components";
+import { AttachmentOutType } from "../../../models/Attachments";
 import {
   ContractorTypesEnum,
   CustomerDescrFormDataType,
@@ -21,7 +23,7 @@ type ContractorInfoBodyPropsType = {
   categoriesTree: DataNode[];
   selectedCategories: number[];
   handleSelectCategories: (value: number[]) => void;
-  images: string[];
+  images: AttachmentOutType[];
   registeringType: ContractorTypesEnum;
 };
 
@@ -73,7 +75,7 @@ const ContractorInfoBody: React.FC<ContractorInfoBodyPropsType> = ({
         )}
         <Divider>Фото</Divider>
         {editMode ? (
-          <UploadFileForm />
+          <UploadFileForm onChange={() => {}} isUploading={true} />
         ) : (
           <ContractorImageList images={images} />
         )}
@@ -83,16 +85,21 @@ const ContractorInfoBody: React.FC<ContractorInfoBodyPropsType> = ({
 };
 
 type ContractorImageListPropsType = {
-  images: string[];
+  images: AttachmentOutType[];
 };
 
 const ContractorImageList: React.FC<ContractorImageListPropsType> = React.memo(
   ({ images }) => {
     return (
-      <div className="order__images">
+      <div className="contractor__images">
         {images &&
           images.map((img, index) => (
-            <Image key={index} width={200} src={img} className="order__image" />
+            <Image
+              key={index}
+              width={200}
+              src={`${baseURL}${img.attachmentLink}`}
+              className="contractor__image"
+            />
           ))}
       </div>
     );

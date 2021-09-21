@@ -167,6 +167,21 @@ body {
     padding: 24px;
   }
   &__images {
+    display: flex;
+    flex-direction: column;
+  }
+  &__images-list {
+    display: flex;
+    align-items: end;
+  }
+  &__image-wrapper {
+    position: relative;
+  }
+  &__image-delete {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
   }
   &__image {
     padding: 5px;
@@ -250,6 +265,9 @@ body {
   &__body {
     padding: 24px;
   }
+  &__image {
+    padding: 5px;
+  }
 }
 .statistic {
   padding: 20px 0;
@@ -268,5 +286,32 @@ body {
   &__pie-subtitle {
     text-align: center;
     display: block;
+  }
+}
+.upload {
+  margin: 5px 0;
+  padding: 5px;
+  &__btn {
+    width: 104px;
+    height: 104px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    text-align: center;
+    vertical-align: top;
+    background-color: #fafafa;
+    border: 1px dashed #d9d9d9;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: border-color 0.3s;
+    &:hover {
+      border-color: #1890ff;
+    }
+  }
+  &__btn-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
   }
 }

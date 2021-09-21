@@ -8,14 +8,24 @@ import {
   Layout,
   Typography,
   TreeSelect,
+  message,
 } from "antd";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
-import { AppAlert, AppPreloader, UploadFileForm } from "../../components";
-import { createOrder, ordersActions } from "../../store/actions/orders";
+import {
+  AppAlert,
+  AppPreloader,
+  ImagesList,
+  UploadFileForm,
+} from "../../components";
+import {
+  addOrderImage,
+  createOrder,
+  ordersActions,
+} from "../../store/actions/orders";
 import {
   ActionStatusEnum,
   DescriptionOrderFormData,
@@ -24,6 +34,8 @@ import {
 import {
   getCurrentOrderState,
   getOrderActionStatusState,
+  getOrderImagesLoadingState,
+  getOrderImagesState,
   getOrdersErrorMessageState,
   getOrdersLoadingState,
 } from "../../store/selectors/orders";
@@ -34,6 +46,8 @@ import {
   getCategoriesTreeDataState,
 } from "../../store/selectors/categories";
 import { categoriesActions } from "../../store/actions/categories";
+import getBase64 from "../../utils/getBase64";
+import { AttachmentType } from "../../models/Attachments";
 
 const { Content } = Layout;
 const { Text, Title } = Typography;
@@ -57,6 +71,8 @@ const OrderCreatePage = () => {
   const orderError = useSelector(getOrdersErrorMessageState);
   const orderLoadingState = useSelector(getOrdersLoadingState);
   const currentOrder = useSelector(getCurrentOrderState);
+  const orderImages = useSelector(getOrderImagesState);
+  const orderUploading = useSelector(getOrderImagesLoadingState);
 
   const categoriesTree = useSelector(getCategoriesTreeDataState);
   const categoriesError = useSelector(getCategoriesErrorMessageState);
@@ -69,6 +85,7 @@ const OrderCreatePage = () => {
     dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.NEVER));
     dispatch(ordersActions.setOrdersErrorMessage(null));
   }, [dispatch]);
+
   const clearCategoriesState = React.useCallback(() => {
     dispatch(
       categoriesActions.setCategoriesActionStatus(ActionStatusEnum.NEVER)
@@ -91,6 +108,37 @@ const OrderCreatePage = () => {
 
   const handleSelectCategories = (value: number[]) => {
     setSelectedCategories(value);
+  };
+
+  const handleUploadImage = async (e: Event) => {
+    const target = e.currentTarget as HTMLInputElement;
+    const file = target.files?.[0];
+
+    //TODO: сделать проверку на расширения regex /\.(gif|jpg|jpeg|png|bmp|GIF|JPG|PNG)$/.test(file.name)
+    //TODO: content: base64 as string проверить
+
+    if (file) {
+      if (
+        file.type !== "image/png" &&
+        file.type !== "image/jpeg" &&
+        file.type !== "image/jpg"
+      ) {
+        return message.error(`${file.name} не является картинкой`);
+      } else {
+        const base64 = await getBase64(file);
+        const ext = file.name.split(".").pop();
+        const name = file.name;
+
+        if (base64 && ext && name) {
+          const image: AttachmentType = {
+            name: name,
+            ext: ext,
+            content: base64 as string,
+          };
+          dispatch(addOrderImage(image));
+        }
+      }
+    }
   };
 
   const onSubmit = handleSubmit((formData) => {
@@ -235,7 +283,11 @@ const OrderCreatePage = () => {
           style={{ width: "100%", marginBottom: 10 }}
           maxTagCount={5}
         />
-        <UploadFileForm />
+        <ImagesList images={orderImages} editMode={true} />
+        <UploadFileForm
+          onChange={handleUploadImage}
+          isUploading={orderUploading}
+        />
         <Button
           className="order__save-btn"
           onClick={onSubmit}

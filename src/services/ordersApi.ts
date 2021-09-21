@@ -1,4 +1,4 @@
-import { AddOrderFormData, OrderFullInfoType, OrderType } from "./../types";
+import { AddOrderFormData, OrderType } from "./../types";
 import { axios } from "../api/axios";
 
 export const ordersApi = {
@@ -8,10 +8,8 @@ export const ordersApi = {
     const { data } = await axios.get<OrderType[]>("orders");
     return data;
   },
-  createOrder: async (
-    formData: AddOrderFormData
-  ): Promise<OrderFullInfoType[]> => {
-    const { data } = await axios.post<OrderFullInfoType[]>("orders", formData);
+  createOrder: async (formData: AddOrderFormData): Promise<OrderType[]> => {
+    const { data } = await axios.post<OrderType[]>("orders", formData);
     return data;
   },
 
@@ -28,20 +26,8 @@ export const ordersApi = {
   updateOrder: async (
     order: AddOrderFormData,
     id: number
-  ): Promise<OrderFullInfoType[]> => {
-    const { data } = await axios.patch<OrderFullInfoType[]>(
-      `/orders/${id}`,
-      order
-    );
-    return data;
-  },
-
-  // orders/{id}/full
-
-  getFullOrderInfo: async (orderId: number): Promise<OrderFullInfoType[]> => {
-    const { data } = await axios.get<OrderFullInfoType[]>(
-      `/orders/${orderId}/full`
-    );
+  ): Promise<OrderType[]> => {
+    const { data } = await axios.patch<OrderType[]>(`/orders/${id}`, order);
     return data;
   },
 };

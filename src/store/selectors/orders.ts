@@ -58,3 +58,9 @@ export const getHistoryOrdersCountState = createSelector(
   [getFilteredOrdersListState("", "archived")],
   (orders) => orders?.length
 );
+
+export const getOrderImagesState = (state: AppStateType) =>
+  getOrdersState(state).orderImages;
+
+export const getOrderImagesLoadingState = (state: AppStateType) =>
+  getOrdersState(state).ordersLoading;

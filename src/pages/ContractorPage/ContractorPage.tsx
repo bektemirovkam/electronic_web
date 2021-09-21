@@ -4,9 +4,7 @@ import {
   PageHeader,
   Button,
   Descriptions,
-  Divider,
   Card,
-  TreeSelect,
   RadioChangeEvent,
   Radio,
 } from "antd";
@@ -15,7 +13,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import {
   ActionStatusEnum,
   AddContractorFormDataType,
-  ContractorStatusEnum,
   ContractorTypesEnum,
   CoordinatesType,
   CustomerDescrFormDataType,
@@ -42,7 +39,7 @@ import {
 import {
   contractorActions,
   deleteContractor,
-  getFullContractorInfo,
+  getContractorById,
   updateContractor,
 } from "../../store/actions/contractors";
 import { ContractorEditableField, ContractorInfoBody } from "./components";
@@ -101,7 +98,7 @@ const ContractorPage = () => {
   }, [dispatch]);
 
   React.useEffect(() => {
-    dispatch(getFullContractorInfo(Number(id)));
+    dispatch(getContractorById(Number(id)));
     return () => {
       clearState();
     };
@@ -113,6 +110,10 @@ const ContractorPage = () => {
         contractor.categories?.map((category) => category.categoryId)
       );
       setRegisteringType(contractor.contractorType);
+      setLatLng({
+        coordinatesLatitude: contractor.coordinates.coordinatesLatitude,
+        coordinatesLongitude: contractor.coordinates.coordinatesLongitude,
+      });
     }
   }, [contractor]);
 
@@ -129,7 +130,7 @@ const ContractorPage = () => {
         categoryId,
       }));
 
-      const newContractor = {
+      const newContractor: AddContractorFormDataType = {
         name: formData.name,
         contactName: formData.contactName,
         phoneNumber: `7${String(formData.phoneNumber).slice(-10)}`,
@@ -151,18 +152,11 @@ const ContractorPage = () => {
           eMail: formData.eMail ? formData.eMail : "",
         },
         contractorType: registeringType,
-        contractorStatus: ContractorStatusEnum.NEW, //TODO: мне указывать?
         categories,
-        photos: [],
-        rating: 0,
+        attachments: [],
       };
       setEditMode(false);
-      dispatch(
-        updateContractor(
-          newContractor as AddContractorFormDataType,
-          contractor.id
-        )
-      );
+      dispatch(updateContractor(newContractor, contractor.id));
     }
   });
 
@@ -189,12 +183,14 @@ const ContractorPage = () => {
 
   const handleSelectCoords = React.useCallback(
     (latLng: google.maps.LatLng | null) => {
-      setLatLng({
-        coordinatesLatitude: String(latLng?.lat()),
-        coordinatesLongitude: String(latLng?.lng()),
-      });
+      if (editMode) {
+        setLatLng({
+          coordinatesLatitude: String(latLng?.lat()),
+          coordinatesLongitude: String(latLng?.lng()),
+        });
+      }
     },
-    []
+    [editMode]
   );
 
   const getEditActionsButtons = () => {
@@ -235,7 +231,9 @@ const ContractorPage = () => {
           <Button className="map-btn" type="default" onClick={toggleShowMap}>
             Назад
           </Button>
-          {latLng && <Button onClick={toggleShowMap}>Сохранить</Button>}
+          {latLng && editMode && (
+            <Button onClick={toggleShowMap}>Сохранить</Button>
+          )}
         </div>
 
         <AppMap
@@ -395,7 +393,7 @@ const ContractorPage = () => {
             categoriesTree={categoriesTree}
             selectedCategories={selectedCategories}
             handleSelectCategories={handleSelectCategories}
-            images={images}
+            images={contractor.attachments}
             registeringType={registeringType}
           />
         </>

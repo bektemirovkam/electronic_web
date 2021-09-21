@@ -23,7 +23,7 @@ export const descendingOrderComparator: DescendingComparatorType<
   SortByOrdersFieldsType
 > = (a, b, sortBy) => {
   // сортировщик
-  if (sortBy === "totalSum") {
+  if (sortBy === "totalSum" || sortBy === "creationDate") {
     //@ts-ignore
     if (b[sortBy] < a[sortBy]) {
       return -1;

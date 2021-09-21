@@ -1,8 +1,10 @@
-import { Card, Divider, TreeSelect, Image } from "antd";
+import { Card, Divider, TreeSelect } from "antd";
 import { DataNode } from "antd/lib/tree";
 import React from "react";
 import { Control, FieldError } from "react-hook-form";
-import { UploadFileForm } from "../../../components";
+
+import { ImagesList, UploadFileForm } from "../../../components";
+import { AttachmentOutType } from "../../../models/Attachments";
 import { DescriptionOrderFormData } from "../../../types";
 import OrderEditableField from "./OrderEditableField";
 
@@ -10,9 +12,10 @@ const { SHOW_ALL } = TreeSelect;
 
 type OrderInfoBodyPropsType = {
   selectedCategories: number[];
+  orderId: number;
   handleSelectCategories: (value: number[]) => void;
   editMode: boolean;
-  images: string[];
+  images: AttachmentOutType[];
   control: Control<DescriptionOrderFormData, object>;
   categoriesTree?: DataNode[];
   defaultValue?: string;
@@ -52,32 +55,19 @@ const OrderInfoBody: React.FC<OrderInfoBodyPropsType> = ({
             showCheckedStrategy={SHOW_ALL}
             placeholder={editMode ? "Выберите категории заявки" : "Категории"}
             style={{ width: "100%", marginBottom: 10 }}
-            // maxTagCount={5}
             disabled={!editMode}
           />
         )}
         <Divider>Фото</Divider>
-        {editMode ? <UploadFileForm /> : <OrderImagesList images={images} />}
+        <div className="order__images">
+          <ImagesList images={images} editMode={editMode} />
+          {editMode && (
+            <UploadFileForm onChange={() => {}} isUploading={true} />
+          )}
+        </div>
       </Card>
     </div>
   );
 };
-
-type OrderImagesListPropsType = {
-  images: string[];
-};
-
-const OrderImagesList: React.FC<OrderImagesListPropsType> = React.memo(
-  ({ images }) => {
-    return (
-      <div className="order__images">
-        {images &&
-          images.map((img, index) => (
-            <Image key={index} width={200} src={img} className="order__image" />
-          ))}
-      </div>
-    );
-  }
-);
 
 export default React.memo(OrderInfoBody);

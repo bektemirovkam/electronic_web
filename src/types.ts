@@ -1,4 +1,5 @@
 import { Control, FieldError } from "react-hook-form";
+import { AttachmentInType, AttachmentOutType } from "./models/Attachments";
 
 export type CategoryType = {
   id: number;
@@ -39,19 +40,6 @@ export type ContractorType = {
   id: number;
   isDeleted: boolean;
   name: string;
-  phoneNumber: string;
-  description: string;
-  location: string;
-  coordinates: CoordinatesType;
-  contacts: ContactsType;
-  contractorType: ContractorTypesEnum;
-  contractorStatus: ContractorStatusEnum;
-};
-
-export type ContractorFullInfoType = {
-  id: number;
-  isDeleted: boolean;
-  name: string;
   contactName: string;
   phoneNumber: string;
   description: string;
@@ -59,8 +47,8 @@ export type ContractorFullInfoType = {
   coordinates: CoordinatesType;
   contacts: ContactsType;
   contractorType: ContractorTypesEnum;
-  categories: ContractorCategoryOutType[];
-  photos: ContractorPhotoOutType[];
+  categories: CategoryOutType[];
+  attachments: AttachmentOutType[];
   rating: number;
 };
 
@@ -68,15 +56,15 @@ export type AddContractorFormDataType = {
   name: string;
   contactName: string;
   phoneNumber: string;
-  description: string;
+  description?: string;
   location: string;
   coordinates: CoordinatesType;
   contacts: ContactsType;
   contractorType: ContractorTypesEnum;
-  categories: ContractorCategoryInType[];
-  photos: ContractorPhotoInType[];
-  rating: number;
+  categories: CategoryInType[];
+  attachments: AttachmentInType[];
 };
+
 export type SupplierDescrFormDataType = {
   name: string;
   phoneNumber: string;
@@ -92,10 +80,6 @@ export type CustomerDescrFormDataType = {
   phoneNumber: string;
   contactName: string;
   location: string;
-};
-export type ContractorCategoryInType = {
-  // при добавлении категории контрагента
-  categoryId: number;
 };
 
 export type SupplierFieldsNameType =
@@ -113,25 +97,6 @@ export type CustomerFieldsNameType =
   | "contactName"
   | "location";
 
-export type ContractorCategoryOutType = {
-  // при получении категорий контрагента
-  categoryId: number;
-  categoryName: string;
-};
-
-export type ContractorPhotoInType = {
-  // при добавлении фото контрагента
-  name: string;
-  photo: string;
-};
-
-export type ContractorPhotoOutType = {
-  // при получении фото контрагента
-  id: number;
-  name: string;
-  photo: string;
-};
-
 export type StateSpecializationType = {
   [key: string]: {
     IDs: string[];
@@ -145,18 +110,6 @@ export type ActionsCreatorsTypes<T> = T extends { [key: string]: infer U }
 
 export type OrderType = {
   id: number;
-  creationDate: string;
-  actualDate: string;
-  title: string;
-  description: string;
-  orderStatus: "NEW" | "ARCHIVED" | "DELETED";
-  customerId: number;
-  totalSum?: string;
-  comment?: string;
-};
-
-export type OrderFullInfoType = {
-  id: number;
   creationDate: number;
   actualDate: number;
   comment?: string;
@@ -165,9 +118,9 @@ export type OrderFullInfoType = {
   totalSum: number;
   orderStatus: "NEW" | "ARCHIVED" | "DELETED";
   customerId: number;
-  categories: OrderCategoryOutType[];
-  contractors: OrderContractorOutType[];
-  attachments: OrderAttachmentOutType[];
+  categories: CategoryOutType[];
+  contractors: ContractorOutType[];
+  attachments: AttachmentOutType[];
 };
 
 export enum OrderStatusEnum {
@@ -183,16 +136,14 @@ export type OrderFieldsNameType =
 
 export type AddOrderFormData = {
   title: string;
-  description?: string;
   comment: string;
   totalSum: number;
-  orderStatus: "NEW" | "ARCHIVED" | "DELETED";
-  categories: OrderCategoryInType[];
-  contractors: OrderContractorInType[] | [];
-  attachments: OrderAttachmentInType[];
+  categories: CategoryInType[];
+  contractors: ContractorInType[] | [];
+  attachments: AttachmentInType[];
   customerId: number;
+  description?: string;
 };
-
 export type DescriptionOrderFormData = {
   title: string;
   description?: string;
@@ -200,40 +151,23 @@ export type DescriptionOrderFormData = {
   totalSum: number;
 };
 
-export type OrderCategoryInType = {
-  // при добавлении категории в заявку
+export type CategoryInType = {
   categoryId: number;
 };
 
-export type OrderCategoryOutType = {
-  // при получении категорий у заявки
+export type CategoryOutType = {
   categoryId: number;
   categoryName: string;
   parentId: number;
 };
 
-export type OrderContractorInType = {
-  // при добавлении или удалении контрагента в заявку
+export type ContractorInType = {
   contractorId: number;
 };
 
-export type OrderContractorOutType = {
-  // при получении всех контрагентов у заявки
+export type ContractorOutType = {
   contractorId: number;
   contractorName: string;
-};
-
-export type OrderAttachmentInType = {
-  // при добавлении вложения в заявку
-  attachmentName: string;
-  attachment: string;
-};
-
-export type OrderAttachmentOutType = {
-  // при получении вложений в заявке
-  attachmentId: number;
-  attachmentName: string;
-  attachment: string;
 };
 
 export enum ActionStatusEnum {
