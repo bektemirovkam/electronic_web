@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
+import { OrdersQueryFilterType, OrderStatusEnum } from "../../models/Orders";
 
-import { OrdersQueryFilterType, OrderStatusEnum } from "../../types";
 import { AppStateType } from "./../store";
 
 const getOrdersState = (state: AppStateType) => state.orders;

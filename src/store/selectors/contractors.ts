@@ -1,6 +1,8 @@
 import { createSelector } from "reselect";
-import { ContractorTypesEnum } from "./../../types";
-import { ContractorsQueryFilterType } from "../../types";
+import {
+  ContractorsQueryFilterType,
+  ContractorTypesEnum,
+} from "../../models/Contractors";
 import { AppStateType } from "./../store";
 
 const getContractorsState = (state: AppStateType) => state.contractors;
@@ -58,3 +60,8 @@ export const getDeletedContractorCountState = createSelector(
   [getFilteredContractorsListState("", "deleted")],
   (contractors) => contractors?.length
 );
+
+export const getContractorImagesState = (state: AppStateType) =>
+  getContractorsState(state).contractorImages;
+export const getContractorImageUploadingState = (state: AppStateType) =>
+  getContractorsState(state).contractorImageUploading;

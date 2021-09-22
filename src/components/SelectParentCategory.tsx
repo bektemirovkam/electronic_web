@@ -1,8 +1,7 @@
 import { Select, Typography } from "antd";
 import React from "react";
 import classNames from "classnames";
-
-import { CategoryType } from "../types";
+import { CategoryType } from "../models/Categories";
 
 const { Option } = Select;
 const { Text } = Typography;

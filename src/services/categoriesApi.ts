@@ -1,5 +1,5 @@
 import { axios } from "../api/axios";
-import { AddCategoryFormData, CategoryType } from "../types";
+import { AddCategoryFormData, CategoryType } from "../models/Categories";
 
 export const categoriesApi = {
   //categories

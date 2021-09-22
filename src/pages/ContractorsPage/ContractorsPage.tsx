@@ -1,7 +1,7 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 
-import { BackTop, Layout } from "antd";
-import { AppAlert, AppPreloader, ContractorItem } from "../../components";
+import { BackTop, Layout, Table, Tag, Button } from "antd";
+import { AppAlert, AppPreloader, AppSearchField } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getContractorsActionStatusState,
@@ -15,21 +15,92 @@ import {
   deleteContractor,
   getContractors,
 } from "../../store/actions/contractors";
+import { ActionStatusEnum } from "../../models/types";
 import {
-  ActionStatusEnum,
   ContractorsQueryFilterType,
   ContractorType,
-  DirectionType,
-  SortByOrdersFieldsType,
-} from "../../types";
+  ContractorTypesEnum,
+} from "../../models/Contractors";
+import { ColumnsType } from "antd/lib/table";
+import { CategoryOutType } from "../../models/Categories";
 const { Content } = Layout;
+
+const columns: ColumnsType<ContractorType> = [
+  {
+    title: "Тип контрагента",
+    dataIndex: "contractorType",
+    render: (status: ContractorTypesEnum) => {
+      const colors = {
+        [ContractorTypesEnum.CUSTOMER]: "green",
+        [ContractorTypesEnum.SUPPLIER]: "geekblue",
+        [ContractorTypesEnum.UNKNOWN]: "gray",
+      };
+
+      return (
+        <Tag color={colors[status]} key={status}>
+          {status === ContractorTypesEnum.CUSTOMER ? "Заказчик" : "Поставщик"}
+        </Tag>
+      );
+    },
+    sorter: {
+      compare: (a, b) => a.name.localeCompare(b.name),
+    },
+  },
+  {
+    title: "Название организации",
+    dataIndex: "name",
+    sorter: {
+      compare: (a, b) => a.name.localeCompare(b.name),
+    },
+  },
+  {
+    title: "Номер телефона",
+    dataIndex: "phoneNumber",
+  },
+  {
+    title: "Город",
+    dataIndex: "location",
+    sorter: {
+      compare: (a, b) => a.location.localeCompare(b.location),
+    },
+  },
+  {
+    title: "Категории",
+    dataIndex: "categories",
+    render: (categories: CategoryOutType[]) => {
+      return (
+        <>
+          {categories
+            .filter((category) => category.parentId === 0)
+            .map((category) => (
+              <Tag
+                color="blue"
+                key={category.categoryId}
+                className="order__tag"
+              >
+                {category.categoryName}
+              </Tag>
+            ))}
+        </>
+      );
+    },
+  },
+
+  {
+    title: "Контактное лицо",
+    dataIndex: "contactName",
+  },
+  {
+    title: "Рейтинг",
+    dataIndex: "rating",
+    sorter: {
+      compare: (a, b) => a.rating - b.rating,
+    },
+  },
+];
 
 const ContractorsPage = () => {
   const [searchText, setSearchText] = React.useState<string>("");
-  const [showFilter, setShowFilter] = React.useState<boolean>(false);
-
-  const [direction, setDirection] = React.useState<DirectionType>("asc");
-  const [sortBy, setSortBy] = React.useState<SortByOrdersFieldsType>("title");
 
   const useQuery = () => {
     return new URLSearchParams(useLocation().search);
@@ -67,6 +138,10 @@ const ContractorsPage = () => {
     history.push(`contractors/${contractor.id}`);
   };
 
+  const handleChangeSearchText = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.currentTarget.value);
+  };
+
   React.useEffect(() => {
     dispatch(getContractors());
     return () => {
@@ -86,19 +161,38 @@ const ContractorsPage = () => {
         successMessage="Контрагент успешно удален"
         status={contractorsActionStatus}
       />
-      <div className="contractors">
-        {contractors &&
-          contractors.map((contractor) => {
-            return (
-              <ContractorItem
-                key={contractor.id}
-                onDelete={handleDeleteContractor}
-                onView={handleViewContractor}
-                contractor={contractor}
-              />
-            );
-          })}
-      </div>
+      <AppSearchField
+        value={searchText}
+        onChange={handleChangeSearchText}
+        placeholder="Найти по названию организации"
+      />
+      <Table
+        columns={columns}
+        dataSource={contractors}
+        rowKey={"id"}
+        expandable={{
+          expandedRowRender: (order) => (
+            <div className="contractor__expanded">
+              <p className="contractor__tab-descr">{order.description}</p>
+              <div className="contractor__expanded-action">
+                <Button
+                  className="contractor__expanded-btn"
+                  onClick={() => handleViewContractor(order)}
+                >
+                  Посмотреть
+                </Button>
+                <Button
+                  className="contractor__expanded-btn"
+                  onClick={() => handleDeleteContractor(order.id)}
+                  danger
+                >
+                  Удалить
+                </Button>
+              </div>
+            </div>
+          ),
+        }}
+      />
       <BackTop />
     </Content>
   );

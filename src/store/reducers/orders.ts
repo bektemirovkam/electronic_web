@@ -1,5 +1,6 @@
 import { AttachmentOutType } from "../../models/Attachments";
-import { ActionStatusEnum, OrderType } from "../../types";
+import { OrderType } from "../../models/Orders";
+import { ActionStatusEnum } from "../../models/types";
 import { OrdersActionTypes } from "../actions/orders";
 
 const initialState = {
@@ -56,10 +57,17 @@ const ordersReducer = (
         orders: state.orders?.filter((order) => order.id !== action.payload.id),
       };
     }
+    case "SET_ORDER_IMAGES": {
+      return {
+        ...state,
+        orderImages: action.payload.images,
+      };
+    }
+
     case "ADD_ORDER_IMAGE": {
       return {
         ...state,
-        orderImages: [...state.orderImages, action.payload.image],
+        orderImages: [...state.orderImages, ...action.payload.images],
       };
     }
 
@@ -69,6 +77,13 @@ const ordersReducer = (
         orderImages: state.orderImages.filter(
           (image) => image.id !== action.payload.imageId
         ),
+      };
+    }
+
+    case "CLEAR_ORDER_IMAGES": {
+      return {
+        ...state,
+        orderImages: [],
       };
     }
     default:

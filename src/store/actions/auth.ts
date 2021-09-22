@@ -1,5 +1,5 @@
 // import { ThunkAction } from "redux-thunk";
-import { ActionsCreatorsTypes } from "../../types";
+import { ActionsCreatorsTypes } from "../../models/types";
 // import { AppStateType } from "../store";
 
 export const authActions = {

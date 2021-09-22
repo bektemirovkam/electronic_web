@@ -3,9 +3,9 @@ import React from "react";
 import { Controller } from "react-hook-form";
 import {
   DescriptionOrderFormData,
-  EditableFieldPropsType,
   OrderFieldsNameType,
-} from "../../../types";
+} from "../../../models/Orders";
+import { EditableFieldPropsType } from "../../../models/types";
 
 const { Text } = Typography;
 

@@ -1,5 +1,5 @@
-import { AddOrderFormData, OrderType } from "./../types";
 import { axios } from "../api/axios";
+import { AddOrderFormData, OrderType } from "../models/Orders";
 
 export const ordersApi = {
   // orders
@@ -28,6 +28,18 @@ export const ordersApi = {
     id: number
   ): Promise<OrderType[]> => {
     const { data } = await axios.patch<OrderType[]>(`/orders/${id}`, order);
+    return data;
+  },
+
+  // orders/{orderId}/attachments/{attachmentId}
+
+  removeOrderAttachment: async (
+    orderId: number,
+    attachmentId: number
+  ): Promise<boolean> => {
+    const { data } = await axios.delete<boolean>(
+      `/orders/${orderId}/attachments/${attachmentId}`
+    );
     return data;
   },
 };

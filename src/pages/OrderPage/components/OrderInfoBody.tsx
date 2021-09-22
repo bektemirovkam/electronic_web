@@ -5,16 +5,18 @@ import { Control, FieldError } from "react-hook-form";
 
 import { ImagesList, UploadFileForm } from "../../../components";
 import { AttachmentOutType } from "../../../models/Attachments";
-import { DescriptionOrderFormData } from "../../../types";
+import { DescriptionOrderFormData } from "../../../models/Orders";
 import OrderEditableField from "./OrderEditableField";
 
 const { SHOW_ALL } = TreeSelect;
 
 type OrderInfoBodyPropsType = {
-  selectedCategories: number[];
-  orderId: number;
+  handleRemoveImage: (imageId: number) => void;
   handleSelectCategories: (value: number[]) => void;
+  handleAddImage: (e: Event) => void;
+  selectedCategories: number[];
   editMode: boolean;
+  imageUploading: boolean;
   images: AttachmentOutType[];
   control: Control<DescriptionOrderFormData, object>;
   categoriesTree?: DataNode[];
@@ -26,11 +28,14 @@ const OrderInfoBody: React.FC<OrderInfoBodyPropsType> = ({
   categoriesTree,
   selectedCategories,
   handleSelectCategories,
+  handleRemoveImage,
+  handleAddImage,
   editMode,
   defaultValue,
   error,
   images,
   control,
+  imageUploading,
 }) => {
   return (
     <div className="order__body">
@@ -60,9 +65,16 @@ const OrderInfoBody: React.FC<OrderInfoBodyPropsType> = ({
         )}
         <Divider>Фото</Divider>
         <div className="order__images">
-          <ImagesList images={images} editMode={editMode} />
+          <ImagesList
+            removeImage={handleRemoveImage}
+            images={images}
+            editMode={editMode}
+          />
           {editMode && (
-            <UploadFileForm onChange={() => {}} isUploading={true} />
+            <UploadFileForm
+              onChange={handleAddImage}
+              isUploading={imageUploading}
+            />
           )}
         </div>
       </Card>

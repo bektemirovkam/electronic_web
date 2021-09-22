@@ -13,7 +13,8 @@ import {
   getCategoryInProcessEditState,
   getDeletedCategoriesState,
 } from "../../store/selectors/categories";
-import { ActionStatusEnum, CategoryType } from "../../types";
+import { ActionStatusEnum } from "../../models/types";
+import { CategoryType } from "../../models/Categories";
 
 const { Text } = Typography;
 

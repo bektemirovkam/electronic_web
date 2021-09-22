@@ -1,5 +1,7 @@
-import { ActionStatusEnum, ContractorType } from "./../../types";
+import { AttachmentOutType } from "./../../models/Attachments";
+import { ActionStatusEnum } from "../../models/types";
 import { ContractorsActionTypes } from "../actions/contractors";
+import { ContractorType } from "../../models/Contractors";
 
 const initialState = {
   contractors: null as ContractorType[] | null | undefined,
@@ -7,6 +9,8 @@ const initialState = {
   contractorsLoading: false,
   contractorsActionStatus: ActionStatusEnum.NEVER,
   errorMessage: null as string | null,
+  contractorImages: [] as AttachmentOutType[],
+  contractorImageUploading: false,
 };
 
 type initStateType = typeof initialState;
@@ -20,7 +24,8 @@ const contractorsReducer = (
     case "SET_CONTRACTORS_LOADING":
     case "SET_CONTRACTORS_ACTION_STATUS":
     case "SET_CONTRACTORS_ERROR_MESSAGE":
-    case "SET_CONTRACTORS": {
+    case "SET_CONTRACTORS":
+    case "SET_CONTRACTOR_IMAGE_UPLOADING": {
       return {
         ...state,
         ...action.payload,
@@ -33,6 +38,36 @@ const contractorsReducer = (
         contractors: state.contractors?.filter(
           (contractor) => contractor.id !== action.payload.contractorId
         ),
+      };
+    }
+
+    case "SET_CONTRACTOR_IMAGES": {
+      return {
+        ...state,
+        contractorImages: action.payload.images,
+      };
+    }
+
+    case "ADD_CONTRACTOR_IMAGE": {
+      return {
+        ...state,
+        contractorImages: [...state.contractorImages, ...action.payload.images],
+      };
+    }
+
+    case "REMOVE_CONTRACTOR_IMAGE": {
+      return {
+        ...state,
+        contractorImages: state.contractorImages.filter(
+          (image) => image.id !== action.payload.imageId
+        ),
+      };
+    }
+
+    case "CLEAR_CONTRACTOR_IMAGES": {
+      return {
+        ...state,
+        contractorImages: [],
       };
     }
     default:

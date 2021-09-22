@@ -1,5 +1,5 @@
 import React from "react";
-import { PlusOutlined, PoweroffOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 
 type UploadFileFormPropsType = {

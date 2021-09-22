@@ -3,48 +3,50 @@ import {
   Layout,
   PageHeader,
   Button,
-  Descriptions,
   Card,
   RadioChangeEvent,
-  Radio,
+  message,
 } from "antd";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  ActionStatusEnum,
-  AddContractorFormDataType,
-  ContractorTypesEnum,
-  CoordinatesType,
-  CustomerDescrFormDataType,
-  SupplierDescrFormDataType,
-} from "../../types";
+import { ActionStatusEnum } from "../../models/types";
 import { customerSchema, supplierSchema } from "../../utils/validatorsSchemes";
-import { NavLink, useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { AppAlert, AppMap, AppPreloader } from "../../components";
 
-import img1 from "../../assets/images/1.jpg";
-import img2 from "../../assets/images/2.jpg";
-import img3 from "../../assets/images/3.jpg";
-import img4 from "../../assets/images/4.jpg";
-import img5 from "../../assets/images/5.jpg";
 import { getCategoriesTreeDataState } from "../../store/selectors/categories";
 import {
+  getContractorImagesState,
+  getContractorImageUploadingState,
   getContractorsActionStatusState,
   getContractorsErrorMessage,
   getContractorsLoadingState,
   getCurrentContractorState,
 } from "../../store/selectors/contractors";
 import {
+  addContractorImage,
   contractorActions,
   deleteContractor,
   getContractorById,
+  removeContractorImage,
   updateContractor,
 } from "../../store/actions/contractors";
-import { ContractorEditableField, ContractorInfoBody } from "./components";
-
-const images = [img1, img2, img3, img4, img5];
+import {
+  ContractorDescription,
+  ContractorEditableField,
+  ContractorInfoBody,
+} from "./components";
+import { AttachmentType } from "../../models/Attachments";
+import getBase64 from "../../utils/getBase64";
+import {
+  AddContractorFormDataType,
+  ContractorTypesEnum,
+  CoordinatesType,
+  CustomerDescrFormDataType,
+  SupplierDescrFormDataType,
+} from "../../models/Contractors";
 
 const { Content } = Layout;
 
@@ -74,6 +76,11 @@ const ContractorPage = () => {
   const contractorError = useSelector(getContractorsErrorMessage);
   const contractorLoadingState = useSelector(getContractorsLoadingState);
 
+  const contractorImages = useSelector(getContractorImagesState);
+  const contractorImageUploading = useSelector(
+    getContractorImageUploadingState
+  );
+
   const categoriesTree = useSelector(getCategoriesTreeDataState);
 
   const { id }: { id?: string } = useParams();
@@ -86,6 +93,7 @@ const ContractorPage = () => {
       contractorActions.setContractorsActionstatus(ActionStatusEnum.NEVER)
     );
     dispatch(contractorActions.setCurrentContractor(null));
+    dispatch(contractorActions.clearContractorImages());
   }, [dispatch]);
 
   const toggleEditMode = React.useCallback(() => {
@@ -114,8 +122,9 @@ const ContractorPage = () => {
         coordinatesLatitude: contractor.coordinates.coordinatesLatitude,
         coordinatesLongitude: contractor.coordinates.coordinatesLongitude,
       });
+      dispatch(contractorActions.setContractorImages(contractor.attachments));
     }
-  }, [contractor]);
+  }, [contractor, dispatch]);
 
   React.useEffect(() => {
     // ВО ВРЕМЯ УДАЛЕНИЯ
@@ -153,7 +162,9 @@ const ContractorPage = () => {
         },
         contractorType: registeringType,
         categories,
-        attachments: [],
+        attachments: contractorImages.map((image) => ({
+          attachmentId: image.id,
+        })),
       };
       setEditMode(false);
       dispatch(updateContractor(newContractor, contractor.id));
@@ -173,13 +184,24 @@ const ContractorPage = () => {
     }
   }, [contractor, dispatch]);
 
-  const handleSelectRegType = (e: RadioChangeEvent) => {
+  const handleSelectRegType = React.useCallback((e: RadioChangeEvent) => {
     setRegisteringType(e.target.value);
-  };
+  }, []);
 
-  const toggleShowMap = () => {
+  const handleCancelEdit = React.useCallback(() => {
+    toggleEditMode();
+    if (contractor) {
+      setSelectedCategories(
+        contractor.categories?.map((category) => category.categoryId)
+      );
+      dispatch(contractorActions.clearContractorImages());
+      dispatch(contractorActions.setContractorImages(contractor.attachments));
+    }
+  }, [contractor, dispatch, toggleEditMode]);
+
+  const toggleShowMap = React.useCallback(() => {
     setShowMap(!showMap);
-  };
+  }, [showMap]);
 
   const handleSelectCoords = React.useCallback(
     (latLng: google.maps.LatLng | null) => {
@@ -193,12 +215,55 @@ const ContractorPage = () => {
     [editMode]
   );
 
+  const handleUploadImage = async (e: Event) => {
+    const target = e.currentTarget as HTMLInputElement;
+    const file = target.files?.[0];
+
+    if (file) {
+      if (
+        file.type !== "image/png" &&
+        file.type !== "image/jpeg" &&
+        file.type !== "image/jpg"
+      ) {
+        return message.error(`${file.name} не является картинкой`);
+      } else {
+        const base64 = await getBase64(file);
+        const ext = file.name.split(".").pop();
+        const name = file.name;
+
+        if (base64 && ext && name) {
+          const image: AttachmentType = {
+            name: name,
+            ext: ext,
+            content: base64.split(",")[1],
+          };
+          dispatch(addContractorImage(image));
+        }
+      }
+    }
+  };
+
+  const handleRemoveImage = (imageId: number) => {
+    if (contractor) {
+      dispatch(removeContractorImage(contractor.id, imageId));
+    }
+  };
+
+  const checkDisabledBtn = React.useCallback(() => {
+    if (registeringType === ContractorTypesEnum.SUPPLIER) {
+      return (
+        Object.keys(errors).length !== 0 || selectedCategories.length === 0
+      );
+    }
+    return Object.keys(errors).length !== 0;
+  }, [errors, registeringType, selectedCategories.length]);
+
   const getEditActionsButtons = () => {
     return [
-      <Button key="1" onClick={onSubmit}>
+      <Button key="1" onClick={onSubmit} disabled={checkDisabledBtn()}>
         Сохранить
       </Button>,
-      <Button key="2" onClick={toggleEditMode} danger>
+      <Button key="2" onClick={handleCancelEdit} danger>
         Отменить
       </Button>,
     ];
@@ -216,8 +281,9 @@ const ContractorPage = () => {
   };
 
   const editActionsButtons = React.useMemo(getEditActionsButtons, [
+    checkDisabledBtn,
+    handleCancelEdit,
     onSubmit,
-    toggleEditMode,
   ]);
   const actionButtons = React.useMemo(getActionsButtons, [
     handleDeleteContractor,
@@ -282,106 +348,15 @@ const ContractorPage = () => {
               }
               extra={editMode ? editActionsButtons : actionButtons}
             >
-              <Descriptions size="small" column={4}>
-                <Descriptions.Item label="Тип контрагента">
-                  {editMode ? (
-                    <Radio.Group
-                      onChange={handleSelectRegType}
-                      value={registeringType}
-                    >
-                      <Radio value={ContractorTypesEnum.SUPPLIER}>
-                        Поставщик
-                      </Radio>
-                      <Radio value={ContractorTypesEnum.CUSTOMER}>
-                        Заказчик
-                      </Radio>
-                    </Radio.Group>
-                  ) : contractor.contractorType ===
-                    ContractorTypesEnum.CUSTOMER ? (
-                    "Заказчик"
-                  ) : (
-                    "Поставщик"
-                  )}
-                </Descriptions.Item>
-                <Descriptions.Item label="Заявки контрагента">
-                  <NavLink to="/orders">Посмотреть</NavLink>
-                </Descriptions.Item>
-                <Descriptions.Item label="Контактное лицо">
-                  <ContractorEditableField
-                    defaultValue={contractor.contactName}
-                    editMode={editMode}
-                    control={control}
-                    error={errors.contactName}
-                    fieldName="contactName"
-                    placeholder="Контактное лицо"
-                  />
-                </Descriptions.Item>
-
-                <Descriptions.Item label="Город">
-                  <ContractorEditableField
-                    defaultValue={contractor.location}
-                    editMode={editMode}
-                    control={control}
-                    error={errors.location}
-                    fieldName="location"
-                    placeholder="Город"
-                  />
-                </Descriptions.Item>
-                <Descriptions.Item label="Координаты">
-                  <Button size="small" type="link" onClick={toggleShowMap}>
-                    Посмотреть на карте
-                  </Button>
-                </Descriptions.Item>
-
-                <Descriptions.Item label="Сайт">
-                  <ContractorEditableField
-                    defaultValue={contractor.contacts.webSite}
-                    editMode={editMode}
-                    control={control}
-                    //@ts-ignore
-                    error={errors.webSite}
-                    fieldName="webSite"
-                    placeholder="Сайт"
-                  />
-                </Descriptions.Item>
-                <Descriptions.Item label="Почта">
-                  <ContractorEditableField
-                    defaultValue={contractor.contacts.eMail}
-                    editMode={editMode}
-                    control={control}
-                    //@ts-ignore
-                    error={errors.eMail}
-                    fieldName="eMail"
-                    placeholder="Почта"
-                  />
-                </Descriptions.Item>
-                <Descriptions.Item label="Адрес">
-                  <ContractorEditableField
-                    defaultValue={contractor.contacts.address}
-                    editMode={editMode}
-                    control={control}
-                    //@ts-ignore
-                    error={errors.address}
-                    fieldName="address"
-                    placeholder="Адрес"
-                  />
-                </Descriptions.Item>
-
-                <Descriptions.Item label="Телефон">
-                  <ContractorEditableField
-                    defaultValue={`+${contractor.phoneNumber}`}
-                    editMode={editMode}
-                    control={control}
-                    error={errors.phoneNumber}
-                    fieldName="phoneNumber"
-                    placeholder="Телефон"
-                    maxLength={12}
-                  />
-                </Descriptions.Item>
-                <Descriptions.Item label="Идентификатор контрагента">
-                  {contractor.id}
-                </Descriptions.Item>
-              </Descriptions>
+              <ContractorDescription
+                editMode={editMode}
+                handleSelectRegType={handleSelectRegType}
+                registeringType={registeringType}
+                contractor={contractor}
+                control={control}
+                errors={errors}
+                toggleShowMap={toggleShowMap}
+              />
             </PageHeader>
           </div>
           <ContractorInfoBody
@@ -393,8 +368,11 @@ const ContractorPage = () => {
             categoriesTree={categoriesTree}
             selectedCategories={selectedCategories}
             handleSelectCategories={handleSelectCategories}
-            images={contractor.attachments}
+            images={contractorImages}
             registeringType={registeringType}
+            handleRemoveImage={handleRemoveImage}
+            handleAddImage={handleUploadImage}
+            imageUploading={contractorImageUploading}
           />
         </>
       )}

@@ -15,10 +15,10 @@ import { AppAlert, AppPreloader, SelectParentCategory } from "../../components";
 import {
   categoriesActions,
   createCategory,
-  getAllCategories,
 } from "../../store/actions/categories";
-import { ActionStatusEnum, AddCategoryFormData } from "../../types";
+import { ActionStatusEnum } from "../../models/types";
 import { categorySchema } from "../../utils/validatorsSchemes";
+import { AddCategoryFormData } from "../../models/Categories";
 
 const { Content } = Layout;
 const { Text, Title } = Typography;

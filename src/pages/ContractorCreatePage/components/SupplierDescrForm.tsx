@@ -4,7 +4,7 @@ import {
   CustomerDescrFormDataType,
   SupplierDescrFormDataType,
   SupplierFieldsNameType,
-} from "../../../types";
+} from "../../../models/Contractors";
 import ContractorField from "./ContractorField";
 
 const fields = [

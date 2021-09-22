@@ -1,15 +1,15 @@
-import { Card, Divider, TreeSelect, Image } from "antd";
+import { Card, Divider, TreeSelect } from "antd";
 import { DataNode } from "antd/lib/tree";
 import React from "react";
 import { Control, FieldError } from "react-hook-form";
-import { baseURL } from "../../../api/axios";
-import { UploadFileForm } from "../../../components";
+import { ImagesList, UploadFileForm } from "../../../components";
 import { AttachmentOutType } from "../../../models/Attachments";
 import {
   ContractorTypesEnum,
   CustomerDescrFormDataType,
   SupplierDescrFormDataType,
-} from "../../../types";
+} from "../../../models/Contractors";
+
 import ContractorEditableField from "./ContractorEditableField";
 
 type ContractorInfoBodyPropsType = {
@@ -23,6 +23,9 @@ type ContractorInfoBodyPropsType = {
   categoriesTree: DataNode[];
   selectedCategories: number[];
   handleSelectCategories: (value: number[]) => void;
+  handleRemoveImage: (imageId: number) => void;
+  handleAddImage: (e: Event) => void;
+  imageUploading: boolean;
   images: AttachmentOutType[];
   registeringType: ContractorTypesEnum;
 };
@@ -37,6 +40,9 @@ const ContractorInfoBody: React.FC<ContractorInfoBodyPropsType> = ({
   categoriesTree,
   selectedCategories,
   handleSelectCategories,
+  handleRemoveImage,
+  handleAddImage,
+  imageUploading,
   images,
   registeringType,
 }) => {
@@ -74,36 +80,22 @@ const ContractorInfoBody: React.FC<ContractorInfoBodyPropsType> = ({
           </>
         )}
         <Divider>Фото</Divider>
-        {editMode ? (
-          <UploadFileForm onChange={() => {}} isUploading={true} />
-        ) : (
-          <ContractorImageList images={images} />
-        )}
+        <div className="contractor__images">
+          <ImagesList
+            removeImage={handleRemoveImage}
+            images={images}
+            editMode={editMode}
+          />
+          {editMode && (
+            <UploadFileForm
+              onChange={handleAddImage}
+              isUploading={imageUploading}
+            />
+          )}
+        </div>
       </Card>
     </div>
   );
 };
-
-type ContractorImageListPropsType = {
-  images: AttachmentOutType[];
-};
-
-const ContractorImageList: React.FC<ContractorImageListPropsType> = React.memo(
-  ({ images }) => {
-    return (
-      <div className="contractor__images">
-        {images &&
-          images.map((img, index) => (
-            <Image
-              key={index}
-              width={200}
-              src={`${baseURL}${img.attachmentLink}`}
-              className="contractor__image"
-            />
-          ))}
-      </div>
-    );
-  }
-);
 
 export default React.memo(ContractorInfoBody);

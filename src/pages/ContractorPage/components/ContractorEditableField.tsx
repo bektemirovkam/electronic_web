@@ -4,10 +4,10 @@ import { Controller } from "react-hook-form";
 import {
   CustomerDescrFormDataType,
   CustomerFieldsNameType,
-  EditableFieldPropsType,
   SupplierDescrFormDataType,
   SupplierFieldsNameType,
-} from "../../../types";
+} from "../../../models/Contractors";
+import { EditableFieldPropsType } from "../../../models/types";
 
 const { Text } = Typography;
 

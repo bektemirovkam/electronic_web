@@ -1,6 +1,6 @@
 import { Button } from "antd";
 import React from "react";
-import { CategoryType } from "../../../types";
+import { CategoryType } from "../../../models/Categories";
 
 type CategoryActionsPropsType = {
   editMode: boolean;

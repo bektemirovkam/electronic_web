@@ -1,6 +1,6 @@
 import { Alert } from "antd";
 import React from "react";
-import { ActionStatusEnum } from "../types";
+import { ActionStatusEnum } from "../models/types";
 
 type AlertPropsType = {
   status: string;

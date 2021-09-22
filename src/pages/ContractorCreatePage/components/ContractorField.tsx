@@ -5,7 +5,7 @@ import {
   CustomerDescrFormDataType,
   SupplierDescrFormDataType,
   SupplierFieldsNameType,
-} from "../../../types";
+} from "../../../models/Contractors";
 
 type ContractorFieldPropsType = {
   subtitle: string;

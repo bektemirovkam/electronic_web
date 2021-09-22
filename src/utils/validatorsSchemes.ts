@@ -43,6 +43,7 @@ export const supplierSchema = yup.object().shape({
     .max(150, "Максимальная длина 150 символов")
     .required("Обязательное поле"),
   webSite: yup.string().max(50, "Максимальная длина 50 символов"),
+  // .url("Введите корректный URL"), //TODO: нужна проверка?
   eMail: yup
     .string()
     .max(50, "Максимальная длина 50 символов")

@@ -173,6 +173,7 @@ body {
   &__images-list {
     display: flex;
     align-items: end;
+    flex-wrap: wrap;
   }
   &__image-wrapper {
     position: relative;
@@ -185,6 +186,7 @@ body {
   }
   &__image {
     padding: 5px;
+    max-height: 200px;
   }
   &__numeric-fields {
     display: flex;
@@ -211,6 +213,19 @@ body {
   }
   &__save-btn {
     margin-top: 10px;
+  }
+  &__tab-descr {
+  }
+  &__tag {
+    margin-bottom: 3px;
+  }
+  &__expanded {
+  }
+  &__expanded-actions {
+    padding: 10px 0px;
+  }
+  &__expanded-btn {
+    margin-right: 10px;
   }
 }
 
@@ -265,8 +280,25 @@ body {
   &__body {
     padding: 24px;
   }
+  &__images {
+    display: flex;
+    flex-direction: column;
+  }
   &__image {
     padding: 5px;
+  }
+  &__tab-descr {
+  }
+  &__tag {
+    margin-bottom: 3px;
+  }
+  &__expanded {
+  }
+  &__expanded-actions {
+    padding: 10px 0px;
+  }
+  &__expanded-btn {
+    margin-right: 10px;
   }
 }
 .statistic {
@@ -290,7 +322,6 @@ body {
 }
 .upload {
   margin: 5px 0;
-  padding: 5px;
   &__btn {
     width: 104px;
     height: 104px;
@@ -313,5 +344,11 @@ body {
     justify-content: center;
     flex-direction: column;
     height: 100%;
+  }
+}
+.filter {
+  margin-bottom: 15px;
+  &__input {
+    width: 400px;
   }
 }

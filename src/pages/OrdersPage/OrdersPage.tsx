@@ -1,5 +1,5 @@
-import React from "react";
-import { Layout, Typography, BackTop } from "antd";
+import React, { ChangeEvent } from "react";
+import { Layout, BackTop, Table, Tag, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -8,30 +8,103 @@ import {
   getFilteredOrdersListState,
   getOrdersLoadingState,
 } from "../../store/selectors/orders";
-import {
-  ActionStatusEnum,
-  DirectionType,
-  OrdersQueryFilterType,
-  OrderType,
-  SortByOrdersFieldsType,
-} from "../../types";
+import { ActionStatusEnum } from "../../models/types";
 import {
   deleteOrder,
   getOrders,
   ordersActions,
 } from "../../store/actions/orders";
-import { AppAlert, AppPreloader, OrderItem } from "../../components";
+import { AppAlert, AppPreloader, AppSearchField } from "../../components";
 import { useHistory, useLocation } from "react-router-dom";
+import {
+  OrdersQueryFilterType,
+  OrderStatusEnum,
+  OrderType,
+} from "../../models/Orders";
+import { formatDate } from "../../utils/formatter";
+import { ColumnsType } from "antd/lib/table";
+import { CategoryOutType } from "../../models/Categories";
 
 const { Content } = Layout;
-const { Text } = Typography;
+
+const columns: ColumnsType<OrderType> = [
+  {
+    title: "Статус",
+    dataIndex: "orderStatus",
+    render: (status: OrderStatusEnum) => {
+      const colors = {
+        [OrderStatusEnum.NEW]: "green",
+        [OrderStatusEnum.ARCHIVED]: "geekblue",
+        [OrderStatusEnum.DELETED]: "volcano",
+      };
+
+      return (
+        <Tag color={colors[status]} key={status}>
+          {status}
+        </Tag>
+      );
+    },
+  },
+  {
+    title: "Заголовок",
+    dataIndex: "title",
+    sorter: {
+      compare: (a, b) => a.title.localeCompare(b.title),
+    },
+  },
+  {
+    title: "Дата создания",
+    dataIndex: "creationDate",
+    sorter: {
+      compare: (a, b) => a.creationDate - b.creationDate,
+    },
+    render: (data: number) => formatDate(data),
+    defaultSortOrder: "descend",
+  },
+  {
+    title: "Дата закрытия",
+    dataIndex: "actualDate",
+    sorter: {
+      compare: (a, b) => a.actualDate - b.actualDate,
+    },
+    render: (data: number) => formatDate(data),
+  },
+  {
+    title: "Категории",
+    dataIndex: "categories",
+    render: (categories: CategoryOutType[]) => {
+      return (
+        <>
+          {categories
+            .filter((category) => category.parentId === 0)
+            .map((category) => (
+              <Tag
+                color="blue"
+                key={category.categoryId}
+                className="order__tag"
+              >
+                {category.categoryName}
+              </Tag>
+            ))}
+        </>
+      );
+    },
+  },
+  {
+    title: "Цена (тг)",
+    dataIndex: "totalSum",
+    sorter: {
+      compare: (a, b) => a.totalSum - b.totalSum,
+    },
+  },
+  {
+    title: "Сроки",
+    dataIndex: "comment",
+  },
+];
 
 const OrdersPage = () => {
   const [searchText, setSearchText] = React.useState<string>("");
-  const [showFilter, setShowFilter] = React.useState<boolean>(false);
-
-  const [direction, setDirection] = React.useState<DirectionType>("asc");
-  const [sortBy, setSortBy] = React.useState<SortByOrdersFieldsType>("title");
 
   const useQuery = () => {
     return new URLSearchParams(useLocation().search);
@@ -56,10 +129,10 @@ const OrdersPage = () => {
     dispatch(ordersActions.setOrdersErrorMessage(null));
   }, [dispatch]);
 
-  const fetchData = React.useCallback(() => {
-    // для кнопки обновить
-    dispatch(getOrders());
-  }, [dispatch]);
+  // const fetchData = React.useCallback(() => {
+  //   // для кнопки обновить
+  //   dispatch(getOrders());
+  // }, [dispatch]);
 
   React.useEffect(() => {
     dispatch(getOrders());
@@ -79,6 +152,10 @@ const OrdersPage = () => {
     history.push(`orders/${order.id}`);
   };
 
+  const handleChangeSearchText = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.currentTarget.value);
+  };
+
   if (ordersLoading) {
     return <AppPreloader size="large" />;
   }
@@ -91,19 +168,38 @@ const OrdersPage = () => {
         successMessage="Заявка успешно удалена"
         status={orderActionStatus}
       />
-      <div className="orders">
-        {orders &&
-          orders.map((order) => {
-            return (
-              <OrderItem
-                key={String(order.id)}
-                onDelete={handleDeleteOrder}
-                onView={handleViewOrder}
-                order={order}
-              />
-            );
-          })}
-      </div>
+      <AppSearchField
+        value={searchText}
+        onChange={handleChangeSearchText}
+        placeholder="Найти по заголовку"
+      />
+      <Table
+        columns={columns}
+        dataSource={orders}
+        rowKey={"id"}
+        expandable={{
+          expandedRowRender: (order) => (
+            <div className="order__expanded">
+              <p className="order__tab-descr">{order.description}</p>
+              <div className="order__expanded-action">
+                <Button
+                  className="order__expanded-btn"
+                  onClick={() => handleViewOrder(order)}
+                >
+                  Посмотреть
+                </Button>
+                <Button
+                  className="order__expanded-btn"
+                  onClick={() => handleDeleteOrder(order.id)}
+                  danger
+                >
+                  Удалить
+                </Button>
+              </div>
+            </div>
+          ),
+        }}
+      />
       <BackTop />
     </Content>
   );

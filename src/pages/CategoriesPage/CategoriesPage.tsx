@@ -13,12 +13,12 @@ import {
 import {
   categoriesActions,
   deleteCategoryById,
-  getAllCategories,
   updateCategoryById,
 } from "../../store/actions/categories";
 import { AppAlert, AppPreloader, SelectParentCategory } from "../../components";
-import { ActionStatusEnum, CategoryType } from "../../types";
+import { ActionStatusEnum } from "../../models/types";
 import { MainCategoryActions, CategoryEditableField } from "./components";
+import { CategoryType } from "../../models/Categories";
 
 const { Content } = Layout;
 const { Text } = Typography;

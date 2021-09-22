@@ -1,34 +1,43 @@
 import React from "react";
-import { Layout, PageHeader, Button, Descriptions } from "antd";
+import { Layout, PageHeader, Button, message } from "antd";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { orderSchema } from "../../utils/validatorsSchemes";
-import { NavLink, useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import {
-  ActionStatusEnum,
-  DescriptionOrderFormData,
-  OrderStatusEnum,
-} from "../../types";
+import { ActionStatusEnum } from "../../models/types";
 import {
   getCurrentOrderState,
   getOrderActionStatusState,
+  getOrderImagesLoadingState,
+  getOrderImagesState,
   getOrdersErrorMessageState,
   getOrdersLoadingState,
 } from "../../store/selectors/orders";
 import {
+  addOrderImage,
   deleteOrder,
   getOrderById,
   ordersActions,
+  removeOrderImage,
   updateOrder,
 } from "../../store/actions/orders";
 import { AppAlert, AppPreloader } from "../../components";
 
-import { OrderEditableField, OrderInfoBody } from "./components";
+import {
+  OrderDescription,
+  OrderEditableField,
+  OrderInfoBody,
+} from "./components";
 import { getCategoriesTreeDataState } from "../../store/selectors/categories";
-import { formatDate } from "../../utils/formatDate";
+import getBase64 from "../../utils/getBase64";
+import { AttachmentType } from "../../models/Attachments";
+import {
+  AddOrderFormData,
+  DescriptionOrderFormData,
+} from "../../models/Orders";
 
 const { Content } = Layout;
 
@@ -51,6 +60,9 @@ const OrderPage = () => {
   const orderError = useSelector(getOrdersErrorMessageState);
   const orderLoadingState = useSelector(getOrdersLoadingState);
 
+  const orderImages = useSelector(getOrderImagesState);
+  const orderImageUploading = useSelector(getOrderImagesLoadingState);
+
   const categoriesTree = useSelector(getCategoriesTreeDataState);
 
   const { id }: { id?: string } = useParams();
@@ -61,6 +73,7 @@ const OrderPage = () => {
   const clearState = React.useCallback(() => {
     dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.NEVER));
     dispatch(ordersActions.setCurrentOrder(null));
+    dispatch(ordersActions.clearOrderImages());
   }, [dispatch]);
 
   const toggleEditMode = () => {
@@ -82,8 +95,9 @@ const OrderPage = () => {
       setSelectedCategories(
         order.categories?.map((category) => category.categoryId)
       );
+      dispatch(ordersActions.setOrderImages(order.attachments));
     }
-  }, [order]);
+  }, [order, dispatch]);
 
   React.useEffect(() => {
     // ВО ВРЕМЯ УДАЛЕНИЯ
@@ -97,17 +111,14 @@ const OrderPage = () => {
       const categories = selectedCategories.map((categoryId) => ({
         categoryId,
       }));
-      const updatedOrder = {
-        id: order.id,
-        creationDate: order.creationDate,
-        actualDate: order.actualDate,
+      const updatedOrder: AddOrderFormData = {
+        ...order,
         title: formData.title,
         description: formData.description,
-        orderStatus: OrderStatusEnum.NEW,
         totalSum: formData.totalSum,
         comment: formData.comment,
         contractors: order.contractors,
-        attachments: [],
+        attachments: orderImages.map((image) => ({ attachmentId: image.id })),
         customerId: 1,
         categories,
       };
@@ -129,11 +140,62 @@ const OrderPage = () => {
     }
   };
 
+  const handleCancelEdit = () => {
+    toggleEditMode();
+    if (order) {
+      setSelectedCategories(
+        order.categories?.map((category) => category.categoryId)
+      );
+      dispatch(ordersActions.clearOrderImages());
+      dispatch(ordersActions.setOrderImages(order.attachments));
+    }
+  };
+
+  const handleUploadImage = async (e: Event) => {
+    const target = e.currentTarget as HTMLInputElement;
+    const file = target.files?.[0];
+
+    if (file) {
+      if (
+        file.type !== "image/png" &&
+        file.type !== "image/jpeg" &&
+        file.type !== "image/jpg"
+      ) {
+        return message.error(`${file.name} не является картинкой`);
+      } else {
+        const base64 = await getBase64(file);
+        const ext = file.name.split(".").pop();
+        const name = file.name;
+
+        if (base64 && ext && name) {
+          const image: AttachmentType = {
+            name: name,
+            ext: ext,
+            content: base64.split(",")[1],
+          };
+          dispatch(addOrderImage(image));
+        }
+      }
+    }
+  };
+
+  const handleRemoveImage = (imageId: number) => {
+    if (order) {
+      dispatch(removeOrderImage(order.id, imageId));
+    }
+  };
+
   const editActionsButtons = [
-    <Button key="1" onClick={onSubmit}>
+    <Button
+      key="1"
+      onClick={onSubmit}
+      disabled={
+        Object.keys(errors).length !== 0 || selectedCategories.length === 0
+      }
+    >
       Сохранить
     </Button>,
-    <Button key="2" onClick={toggleEditMode} danger>
+    <Button key="2" onClick={handleCancelEdit} danger>
       Отменить
     </Button>,
   ];
@@ -190,61 +252,26 @@ const OrderPage = () => {
               }
               extra={editMode ? editActionsButtons : actionsButtons}
             >
-              <Descriptions size="small" column={3}>
-                <Descriptions.Item label="Создана">
-                  {formatDate(order.creationDate)}
-                </Descriptions.Item>
-                <Descriptions.Item label="Автор">
-                  <NavLink to="/contractors/2">
-                    {order.contractors?.length > 0
-                      ? order.contractors[0].contractorName
-                      : "Не известный заказчик"}
-                  </NavLink>
-                </Descriptions.Item>
-                <Descriptions.Item label="Сроки">
-                  <OrderEditableField
-                    defaultValue={order.comment}
-                    editMode={editMode}
-                    control={control}
-                    error={errors.title}
-                    fieldName="comment"
-                    placeholder="Сроки"
-                  />
-                </Descriptions.Item>
-
-                <Descriptions.Item label="Закроется">
-                  {formatDate(order.actualDate)}
-                </Descriptions.Item>
-                <Descriptions.Item label="Чаты">
-                  <NavLink to="/">Чаты</NavLink>
-                </Descriptions.Item>
-                <Descriptions.Item label="Цена">
-                  <OrderEditableField
-                    isNumberInput
-                    defaultValue={order.totalSum}
-                    editMode={editMode}
-                    control={control}
-                    error={errors.totalSum}
-                    fieldName="totalSum"
-                    placeholder="Цена"
-                  />
-                </Descriptions.Item>
-                <Descriptions.Item label="Номер заявки">
-                  {order.id}
-                </Descriptions.Item>
-              </Descriptions>
+              <OrderDescription
+                order={order}
+                editMode={editMode}
+                errors={errors}
+                control={control}
+              />
             </PageHeader>
           </div>
           <OrderInfoBody
             categoriesTree={categoriesTree}
             selectedCategories={selectedCategories}
             handleSelectCategories={handleSelectCategories}
+            handleRemoveImage={handleRemoveImage}
+            handleAddImage={handleUploadImage}
             editMode={editMode}
             defaultValue={order.description}
             error={errors.description}
-            images={order.attachments}
+            images={orderImages}
             control={control}
-            orderId={order.id}
+            imageUploading={orderImageUploading}
           />
         </>
       )}

@@ -1,16 +1,6 @@
 import React from "react";
-import {
-  Button,
-  Card,
-  Form,
-  Input,
-  InputNumber,
-  Layout,
-  Typography,
-  TreeSelect,
-  message,
-} from "antd";
-import { Controller, useForm } from "react-hook-form";
+import { Button, Card, Layout, Typography, TreeSelect, message } from "antd";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -25,12 +15,9 @@ import {
   addOrderImage,
   createOrder,
   ordersActions,
+  removeNewOrderImage,
 } from "../../store/actions/orders";
-import {
-  ActionStatusEnum,
-  DescriptionOrderFormData,
-  OrderStatusEnum,
-} from "../../types";
+import { ActionStatusEnum } from "../../models/types";
 import {
   getCurrentOrderState,
   getOrderActionStatusState,
@@ -48,9 +35,14 @@ import {
 import { categoriesActions } from "../../store/actions/categories";
 import getBase64 from "../../utils/getBase64";
 import { AttachmentType } from "../../models/Attachments";
+import { OrderCreateForm } from "./components";
+import {
+  AddOrderFormData,
+  DescriptionOrderFormData,
+} from "../../models/Orders";
 
 const { Content } = Layout;
-const { Text, Title } = Typography;
+const { Title } = Typography;
 const { SHOW_ALL } = TreeSelect;
 
 const OrderCreatePage = () => {
@@ -84,6 +76,7 @@ const OrderCreatePage = () => {
   const clearOrderState = React.useCallback(() => {
     dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.NEVER));
     dispatch(ordersActions.setOrdersErrorMessage(null));
+    dispatch(ordersActions.clearOrderImages());
   }, [dispatch]);
 
   const clearCategoriesState = React.useCallback(() => {
@@ -110,12 +103,13 @@ const OrderCreatePage = () => {
     setSelectedCategories(value);
   };
 
+  const handleRemoveImage = (imageId: number) => {
+    dispatch(removeNewOrderImage(imageId));
+  };
+
   const handleUploadImage = async (e: Event) => {
     const target = e.currentTarget as HTMLInputElement;
     const file = target.files?.[0];
-
-    //TODO: сделать проверку на расширения regex /\.(gif|jpg|jpeg|png|bmp|GIF|JPG|PNG)$/.test(file.name)
-    //TODO: content: base64 as string проверить
 
     if (file) {
       if (
@@ -133,7 +127,7 @@ const OrderCreatePage = () => {
           const image: AttachmentType = {
             name: name,
             ext: ext,
-            content: base64 as string,
+            content: base64.split(",")[1],
           };
           dispatch(addOrderImage(image));
         }
@@ -146,14 +140,15 @@ const OrderCreatePage = () => {
       categoryId,
     }));
 
-    const newOrder = {
+    const newOrder: AddOrderFormData = {
       title: formData.title,
       description: formData.description,
       comment: formData.comment,
       totalSum: formData.totalSum,
-      orderStatus: OrderStatusEnum.NEW,
       contractors: [],
-      attachments: [] as [],
+      attachments: orderImages.map((image) => ({
+        attachmentId: image.id,
+      })),
       customerId: 1,
       categories,
     };
@@ -183,96 +178,7 @@ const OrderCreatePage = () => {
         <Title level={3} className="title">
           Создание заявки
         </Title>
-        <Controller
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field: { onChange, value } }) => (
-            <Form.Item
-              validateStatus={errors.title ? "error" : "success"}
-              help={errors.title?.message}
-              className="input order__title-input"
-              required
-            >
-              <Text className="subtitle">Заголовок</Text>
-              <Input
-                placeholder="Заголовок заявки"
-                value={value}
-                onChange={onChange}
-              />
-            </Form.Item>
-          )}
-          name="title"
-          defaultValue=""
-        />
-        <div className="order__numeric-fields">
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-            }}
-            render={({ field: { onChange, value } }) => (
-              <Form.Item
-                validateStatus={errors.comment ? "error" : "success"}
-                help={errors.comment?.message}
-                className="order__comment-input input"
-                required
-              >
-                <Text className="subtitle">Сроки</Text>
-                <Input placeholder="Сроки" value={value} onChange={onChange} />
-              </Form.Item>
-            )}
-            name="comment"
-            defaultValue=""
-          />
-
-          <Controller
-            control={control}
-            rules={{
-              required: true,
-            }}
-            render={({ field: { onChange, value } }) => (
-              <Form.Item
-                validateStatus={errors.totalSum ? "error" : "success"}
-                help={errors.totalSum?.message}
-                className="input order__totalsum-input"
-                required
-              >
-                <div className="order__totalsum-field">
-                  <Text className="subtitle">Цена (тг)</Text>
-                  <InputNumber value={value} onChange={onChange} />
-                </div>
-              </Form.Item>
-            )}
-            name="totalSum"
-            defaultValue={0}
-          />
-        </div>
-
-        <Controller
-          control={control}
-          rules={{
-            required: false,
-          }}
-          render={({ field: { onChange, value } }) => (
-            <Form.Item
-              validateStatus={errors.description ? "error" : "success"}
-              help={errors.description?.message}
-              className="input order__descr-input"
-              required
-            >
-              <Text className="subtitle">Описание</Text>
-              <Input.TextArea
-                placeholder="Описание"
-                value={value}
-                onChange={onChange}
-              />
-            </Form.Item>
-          )}
-          name="description"
-          defaultValue=""
-        />
+        <OrderCreateForm control={control} errors={errors} />
         <TreeSelect
           treeData={categoriesTree}
           value={selectedCategories}
@@ -283,7 +189,11 @@ const OrderCreatePage = () => {
           style={{ width: "100%", marginBottom: 10 }}
           maxTagCount={5}
         />
-        <ImagesList images={orderImages} editMode={true} />
+        <ImagesList
+          removeImage={handleRemoveImage}
+          images={orderImages}
+          editMode={true}
+        />
         <UploadFileForm
           onChange={handleUploadImage}
           isUploading={orderUploading}
@@ -291,7 +201,9 @@ const OrderCreatePage = () => {
         <Button
           className="order__save-btn"
           onClick={onSubmit}
-          disabled={Object.keys(errors).length > 0}
+          disabled={
+            Object.keys(errors).length > 0 || selectedCategories.length === 0
+          }
         >
           Сохранить
         </Button>

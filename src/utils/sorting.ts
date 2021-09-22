@@ -1,11 +1,10 @@
+import { OrderType, SortByOrdersFieldsType } from "../models/Orders";
 import {
   DescendingComparatorType,
   DirectionType,
   GetComparatorType,
-  OrderType,
-  SortByOrdersFieldsType,
   StableSortType,
-} from "../types";
+} from "../models/types";
 
 export const getOrderComparator: GetComparatorType<
   OrderType,

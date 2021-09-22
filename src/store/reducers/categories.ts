@@ -1,6 +1,6 @@
-import { ActionStatusEnum } from "./../../types";
-import { CategoryType } from "../../types";
+import { ActionStatusEnum } from "../../models/types";
 import { CategoriesActionTypes } from "../actions/categories";
+import { CategoryType } from "../../models/Categories";
 
 const initialState = {
   categories: null as CategoryType[] | null | undefined,

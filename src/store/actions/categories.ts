@@ -1,13 +1,10 @@
-import {
-  ActionStatusEnum,
-  AddCategoryFormData,
-  CategoryType,
-} from "./../../types";
+import { ActionStatusEnum } from "../../models/types";
 import { ThunkAction } from "redux-thunk";
-import { ActionsCreatorsTypes } from "../../types";
+import { ActionsCreatorsTypes } from "../../models/types";
 import { AppStateType } from "../store";
 import { categoriesApi } from "../../services/categoriesApi";
 import { Dispatch } from "redux";
+import { AddCategoryFormData, CategoryType } from "../../models/Categories";
 
 export const categoriesActions = {
   setAllCategories: (categories: CategoryType[]) => {

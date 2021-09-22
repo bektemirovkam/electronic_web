@@ -7,7 +7,7 @@ import {
   WithGoogleMapProps,
   WithScriptjsProps,
 } from "react-google-maps";
-import { CoordinatesType } from "../types";
+import { CoordinatesType } from "../models/Contractors";
 
 type AppMapPropsType = {
   handleSelectCoords: (latLng: google.maps.LatLng | null) => void;
@@ -26,8 +26,19 @@ const AppMap: React.ComponentClass<
 
     return (
       <GoogleMap
-        defaultZoom={7}
-        defaultCenter={{ lat: 51.2146889644867, lng: 68.80153486533352 }}
+        defaultZoom={
+          marker ? (marker.coordinatesLatitude.length > 0 ? 12 : 7) : 7
+        }
+        defaultCenter={
+          marker
+            ? marker.coordinatesLatitude.length > 0
+              ? {
+                  lat: Number(marker.coordinatesLatitude),
+                  lng: Number(marker.coordinatesLongitude),
+                }
+              : { lat: 51.2146889644867, lng: 68.80153486533352 }
+            : { lat: 51.2146889644867, lng: 68.80153486533352 }
+        }
         onClick={onMapClick}
       >
         {marker && (

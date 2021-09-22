@@ -7,6 +7,7 @@ import {
   Typography,
   TreeSelect,
   RadioChangeEvent,
+  message,
 } from "antd";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,16 +17,10 @@ import {
   AppAlert,
   AppMap,
   AppPreloader,
+  ImagesList,
   UploadFileForm,
 } from "../../components";
-import {
-  ActionStatusEnum,
-  AddContractorFormDataType,
-  ContractorTypesEnum,
-  CoordinatesType,
-  CustomerDescrFormDataType,
-  SupplierDescrFormDataType,
-} from "../../types";
+import { ActionStatusEnum } from "../../models/types";
 import { customerSchema, supplierSchema } from "../../utils/validatorsSchemes";
 import {
   getCategoriesActionStatusState,
@@ -35,10 +30,14 @@ import {
 import { categoriesActions } from "../../store/actions/categories";
 import { useHistory } from "react-router-dom";
 import {
+  addContractorImage,
   contractorActions,
   createContractorProfile,
+  removeNewContractorImage,
 } from "../../store/actions/contractors";
 import {
+  getContractorImagesState,
+  getContractorImageUploadingState,
   getContractorsActionStatusState,
   getContractorsErrorMessage,
   getContractorsLoadingState,
@@ -46,6 +45,15 @@ import {
 } from "../../store/selectors/contractors";
 import { SupplierDescrForm } from "./components";
 import CustomerDescrForm from "./components/CustomerDescrForm";
+import getBase64 from "../../utils/getBase64";
+import { AttachmentType } from "../../models/Attachments";
+import {
+  AddContractorFormDataType,
+  ContractorTypesEnum,
+  CoordinatesType,
+  CustomerDescrFormDataType,
+  SupplierDescrFormDataType,
+} from "../../models/Contractors";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -79,6 +87,11 @@ const ContractorCreatePage = () => {
   const contractorLoading = useSelector(getContractorsLoadingState);
   const currentContractor = useSelector(getCurrentContractorState);
 
+  const contractorImages = useSelector(getContractorImagesState);
+  const contractorImageUploading = useSelector(
+    getContractorImageUploadingState
+  );
+
   const categoriesTree = useSelector(getCategoriesTreeDataState);
   const categoriesError = useSelector(getCategoriesErrorMessageState);
   const categoriesActionStatus = useSelector(getCategoriesActionStatusState);
@@ -91,6 +104,7 @@ const ContractorCreatePage = () => {
       contractorActions.setContractorsActionstatus(ActionStatusEnum.NEVER)
     );
     dispatch(contractorActions.setContractorsErrorMessage(null));
+    dispatch(contractorActions.clearContractorImages());
   }, [dispatch]);
 
   const clearCategoriesState = React.useCallback(() => {
@@ -148,7 +162,9 @@ const ContractorCreatePage = () => {
       },
       contractorType: registeringType,
       categories,
-      attachments: [],
+      attachments: contractorImages.map((image) => ({
+        attachmentId: image.id,
+      })),
     };
     dispatch(createContractorProfile(newContractor));
   });
@@ -167,6 +183,38 @@ const ContractorCreatePage = () => {
       coordinatesLatitude: String(latLng?.lat()),
       coordinatesLongitude: String(latLng?.lng()),
     });
+  };
+
+  const handleRemoveImage = (imageId: number) => {
+    dispatch(removeNewContractorImage(imageId));
+  };
+
+  const handleUploadImage = async (e: Event) => {
+    const target = e.currentTarget as HTMLInputElement;
+    const file = target.files?.[0];
+
+    if (file) {
+      if (
+        file.type !== "image/png" &&
+        file.type !== "image/jpeg" &&
+        file.type !== "image/jpg"
+      ) {
+        return message.error(`${file.name} не является картинкой`);
+      } else {
+        const base64 = await getBase64(file);
+        const ext = file.name.split(".").pop();
+        const name = file.name;
+
+        if (base64 && ext && name) {
+          const image: AttachmentType = {
+            name: name,
+            ext: ext,
+            content: base64.split(",")[1],
+          };
+          dispatch(addContractorImage(image));
+        }
+      }
+    }
   };
 
   if (contractorLoading) {
@@ -248,7 +296,15 @@ const ContractorCreatePage = () => {
             {latLng ? "Изменить координаты" : "Отметить на карте"}
           </Button>
         )}
-        <UploadFileForm onChange={() => {}} isUploading={true} />
+        <ImagesList
+          removeImage={handleRemoveImage}
+          images={contractorImages}
+          editMode={true}
+        />
+        <UploadFileForm
+          onChange={handleUploadImage}
+          isUploading={contractorImageUploading}
+        />
         <Button
           className="order__save-btn"
           onClick={onSubmit}

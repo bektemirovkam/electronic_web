@@ -9,3 +9,7 @@ export const formatDate = (date: number) => {
 export const formatDateWithTime = (date: number) => {
   return moment(date).format("DD.MM.YYYY hh:mm");
 };
+
+export const truncateString = (str: string, n: number) => {
+  return str.length > n ? str.substr(0, n - 1) + "..." : str;
+};

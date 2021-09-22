@@ -4,6 +4,8 @@ import { useDispatch } from "react-redux";
 import { MainLayout } from "./layouts";
 import { getAllCategories } from "./store/actions/categories";
 
+//TODO: при входе обновлять профиль userProfile, если не получается то использовать из asyncstorage
+
 function App() {
   const dispatch = useDispatch();
 

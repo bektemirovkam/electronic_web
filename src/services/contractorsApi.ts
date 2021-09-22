@@ -1,5 +1,8 @@
 import { axios } from "../api/axios";
-import { AddContractorFormDataType, ContractorType } from "../types";
+import {
+  AddContractorFormDataType,
+  ContractorType,
+} from "../models/Contractors";
 
 export const contractorsApi = {
   // contractors
@@ -40,6 +43,18 @@ export const contractorsApi = {
   ): Promise<ContractorType[]> => {
     const { data } = await axios.get<ContractorType[]>(
       `/contractors/${contractorId}`
+    );
+    return data;
+  },
+
+  // contractors/{orderId}/attachments/{attachmentId}
+
+  removeContractorAttachment: async (
+    contractorId: number,
+    attachmentId: number
+  ): Promise<boolean> => {
+    const { data } = await axios.delete<boolean>(
+      `/contractors/${contractorId}/attachments/${attachmentId}`
     );
     return data;
   },

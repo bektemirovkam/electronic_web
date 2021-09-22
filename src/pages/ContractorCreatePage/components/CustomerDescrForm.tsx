@@ -3,7 +3,7 @@ import { Control, FieldError } from "react-hook-form";
 import {
   CustomerDescrFormDataType,
   CustomerFieldsNameType,
-} from "../../../types";
+} from "../../../models/Contractors";
 import ContractorField from "./ContractorField";
 
 const fields = [
