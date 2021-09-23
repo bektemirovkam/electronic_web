@@ -8,6 +8,7 @@ import {
   SupplierFieldsNameType,
 } from "../../../models/Contractors";
 import { EditableFieldPropsType } from "../../../models/types";
+import { truncateString } from "../../../utils/formatter";
 
 const { Text } = Typography;
 
@@ -58,6 +59,16 @@ const ContractorEditableField: React.FC<
         name={fieldName}
         defaultValue={defaultValue as string}
       />
+    );
+  }
+  if (fieldName === "eMail") {
+    return <a href={`mailto:${defaultValue}`}>{defaultValue}</a>;
+  }
+  if (fieldName === "webSite" && defaultValue) {
+    return (
+      <a href={defaultValue as string} target="_blank" rel="noreferrer">
+        {truncateString(defaultValue as string, 25)}
+      </a>
     );
   }
   return <Text>{defaultValue}</Text>;
