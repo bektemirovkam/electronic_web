@@ -99,3 +99,21 @@ export type ContractorsQueryFilterType =
   | "supplier"
   | "deleted"
   | null;
+
+export type UserOutType = {
+  id: number;
+  phoneNumber: string;
+  pushToken: string;
+  secretToken: string;
+  isBlocked: boolean;
+};
+export type UserInType = {
+  phoneNumber: string;
+  password?: string;
+  smsCode: string;
+  pushToken?: string;
+};
+export type UserCheckType = {
+  phoneNumber: string;
+  secretToken: string;
+};

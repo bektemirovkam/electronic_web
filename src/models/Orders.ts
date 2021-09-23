@@ -12,6 +12,7 @@ export type OrderType = {
   totalSum: number;
   orderStatus: OrderStatusEnum;
   customerId: number;
+  customerPhoneNumber: string;
   categories: CategoryOutType[];
   contractors: ContractorOutType[];
   attachments: AttachmentOutType[];

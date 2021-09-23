@@ -52,3 +52,8 @@ export type EditableFieldPropsType<T, F> = {
   currentValue?: string;
   maxLength?: number;
 };
+
+export type Result = {
+  id: number;
+  error: string;
+};
