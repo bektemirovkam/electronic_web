@@ -8,8 +8,6 @@ import { AttachmentOutType, AttachmentType } from "../../models/Attachments";
 import { attachmentsApi } from "../../services/attachmentsApi";
 import { AddOrderFormData, OrderType } from "../../models/Orders";
 
-// TODO: добавление/удаление вложений при создании и редактировании
-
 export const ordersActions = {
   setOrders: (orders: OrderType[]) => {
     return {

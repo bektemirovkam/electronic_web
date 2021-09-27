@@ -72,15 +72,18 @@ const columns: ColumnsType<ContractorType> = [
         <>
           {categories
             .filter((category) => category.parentId === 0)
-            .map((category) => (
-              <Tag
-                color="blue"
-                key={category.categoryId}
-                className="order__tag"
-              >
-                {category.categoryName}
-              </Tag>
-            ))}
+            .map((category) => {
+              console.log(category);
+              return (
+                <Tag
+                  color="blue"
+                  key={category.categoryId}
+                  className="order__tag"
+                >
+                  {category.categoryName}
+                </Tag>
+              );
+            })}
         </>
       );
     },

@@ -12,7 +12,7 @@ export const categoriesApi = {
     return data;
   },
   addCategory: async (
-    formData: AddCategoryFormData[]
+    formData: AddCategoryFormData
   ): Promise<CategoryType[]> => {
     const { data } = await axios.post<CategoryType[]>("categories", formData);
     return data;

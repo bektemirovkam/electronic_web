@@ -1,5 +1,5 @@
 import { AttachmentInType, AttachmentOutType } from "./Attachments";
-import { CategoryInType, CategoryOutType } from "./Categories";
+import { CategoryInType, CategoryOutType, CategoryType } from "./Categories";
 
 export type CoordinatesType = {
   coordinatesLatitude: string;
@@ -115,5 +115,9 @@ export type UserInType = {
 };
 export type UserCheckType = {
   phoneNumber: string;
+  secretToken: string;
+};
+export type UserCredentialsType = {
+  userName: string;
   secretToken: string;
 };

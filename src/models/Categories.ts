@@ -2,12 +2,6 @@ export type CategoryInType = {
   categoryId: number;
 };
 
-export type CategoryOutType = {
-  categoryId: number;
-  categoryName: string;
-  parentId: number;
-};
-
 export type CategoryType = {
   id: number;
   name: string;
@@ -18,4 +12,11 @@ export type CategoryType = {
 export type AddCategoryFormData = {
   name: string;
   parentId: number;
+  isDeleted?: boolean;
+};
+
+export type CategoryOutType = {
+  categoryId: number;
+  parentId: number;
+  categoryName: string;
 };

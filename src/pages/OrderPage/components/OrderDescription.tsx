@@ -28,11 +28,7 @@ const OrderDescription: React.FC<OrderDescriptionPropsType> = ({
         {formatDate(order.creationDate)}
       </Descriptions.Item>
       <Descriptions.Item label="Автор">
-        <NavLink to="/contractors/2">
-          {order.contractors?.length > 0
-            ? order.contractors[0].contractorName
-            : "Не известный заказчик"}
-        </NavLink>
+        <NavLink to={`/contractors/${order.customerId}`}>Заказчик</NavLink>
       </Descriptions.Item>
       <Descriptions.Item label="Сроки">
         <OrderEditableField

@@ -79,8 +79,6 @@ const showError = (text: string, dispatch: Dispatch) => {
   dispatch(categoriesActions.setCategoriesErrorMessage(text));
 };
 
-//TODO: как то проверять пришли ли данные без ошибки
-
 export const getAllCategories = (): ThunkAcionType => async (dispatch) => {
   try {
     dispatch(categoriesActions.setIsLoadingCategories(true));
@@ -118,19 +116,16 @@ export const deleteAllCategories = (): ThunkAcionType => async (dispatch) => {
   }
 };
 
-// TODO:
-// тут будет приходить не CategoryType а только name и parentID
 export const createCategory =
   (formData: AddCategoryFormData): ThunkAcionType =>
   async (dispatch) => {
     try {
       dispatch(categoriesActions.setIsLoadingCategories(true));
-      const createdCategory = await categoriesApi.addCategory([
-        {
-          name: formData.name,
-          parentId: Number(formData.parentId),
-        },
-      ]);
+      const createdCategory = await categoriesApi.addCategory({
+        name: formData.name,
+        parentId: Number(formData.parentId),
+        isDeleted: false,
+      });
 
       if (createdCategory.length > 0) {
         dispatch(

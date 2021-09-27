@@ -38,6 +38,7 @@ type ContractorDescriptionPropsType = {
         location?: FieldError;
       };
 };
+//TODO: сделать фильтр для заявок конкретного контрагента
 
 const ContractorDescription: React.FC<ContractorDescriptionPropsType> = ({
   editMode,
