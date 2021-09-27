@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/electronic_web/static/css/main.2325147c.chunk.css",
-    "main.js": "/electronic_web/static/js/main.3a218828.chunk.js",
-    "main.js.map": "/electronic_web/static/js/main.3a218828.chunk.js.map",
+    "main.js": "/electronic_web/static/js/main.1427dda4.chunk.js",
+    "main.js.map": "/electronic_web/static/js/main.1427dda4.chunk.js.map",
     "runtime-main.js": "/electronic_web/static/js/runtime-main.d5faee0f.js",
     "runtime-main.js.map": "/electronic_web/static/js/runtime-main.d5faee0f.js.map",
     "static/css/2.d26d1254.chunk.css": "/electronic_web/static/css/2.d26d1254.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.d26d1254.chunk.css",
     "static/js/2.40a9134b.chunk.js",
     "static/css/main.2325147c.chunk.css",
-    "static/js/main.3a218828.chunk.js"
+    "static/js/main.1427dda4.chunk.js"
   ]
 }
