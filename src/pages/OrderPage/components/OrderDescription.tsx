@@ -45,7 +45,7 @@ const OrderDescription: React.FC<OrderDescriptionPropsType> = ({
         {formatDate(order.actualDate)}
       </Descriptions.Item>
       <Descriptions.Item label="Чаты">
-        <NavLink to="/">Чаты</NavLink>
+        <NavLink to={`/orders/${order.id}/chats`}>Чаты</NavLink>
       </Descriptions.Item>
       <Descriptions.Item label="Цена">
         <OrderEditableField

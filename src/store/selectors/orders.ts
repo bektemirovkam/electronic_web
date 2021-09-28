@@ -64,3 +64,5 @@ export const getOrderImagesState = (state: AppStateType) =>
 
 export const getOrderImagesLoadingState = (state: AppStateType) =>
   getOrdersState(state).ordersLoading;
+export const getOrderChatsState = (state: AppStateType) =>
+  getOrdersState(state).orderChats;

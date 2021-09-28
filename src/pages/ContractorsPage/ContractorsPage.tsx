@@ -73,7 +73,6 @@ const columns: ColumnsType<ContractorType> = [
           {categories
             .filter((category) => category.parentId === 0)
             .map((category) => {
-              console.log(category);
               return (
                 <Tag
                   color="blue"
@@ -170,6 +169,7 @@ const ContractorsPage = () => {
         placeholder="Найти по названию организации"
       />
       <Table
+        showSorterTooltip={false}
         columns={columns}
         dataSource={contractors}
         rowKey={"id"}

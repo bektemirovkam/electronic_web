@@ -7,6 +7,8 @@ import { Dispatch } from "redux";
 import { AttachmentOutType, AttachmentType } from "../../models/Attachments";
 import { attachmentsApi } from "../../services/attachmentsApi";
 import { AddOrderFormData, OrderType } from "../../models/Orders";
+import { ChatType } from "../../models/Chats";
+import { chatsApi } from "../../services/chatsApi";
 
 export const ordersActions = {
   setOrders: (orders: OrderType[]) => {
@@ -90,6 +92,12 @@ export const ordersActions = {
   clearOrderImages: () => {
     return {
       type: "CLEAR_ORDER_IMAGES",
+    } as const;
+  },
+  setOrderChats: (orderChats: ChatType[] | null) => {
+    return {
+      type: "SET_ORDER_CHATS",
+      payload: { orderChats },
     } as const;
   },
 };
@@ -256,6 +264,26 @@ export const removeNewOrderImage =
       showError("Ошибка сети, попробуйте еще раз", dispatch);
     } finally {
       dispatch(ordersActions.setOrderImageUploading(false));
+    }
+  };
+
+export const getOrderChats =
+  (orderId: number): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(ordersActions.setOrdersLoading(true));
+
+      const chats = await chatsApi.getOrderChats(orderId);
+
+      if (chats) {
+        dispatch(ordersActions.setOrderChats(chats));
+      } else {
+        showError("Ошибка, попробуйте еще раз", dispatch);
+      }
+    } catch (error) {
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
+    } finally {
+      dispatch(ordersActions.setOrdersLoading(false));
     }
   };
 

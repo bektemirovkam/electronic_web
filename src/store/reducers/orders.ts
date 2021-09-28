@@ -1,4 +1,5 @@
 import { AttachmentOutType } from "../../models/Attachments";
+import { ChatType } from "../../models/Chats";
 import { OrderType } from "../../models/Orders";
 import { ActionStatusEnum } from "../../models/types";
 import { OrdersActionTypes } from "../actions/orders";
@@ -11,6 +12,7 @@ const initialState = {
   currentOrder: null as OrderType | null,
   orderImages: [] as AttachmentOutType[],
   orderImageUploading: false,
+  orderChats: null as ChatType[] | null,
 };
 
 type initStateType = typeof initialState;
@@ -25,7 +27,8 @@ const ordersReducer = (
     case "SET_ORDERS_ERROR":
     case "SET_ORDER_ACTION_STATUS":
     case "SET_CURRENT_ORDER":
-    case "SET_ORDER_IMAGE_UPLOADING": {
+    case "SET_ORDER_IMAGE_UPLOADING":
+    case "SET_ORDER_CHATS": {
       return {
         ...state,
         ...action.payload,

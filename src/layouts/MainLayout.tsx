@@ -15,6 +15,7 @@ import {
   CategoryCreatePage,
   DeletedCategoriesPage,
   ContractorPage,
+  OrderChatsPage,
 } from "../pages";
 
 const MainLayout = () => {
@@ -36,8 +37,12 @@ const MainLayout = () => {
             <Route exact path="/orders/create">
               <OrderCreatePage />
             </Route>
-            <Route path="/orders/:id">
+            <Route exact path="/orders/:id">
               <OrderPage />
+            </Route>
+
+            <Route exact path="/orders/:id/chats">
+              <OrderChatsPage />
             </Route>
 
             <Route exact path="/contractors">

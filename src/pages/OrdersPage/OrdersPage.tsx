@@ -174,6 +174,7 @@ const OrdersPage = () => {
         placeholder="Найти по заголовку"
       />
       <Table
+        showSorterTooltip={false}
         columns={columns}
         dataSource={orders}
         rowKey={"id"}

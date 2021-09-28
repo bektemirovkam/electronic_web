@@ -1,5 +1,5 @@
 import { AttachmentInType, AttachmentOutType } from "./Attachments";
-import { CategoryInType, CategoryOutType, CategoryType } from "./Categories";
+import { CategoryInType, CategoryOutType } from "./Categories";
 
 export type CoordinatesType = {
   coordinatesLatitude: string;
