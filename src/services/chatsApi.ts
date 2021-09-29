@@ -1,5 +1,5 @@
 import { axios } from "../api/axios";
-import { ChatMessageType, ChatType } from "../models/Chats";
+import { ChatMessageOutType, ChatType } from "../models/Chats";
 
 export const chatsApi = {
   // chats/{orderId}
@@ -14,8 +14,8 @@ export const chatsApi = {
   getAllChatMessage: async (
     orderId: number,
     chatId: number
-  ): Promise<ChatMessageType[]> => {
-    const { data } = await axios.get<ChatMessageType[]>(
+  ): Promise<ChatMessageOutType[]> => {
+    const { data } = await axios.get<ChatMessageOutType[]>(
       `chats/${orderId}/${chatId}`
     );
     return data;

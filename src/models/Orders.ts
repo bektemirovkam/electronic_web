@@ -18,6 +18,12 @@ export type OrderType = {
   attachments: AttachmentOutType[];
 };
 
+export type OrderNumberSortFieldsType =
+  | "actualDate"
+  | "creationDate"
+  | "totalSum";
+export type OrderStringSortFieldsType = "title";
+
 export enum OrderStatusEnum {
   NEW = "NEW",
   ARCHIVED = "ARCHIVED",

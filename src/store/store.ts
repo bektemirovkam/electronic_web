@@ -5,6 +5,7 @@ import {
   contractorsReducer,
   authReducer,
   ordersReducer,
+  chatsReducer,
 } from "./reducers";
 
 declare global {
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   categories: categoriesReducer,
   contractors: contractorsReducer,
   orders: ordersReducer,
+  chats: chatsReducer,
 });
 
 export type AppStateType = ReturnType<typeof rootReducer>;

@@ -83,7 +83,7 @@ const ContractorPage = () => {
 
   const categoriesTree = useSelector(getCategoriesTreeDataState);
 
-  const { id }: { id?: string } = useParams();
+  const { contractorId }: { contractorId?: string } = useParams();
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -106,11 +106,11 @@ const ContractorPage = () => {
   }, [dispatch]);
 
   React.useEffect(() => {
-    dispatch(getContractorById(Number(id)));
+    dispatch(getContractorById(Number(contractorId)));
     return () => {
       clearState();
     };
-  }, [clearState, dispatch, id]);
+  }, [clearState, dispatch, contractorId]);
 
   React.useEffect(() => {
     if (contractor) {

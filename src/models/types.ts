@@ -22,24 +22,6 @@ export type OtpFormDataType = {
   otp: string;
 };
 
-export type DirectionType = "asc" | "desc";
-
-export type GetComparatorType<T, D, S> = {
-  (direction: D, sortBy: S): ComparatorType<T>;
-};
-
-export type ComparatorType<T> = {
-  (a: T, b: T): number;
-};
-
-export type StableSortType<T> = {
-  (array: T[], comparator: ComparatorType<T>): T[];
-};
-
-export type DescendingComparatorType<T, S> = {
-  (a: T, b: T, sortBy: S): number;
-};
-
 export type EditableFieldPropsType<T, F> = {
   editMode: boolean;
   fieldName: F;

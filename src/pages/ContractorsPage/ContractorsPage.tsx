@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from "react";
 
-import { BackTop, Layout, Table, Tag, Button } from "antd";
+import { Layout, Table, Tag, Button, Space } from "antd";
 import { AppAlert, AppPreloader, AppSearchField } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -9,7 +9,7 @@ import {
   getFilteredContractorsListState,
   getContractorsLoadingState,
 } from "../../store/selectors/contractors";
-import { useHistory, useLocation } from "react-router-dom";
+import { NavLink, useHistory, useLocation } from "react-router-dom";
 import {
   contractorActions,
   deleteContractor,
@@ -17,89 +17,25 @@ import {
 } from "../../store/actions/contractors";
 import { ActionStatusEnum } from "../../models/types";
 import {
+  ContractorNumberSortFieldsType,
   ContractorsQueryFilterType,
+  ContractorStringSortFieldsType,
   ContractorType,
   ContractorTypesEnum,
 } from "../../models/Contractors";
-import { ColumnsType } from "antd/lib/table";
-import { CategoryOutType } from "../../models/Categories";
+
 const { Content } = Layout;
+const { Column } = Table;
 
-const columns: ColumnsType<ContractorType> = [
-  {
-    title: "Тип контрагента",
-    dataIndex: "contractorType",
-    render: (status: ContractorTypesEnum) => {
-      const colors = {
-        [ContractorTypesEnum.CUSTOMER]: "green",
-        [ContractorTypesEnum.SUPPLIER]: "geekblue",
-        [ContractorTypesEnum.UNKNOWN]: "gray",
-      };
+const getNumberSorter = (fieldName: ContractorNumberSortFieldsType) => ({
+  compare: (a: ContractorType, b: ContractorType) =>
+    a[fieldName] - b[fieldName],
+});
 
-      return (
-        <Tag color={colors[status]} key={status}>
-          {status === ContractorTypesEnum.CUSTOMER ? "Заказчик" : "Поставщик"}
-        </Tag>
-      );
-    },
-    sorter: {
-      compare: (a, b) => a.name.localeCompare(b.name),
-    },
-  },
-  {
-    title: "Название организации",
-    dataIndex: "name",
-    sorter: {
-      compare: (a, b) => a.name.localeCompare(b.name),
-    },
-  },
-  {
-    title: "Номер телефона",
-    dataIndex: "phoneNumber",
-  },
-  {
-    title: "Город",
-    dataIndex: "location",
-    sorter: {
-      compare: (a, b) => a.location.localeCompare(b.location),
-    },
-  },
-  {
-    title: "Категории",
-    dataIndex: "categories",
-    render: (categories: CategoryOutType[]) => {
-      return (
-        <>
-          {categories
-            .filter((category) => category.parentId === 0)
-            .map((category) => {
-              return (
-                <Tag
-                  color="blue"
-                  key={category.categoryId}
-                  className="order__tag"
-                >
-                  {category.categoryName}
-                </Tag>
-              );
-            })}
-        </>
-      );
-    },
-  },
-
-  {
-    title: "Контактное лицо",
-    dataIndex: "contactName",
-  },
-  {
-    title: "Рейтинг",
-    dataIndex: "rating",
-    sorter: {
-      compare: (a, b) => a.rating - b.rating,
-    },
-  },
-];
+const getStringSorter = (fieldName: ContractorStringSortFieldsType) => ({
+  compare: (a: ContractorType, b: ContractorType) =>
+    a[fieldName].localeCompare(b[fieldName]),
+});
 
 const ContractorsPage = () => {
   const [searchText, setSearchText] = React.useState<string>("");
@@ -170,7 +106,6 @@ const ContractorsPage = () => {
       />
       <Table
         showSorterTooltip={false}
-        columns={columns}
         dataSource={contractors}
         rowKey={"id"}
         expandable={{
@@ -195,8 +130,88 @@ const ContractorsPage = () => {
             </div>
           ),
         }}
-      />
-      <BackTop />
+      >
+        <Column<ContractorType>
+          title="Тип контрагента"
+          dataIndex="contractorType"
+          key="contractorType"
+          render={(_, contractor) => {
+            const colors = {
+              [ContractorTypesEnum.CUSTOMER]: "green",
+              [ContractorTypesEnum.SUPPLIER]: "geekblue",
+              [ContractorTypesEnum.UNKNOWN]: "gray",
+            };
+
+            return (
+              <Tag
+                color={colors[contractor.contractorType]}
+                key={contractor.contractorType}
+              >
+                {contractor.contractorType === ContractorTypesEnum.CUSTOMER
+                  ? "Заказчик"
+                  : "Поставщик"}
+              </Tag>
+            );
+          }}
+          sorter={getStringSorter("contractorType")}
+        />
+        <Column<ContractorType>
+          title="Название организации"
+          key="name"
+          render={(_, contractor) => (
+            <Space size="middle">
+              <NavLink to={`contractors/${contractor.id}`}>
+                {contractor.name}
+              </NavLink>
+            </Space>
+          )}
+          sorter={getStringSorter("name")}
+        />
+        <Column<ContractorType>
+          title="Номер телефона"
+          dataIndex="phoneNumber"
+          key="phoneNumber"
+        />
+        <Column<ContractorType>
+          title="Город"
+          dataIndex="location"
+          key="location"
+          sorter={getStringSorter("location")}
+        />
+        <Column<ContractorType>
+          title="Категории"
+          dataIndex="categories"
+          key="categories"
+          render={(_, data) => {
+            return (
+              <>
+                {data.categories
+                  .filter((category) => category.parentId === 0)
+                  .map((category) => (
+                    <Tag
+                      color="blue"
+                      key={category.categoryId}
+                      className="order__tag"
+                    >
+                      {category.categoryName}
+                    </Tag>
+                  ))}
+              </>
+            );
+          }}
+        />
+        <Column<ContractorType>
+          title="Контактное лицо"
+          dataIndex="contactName"
+          key="contactName"
+        />
+        <Column<ContractorType>
+          title="Рейтинг"
+          dataIndex="rating"
+          key="rating"
+          sorter={getNumberSorter("rating")}
+        />
+      </Table>
     </Content>
   );
 };

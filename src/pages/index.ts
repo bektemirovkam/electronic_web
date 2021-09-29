@@ -10,3 +10,4 @@ export { default as CategoriesPage } from "./CategoriesPage/CategoriesPage";
 export { default as CategoryCreatePage } from "./CategoryCreatePage/CategoryCreatePage";
 export { default as DeletedCategoriesPage } from "./DeletedCategoriesPage/DeletedCategoriesPage";
 export { default as OrderChatsPage } from "./OrderChatsPage/OrderChatsPage";
+export { default as ChatPage } from "./ChatPage/ChatPage";

@@ -17,17 +17,12 @@ export enum ChatMessageEnum {
   SYSTEM = "SYSTEM",
 }
 
-export type ChatMessageType = {
-  id: number;
-  chatId: number;
-  date: number;
-  isDelivered: boolean;
-  isRead: boolean;
-  message: string;
-  customerId: number;
-  supplierId: number;
-  messageType: ChatMessageEnum;
-};
+export enum ChatTypesMessageEnum {
+  TEXT = "TEXT",
+  ATTACHMENT = "ATTACHMENT",
+  SYSTEM = "SYSTEM",
+  ADD_CHAT = "ADD_CHAT",
+}
 
 export type ChatMessageInType = {
   chatId: number;
@@ -35,10 +30,15 @@ export type ChatMessageInType = {
 };
 
 export type ChatMessageOutType = {
+  id?: number;
   chatId: number;
   senderId: number;
   recipientId: number;
-  type: ChatMessageEnum;
+  type: ChatTypesMessageEnum;
   timeStamp: number;
   text: string;
+  senderName: string;
+  recipientName: string;
+  isDelivered: boolean;
+  isRead: boolean;
 };

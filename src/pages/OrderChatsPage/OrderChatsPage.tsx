@@ -11,7 +11,7 @@ import {
 } from "../../store/selectors/orders";
 
 const OrderChatsPage = () => {
-  const { id }: { id?: string } = useParams();
+  const { orderId }: { orderId?: string } = useParams();
 
   const orderChats = useSelector(getOrderChatsState);
   const chatsLoading = useSelector(getOrdersLoadingState);
@@ -19,8 +19,8 @@ const OrderChatsPage = () => {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    dispatch(getOrderChats(Number(id)));
-  }, [dispatch, id]);
+    dispatch(getOrderChats(Number(orderId)));
+  }, [dispatch, orderId]);
 
   if (chatsLoading) {
     return <AppPreloader />;
@@ -55,7 +55,13 @@ const OrderChatsPage = () => {
                     </NavLink>
                   }
                 </Card.Grid>
-                <Card.Grid>{<NavLink to={`/`}>Сообщения</NavLink>}</Card.Grid>
+                <Card.Grid>
+                  {
+                    <NavLink to={`/orders/${chat.orderId}/chats/${chat.id}`}>
+                      Сообщения
+                    </NavLink>
+                  }
+                </Card.Grid>
               </Card>
             ))}
           </>

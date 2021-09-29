@@ -65,7 +65,7 @@ const OrderPage = () => {
 
   const categoriesTree = useSelector(getCategoriesTreeDataState);
 
-  const { id }: { id?: string } = useParams();
+  const { orderId }: { orderId?: string } = useParams();
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -84,11 +84,11 @@ const OrderPage = () => {
   };
 
   React.useEffect(() => {
-    dispatch(getOrderById(Number(id)));
+    dispatch(getOrderById(Number(orderId)));
     return () => {
       clearState();
     };
-  }, [clearState, dispatch, id]);
+  }, [clearState, dispatch, orderId]);
 
   React.useEffect(() => {
     if (order) {

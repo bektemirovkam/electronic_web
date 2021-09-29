@@ -40,6 +40,13 @@ export type ContractorType = {
   rating: number;
 };
 
+export type ContractorStringSortFieldsType =
+  | "contractorType"
+  | "name"
+  | "location";
+
+export type ContractorNumberSortFieldsType = "rating";
+
 export type AddContractorFormDataType = {
   name: string;
   contactName: string;

@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from "react";
-import { Layout, BackTop, Table, Tag, Button } from "antd";
+import { Layout, BackTop, Table, Tag, Button, Space } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -15,93 +15,27 @@ import {
   ordersActions,
 } from "../../store/actions/orders";
 import { AppAlert, AppPreloader, AppSearchField } from "../../components";
-import { useHistory, useLocation } from "react-router-dom";
+import { NavLink, useHistory, useLocation } from "react-router-dom";
 import {
+  OrderNumberSortFieldsType,
   OrdersQueryFilterType,
   OrderStatusEnum,
+  OrderStringSortFieldsType,
   OrderType,
 } from "../../models/Orders";
 import { formatDate } from "../../utils/formatter";
-import { ColumnsType } from "antd/lib/table";
-import { CategoryOutType } from "../../models/Categories";
 
 const { Content } = Layout;
+const { Column } = Table;
 
-const columns: ColumnsType<OrderType> = [
-  {
-    title: "Статус",
-    dataIndex: "orderStatus",
-    render: (status: OrderStatusEnum) => {
-      const colors = {
-        [OrderStatusEnum.NEW]: "green",
-        [OrderStatusEnum.ARCHIVED]: "geekblue",
-        [OrderStatusEnum.DELETED]: "volcano",
-      };
+const getNumberSorter = (fieldName: OrderNumberSortFieldsType) => ({
+  compare: (a: OrderType, b: OrderType) => a[fieldName] - b[fieldName],
+});
 
-      return (
-        <Tag color={colors[status]} key={status}>
-          {status}
-        </Tag>
-      );
-    },
-  },
-  {
-    title: "Заголовок",
-    dataIndex: "title",
-    sorter: {
-      compare: (a, b) => a.title.localeCompare(b.title),
-    },
-  },
-  {
-    title: "Дата создания",
-    dataIndex: "creationDate",
-    sorter: {
-      compare: (a, b) => a.creationDate - b.creationDate,
-    },
-    render: (data: number) => formatDate(data),
-    defaultSortOrder: "descend",
-  },
-  {
-    title: "Дата закрытия",
-    dataIndex: "actualDate",
-    sorter: {
-      compare: (a, b) => a.actualDate - b.actualDate,
-    },
-    render: (data: number) => formatDate(data),
-  },
-  {
-    title: "Категории",
-    dataIndex: "categories",
-    render: (categories: CategoryOutType[]) => {
-      return (
-        <>
-          {categories
-            .filter((category) => category.parentId === 0)
-            .map((category) => (
-              <Tag
-                color="blue"
-                key={category.categoryId}
-                className="order__tag"
-              >
-                {category.categoryName}
-              </Tag>
-            ))}
-        </>
-      );
-    },
-  },
-  {
-    title: "Цена (тг)",
-    dataIndex: "totalSum",
-    sorter: {
-      compare: (a, b) => a.totalSum - b.totalSum,
-    },
-  },
-  {
-    title: "Сроки",
-    dataIndex: "comment",
-  },
-];
+const getStringSorter = (fieldName: OrderStringSortFieldsType) => ({
+  compare: (a: OrderType, b: OrderType) =>
+    a[fieldName].localeCompare(b[fieldName]),
+});
 
 const OrdersPage = () => {
   const [searchText, setSearchText] = React.useState<string>("");
@@ -175,7 +109,7 @@ const OrdersPage = () => {
       />
       <Table
         showSorterTooltip={false}
-        columns={columns}
+        // columns={columns}
         dataSource={orders}
         rowKey={"id"}
         expandable={{
@@ -200,8 +134,80 @@ const OrdersPage = () => {
             </div>
           ),
         }}
-      />
-      <BackTop />
+      >
+        <Column<OrderType>
+          title="Статус"
+          dataIndex="orderStatus"
+          key="age"
+          render={(status: OrderStatusEnum) => {
+            const colors = {
+              [OrderStatusEnum.NEW]: "green",
+              [OrderStatusEnum.ARCHIVED]: "geekblue",
+              [OrderStatusEnum.DELETED]: "volcano",
+            };
+
+            return (
+              <Tag color={colors[status]} key={status}>
+                {status}
+              </Tag>
+            );
+          }}
+        />
+        <Column<OrderType>
+          title="Заголовок"
+          key="title"
+          render={(_, order) => (
+            <Space size="middle">
+              <NavLink to={`orders/${order.id}`}>{order.title}</NavLink>
+            </Space>
+          )}
+          sorter={getStringSorter("title")}
+        />
+        <Column<OrderType>
+          title="Дата создания"
+          dataIndex="creationDate"
+          key="creationDate"
+          render={(_, data) => formatDate(data.creationDate)}
+          defaultSortOrder="descend"
+          sorter={getNumberSorter("creationDate")}
+        />
+        <Column<OrderType>
+          title="Дата закрытия"
+          dataIndex="actualDate"
+          key="actualDate"
+          render={(_, data) => formatDate(data.actualDate)}
+          sorter={getNumberSorter("actualDate")}
+        />
+        <Column<OrderType>
+          title="Категории"
+          dataIndex="categories"
+          key="categories"
+          render={(_, data) => {
+            return (
+              <>
+                {data.categories
+                  .filter((category) => category.parentId === 0)
+                  .map((category) => (
+                    <Tag
+                      color="blue"
+                      key={category.categoryId}
+                      className="order__tag"
+                    >
+                      {category.categoryName}
+                    </Tag>
+                  ))}
+              </>
+            );
+          }}
+        />
+        <Column<OrderType>
+          title="Цена (тг)"
+          dataIndex="totalSum"
+          key="totalSum"
+          sorter={getNumberSorter("totalSum")}
+        />
+        <Column<OrderType> title="Сроки" dataIndex="comment" key="comment" />
+      </Table>
     </Content>
   );
 };
