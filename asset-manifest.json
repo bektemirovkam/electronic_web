@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/electronic_web/static/css/main.2325147c.chunk.css",
-    "main.js": "/electronic_web/static/js/main.f0b2b695.chunk.js",
-    "main.js.map": "/electronic_web/static/js/main.f0b2b695.chunk.js.map",
+    "main.css": "/electronic_web/static/css/main.dd6725fa.chunk.css",
+    "main.js": "/electronic_web/static/js/main.8788c41c.chunk.js",
+    "main.js.map": "/electronic_web/static/js/main.8788c41c.chunk.js.map",
     "runtime-main.js": "/electronic_web/static/js/runtime-main.cd5eeace.js",
     "runtime-main.js.map": "/electronic_web/static/js/runtime-main.cd5eeace.js.map",
     "static/css/2.d26d1254.chunk.css": "/electronic_web/static/css/2.d26d1254.chunk.css",
@@ -12,14 +12,14 @@
     "static/js/3.6989c12b.chunk.js.map": "/electronic_web/static/js/3.6989c12b.chunk.js.map",
     "index.html": "/electronic_web/index.html",
     "static/css/2.d26d1254.chunk.css.map": "/electronic_web/static/css/2.d26d1254.chunk.css.map",
-    "static/css/main.2325147c.chunk.css.map": "/electronic_web/static/css/main.2325147c.chunk.css.map",
+    "static/css/main.dd6725fa.chunk.css.map": "/electronic_web/static/css/main.dd6725fa.chunk.css.map",
     "static/js/2.95eb4e29.chunk.js.LICENSE.txt": "/electronic_web/static/js/2.95eb4e29.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.cd5eeace.js",
     "static/css/2.d26d1254.chunk.css",
     "static/js/2.95eb4e29.chunk.js",
-    "static/css/main.2325147c.chunk.css",
-    "static/js/main.f0b2b695.chunk.js"
+    "static/css/main.dd6725fa.chunk.css",
+    "static/js/main.8788c41c.chunk.js"
   ]
 }
