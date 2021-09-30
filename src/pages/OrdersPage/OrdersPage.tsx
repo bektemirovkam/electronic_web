@@ -48,7 +48,8 @@ const OrdersPage = () => {
   const orders = useSelector(
     getFilteredOrdersListState(
       searchText,
-      query.get("filter") as OrdersQueryFilterType
+      query.get("filter") as OrdersQueryFilterType,
+      query.get("category")
     )
   );
   const ordersLoading = useSelector(getOrdersLoadingState);
@@ -84,6 +85,10 @@ const OrdersPage = () => {
 
   const handleViewOrder = (order: OrderType) => {
     history.push(`orders/${order.id}`);
+  };
+
+  const addCategory = (categoryId: number) => {
+    history.replace(`?category=${categoryId}`);
   };
 
   const handleChangeSearchText = (e: ChangeEvent<HTMLInputElement>) => {
@@ -152,6 +157,7 @@ const OrdersPage = () => {
               </Tag>
             );
           }}
+          sorter={getStringSorter("orderStatus")}
         />
         <Column<OrderType>
           title="Заголовок"
@@ -188,13 +194,18 @@ const OrdersPage = () => {
                 {data.categories
                   .filter((category) => category.parentId === 0)
                   .map((category) => (
-                    <Tag
-                      color="blue"
-                      key={category.categoryId}
-                      className="order__tag"
+                    <Button
+                      onClick={() => addCategory(category.categoryId)}
+                      type="link"
                     >
-                      {category.categoryName}
-                    </Tag>
+                      <Tag
+                        color="blue"
+                        key={category.categoryId}
+                        className="order__tag"
+                      >
+                        {category.categoryName}
+                      </Tag>
+                    </Button>
                   ))}
               </>
             );

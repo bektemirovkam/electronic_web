@@ -51,7 +51,8 @@ const ContractorsPage = () => {
   const contractors = useSelector(
     getFilteredContractorsListState(
       searchText,
-      query.get("filter") as ContractorsQueryFilterType
+      query.get("filter") as ContractorsQueryFilterType,
+      query.get("category")
     )
   );
 
@@ -86,6 +87,10 @@ const ContractorsPage = () => {
       clearState();
     };
   }, [dispatch, clearState]);
+
+  const addCategory = (categoryId: number) => {
+    history.replace(`?category=${categoryId}`);
+  };
 
   if (contractorsLoading) {
     return <AppPreloader size="large" />;
@@ -188,13 +193,18 @@ const ContractorsPage = () => {
                 {data.categories
                   .filter((category) => category.parentId === 0)
                   .map((category) => (
-                    <Tag
-                      color="blue"
-                      key={category.categoryId}
-                      className="order__tag"
+                    <Button
+                      onClick={() => addCategory(category.categoryId)}
+                      type="link"
                     >
-                      {category.categoryName}
-                    </Tag>
+                      <Tag
+                        color="blue"
+                        key={category.categoryId}
+                        className="order__tag"
+                      >
+                        {category.categoryName}
+                      </Tag>
+                    </Button>
                   ))}
               </>
             );

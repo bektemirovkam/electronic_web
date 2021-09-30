@@ -15,7 +15,8 @@ export const getCurrentContractorState = (state: AppStateType) =>
 
 export const getFilteredContractorsListState = (
   searchText: string,
-  filter: ContractorsQueryFilterType
+  filter: ContractorsQueryFilterType,
+  categoryId: string | null
 ) =>
   createSelector([getContractorsListState], (contractors) => {
     return contractors
@@ -31,7 +32,20 @@ export const getFilteredContractorsListState = (
       })
       ?.filter((contractor) =>
         contractor.name.toLowerCase().includes(searchText.toLowerCase())
-      );
+      )
+      ?.filter((contractor) => {
+        if (categoryId) {
+          return Boolean(
+            contractor.categories.find((category) => {
+              return (
+                category.categoryId === Number(categoryId) ||
+                category.parentId === Number(categoryId)
+              );
+            })
+          );
+        }
+        return true;
+      });
   });
 
 export const getContractorsLoadingState = (state: AppStateType) =>
@@ -42,22 +56,22 @@ export const getContractorsErrorMessage = (state: AppStateType) =>
   getContractorsState(state).errorMessage;
 
 export const getContractorsCountState = createSelector(
-  [getFilteredContractorsListState("", null)],
+  [getFilteredContractorsListState("", null, null)],
   (contractors) => contractors?.length
 );
 
 export const getCustomersCountState = createSelector(
-  [getFilteredContractorsListState("", "customers")],
+  [getFilteredContractorsListState("", "customers", null)],
   (contractors) => contractors?.length
 );
 
 export const getSuppliersCountState = createSelector(
-  [getFilteredContractorsListState("", "supplier")],
+  [getFilteredContractorsListState("", "supplier", null)],
   (contractors) => contractors?.length
 );
 
 export const getDeletedContractorCountState = createSelector(
-  [getFilteredContractorsListState("", "deleted")],
+  [getFilteredContractorsListState("", "deleted", null)],
   (contractors) => contractors?.length
 );
 

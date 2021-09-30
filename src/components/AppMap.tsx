@@ -27,11 +27,17 @@ const AppMap: React.ComponentClass<
     return (
       <GoogleMap
         defaultZoom={
-          marker ? (marker.coordinatesLatitude.length > 0 ? 12 : 7) : 7
+          marker
+            ? marker.coordinatesLatitude.length > 0 &&
+              !isNaN(Number(marker.coordinatesLatitude))
+              ? 12
+              : 7
+            : 7
         }
         defaultCenter={
           marker
-            ? marker.coordinatesLatitude.length > 0
+            ? marker.coordinatesLatitude.length > 0 &&
+              !isNaN(Number(marker.coordinatesLatitude))
               ? {
                   lat: Number(marker.coordinatesLatitude),
                   lng: Number(marker.coordinatesLongitude),

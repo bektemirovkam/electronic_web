@@ -8,7 +8,8 @@ const getOrdersListState = (state: AppStateType) => state.orders.orders;
 
 export const getFilteredOrdersListState = (
   searchText: string,
-  filter: OrdersQueryFilterType
+  filter: OrdersQueryFilterType,
+  categoryId: string | null
 ) =>
   createSelector([getOrdersListState], (orders) => {
     return orders
@@ -24,7 +25,20 @@ export const getFilteredOrdersListState = (
       })
       ?.filter((order) =>
         order.title.toLowerCase().includes(searchText.toLowerCase())
-      );
+      )
+      ?.filter((order) => {
+        if (categoryId) {
+          return Boolean(
+            order.categories.find((category) => {
+              return (
+                category.categoryId === Number(categoryId) ||
+                category.parentId === Number(categoryId)
+              );
+            })
+          );
+        }
+        return true;
+      });
   });
 
 export const getOrdersLoadingState = (state: AppStateType) =>
@@ -40,22 +54,22 @@ export const getCurrentOrderState = (state: AppStateType) =>
   getOrdersState(state).currentOrder;
 
 export const getAllOrdersCountState = createSelector(
-  [getFilteredOrdersListState("", null)],
+  [getFilteredOrdersListState("", null, null)],
   (orders) => orders?.length
 );
 
 export const getActiveOrdersCountState = createSelector(
-  [getFilteredOrdersListState("", "active")],
+  [getFilteredOrdersListState("", "active", null)],
   (orders) => orders?.length
 );
 
 export const getDeletedOrdersCountState = createSelector(
-  [getFilteredOrdersListState("", "deleted")],
+  [getFilteredOrdersListState("", "deleted", null)],
   (orders) => orders?.length
 );
 
 export const getHistoryOrdersCountState = createSelector(
-  [getFilteredOrdersListState("", "archived")],
+  [getFilteredOrdersListState("", "archived", null)],
   (orders) => orders?.length
 );
 

@@ -22,7 +22,7 @@ export type OrderNumberSortFieldsType =
   | "actualDate"
   | "creationDate"
   | "totalSum";
-export type OrderStringSortFieldsType = "title";
+export type OrderStringSortFieldsType = "title" | "orderStatus";
 
 export enum OrderStatusEnum {
   NEW = "NEW",
