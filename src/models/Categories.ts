@@ -20,3 +20,21 @@ export type CategoryOutType = {
   parentId: number;
   categoryName: string;
 };
+
+export type CategoryTreeItemType = {
+  title: string;
+  value: number;
+  key: number;
+  children:
+    | {
+        title: string;
+        value: number;
+        key: number;
+      }[]
+    | undefined;
+};
+
+export type CategoryTreeItemInputType = {
+  value: number;
+  label: string;
+};

@@ -70,6 +70,8 @@ const OrderPage = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
+  //TODO: отрегулировать TREE
+
   const clearState = React.useCallback(() => {
     dispatch(ordersActions.setOrderActionStatus(ActionStatusEnum.NEVER));
     dispatch(ordersActions.setCurrentOrder(null));
