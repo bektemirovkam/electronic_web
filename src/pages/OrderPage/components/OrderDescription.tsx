@@ -24,7 +24,7 @@ const OrderDescription: React.FC<OrderDescriptionPropsType> = ({
 }) => {
   return (
     <Descriptions size="small" column={3}>
-      <Descriptions.Item label="Создана">
+      <Descriptions.Item label="Дата создания">
         {formatDate(order.creationDate)}
       </Descriptions.Item>
       <Descriptions.Item label="Автор">
@@ -41,13 +41,13 @@ const OrderDescription: React.FC<OrderDescriptionPropsType> = ({
         />
       </Descriptions.Item>
 
-      <Descriptions.Item label="Закроется">
+      <Descriptions.Item label="Дата закрытия">
         {formatDate(order.actualDate)}
       </Descriptions.Item>
       <Descriptions.Item label="Чаты">
         <NavLink to={`/orders/${order.id}/chats`}>Чаты</NavLink>
       </Descriptions.Item>
-      <Descriptions.Item label="Цена">
+      <Descriptions.Item label="Цена (тг)">
         <OrderEditableField
           isNumberInput
           defaultValue={order.totalSum}

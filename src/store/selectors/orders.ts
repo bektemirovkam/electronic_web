@@ -9,7 +9,8 @@ const getOrdersListState = (state: AppStateType) => state.orders.orders;
 export const getFilteredOrdersListState = (
   searchText: string,
   filter: OrdersQueryFilterType,
-  categoryId: string | null
+  categoryId: string | null,
+  contractorId: string | null
 ) =>
   createSelector([getOrdersListState], (orders) => {
     return orders
@@ -38,6 +39,12 @@ export const getFilteredOrdersListState = (
           );
         }
         return true;
+      })
+      ?.filter((order) => {
+        if (contractorId) {
+          return order.customerId === Number(contractorId);
+        }
+        return true;
       });
   });
 
@@ -54,22 +61,22 @@ export const getCurrentOrderState = (state: AppStateType) =>
   getOrdersState(state).currentOrder;
 
 export const getAllOrdersCountState = createSelector(
-  [getFilteredOrdersListState("", null, null)],
+  [getFilteredOrdersListState("", null, null, null)],
   (orders) => orders?.length
 );
 
 export const getActiveOrdersCountState = createSelector(
-  [getFilteredOrdersListState("", "active", null)],
+  [getFilteredOrdersListState("", "active", null, null)],
   (orders) => orders?.length
 );
 
 export const getDeletedOrdersCountState = createSelector(
-  [getFilteredOrdersListState("", "deleted", null)],
+  [getFilteredOrdersListState("", "deleted", null, null)],
   (orders) => orders?.length
 );
 
 export const getHistoryOrdersCountState = createSelector(
-  [getFilteredOrdersListState("", "archived", null)],
+  [getFilteredOrdersListState("", "archived", null, null)],
   (orders) => orders?.length
 );
 

@@ -1,13 +1,7 @@
-import { Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
-import {
-  ChatInType,
-  ChatMessageInType,
-  ChatMessageOutType,
-} from "../../models/Chats";
+import { ChatMessageOutType } from "../../models/Chats";
 import { ActionsCreatorsTypes } from "../../models/types";
 import { chatsApi } from "../../services/chatsApi";
-import { ordersApi } from "../../services/ordersApi";
 import { AppStateType } from "../store";
 
 export const chatsActions = {

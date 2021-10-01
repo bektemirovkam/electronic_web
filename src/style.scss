@@ -134,6 +134,11 @@ body {
       // margin-right: 0;
     }
   }
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
 }
 
 .order {
@@ -266,6 +271,11 @@ body {
 
 .contractors {
   padding: 20px;
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
 }
 .contractor {
   margin-bottom: 15px;
@@ -349,6 +359,7 @@ body {
 }
 .filter {
   margin-bottom: 15px;
+  flex: 1 1 auto;
   &__input {
     width: 400px;
   }

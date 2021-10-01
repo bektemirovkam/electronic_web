@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from "react";
 import { Layout, Table, Tag, Button, Space } from "antd";
 import { useDispatch, useSelector } from "react-redux";
+import { ReloadOutlined } from "@ant-design/icons";
 
 import {
   getOrderActionStatusState,
@@ -15,7 +16,7 @@ import {
   ordersActions,
 } from "../../store/actions/orders";
 import { AppAlert, AppPreloader, AppSearchField } from "../../components";
-import { NavLink, useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import {
   OrderNumberSortFieldsType,
   OrdersQueryFilterType,
@@ -49,7 +50,8 @@ const OrdersPage = () => {
     getFilteredOrdersListState(
       searchText,
       query.get("filter") as OrdersQueryFilterType,
-      query.get("category")
+      query.get("category"),
+      query.get("contractor")
     )
   );
   const ordersLoading = useSelector(getOrdersLoadingState);
@@ -64,10 +66,9 @@ const OrdersPage = () => {
     dispatch(ordersActions.setOrdersErrorMessage(null));
   }, [dispatch]);
 
-  // const fetchData = React.useCallback(() => {
-  //   // для кнопки обновить
-  //   dispatch(getOrders());
-  // }, [dispatch]);
+  const fetchData = React.useCallback(() => {
+    dispatch(getOrders());
+  }, [dispatch]);
 
   React.useEffect(() => {
     dispatch(getOrders());
@@ -84,11 +85,14 @@ const OrdersPage = () => {
   };
 
   const handleViewOrder = (order: OrderType) => {
-    history.push(`orders/${order.id}`);
+    history.push(`/orders/${order.id}`);
   };
 
-  const addCategory = (categoryId: number) => {
-    history.replace(`?category=${categoryId}`);
+  const addFilterByCategory = (categoryId: number) => {
+    history.push({
+      pathname: "/orders",
+      search: `?category=${categoryId}`,
+    });
   };
 
   const handleChangeSearchText = (e: ChangeEvent<HTMLInputElement>) => {
@@ -107,14 +111,22 @@ const OrdersPage = () => {
         successMessage="Заявка успешно удалена"
         status={orderActionStatus}
       />
-      <AppSearchField
-        value={searchText}
-        onChange={handleChangeSearchText}
-        placeholder="Найти по заголовку"
-      />
+      <div className="orders__header">
+        <AppSearchField
+          value={searchText}
+          onChange={handleChangeSearchText}
+          placeholder="Найти по заголовку"
+        />
+
+        <Button
+          type="primary"
+          icon={<ReloadOutlined />}
+          size="large"
+          onClick={fetchData}
+        />
+      </div>
       <Table
         showSorterTooltip={false}
-        // columns={columns}
         dataSource={orders}
         rowKey={"id"}
         expandable={{
@@ -164,7 +176,14 @@ const OrdersPage = () => {
           key="title"
           render={(_, order) => (
             <Space size="middle">
-              <NavLink to={`orders/${order.id}`}>{order.title}</NavLink>
+              {/* <NavLink to={`orders/${order.id}`}>{order.title}</NavLink> */}
+              <Button
+                onClick={() => handleViewOrder(order)}
+                type="link"
+                key="title"
+              >
+                {order.title}
+              </Button>
             </Space>
           )}
           sorter={getStringSorter("title")}
@@ -195,14 +214,11 @@ const OrdersPage = () => {
                   .filter((category) => category.parentId === 0)
                   .map((category) => (
                     <Button
-                      onClick={() => addCategory(category.categoryId)}
+                      onClick={() => addFilterByCategory(category.categoryId)}
                       type="link"
+                      key={category.categoryId}
                     >
-                      <Tag
-                        color="blue"
-                        key={category.categoryId}
-                        className="order__tag"
-                      >
+                      <Tag color="blue" className="order__tag">
                         {category.categoryName}
                       </Tag>
                     </Button>

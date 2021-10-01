@@ -1,4 +1,5 @@
 import React, { ChangeEvent } from "react";
+import { ReloadOutlined } from "@ant-design/icons";
 
 import { Layout, Table, Tag, Button, Space } from "antd";
 import { AppAlert, AppPreloader, AppSearchField } from "../../components";
@@ -81,6 +82,10 @@ const ContractorsPage = () => {
     setSearchText(e.currentTarget.value);
   };
 
+  const fetchData = React.useCallback(() => {
+    dispatch(getContractors());
+  }, [dispatch]);
+
   React.useEffect(() => {
     dispatch(getContractors());
     return () => {
@@ -104,11 +109,19 @@ const ContractorsPage = () => {
         successMessage="Контрагент успешно удален"
         status={contractorsActionStatus}
       />
-      <AppSearchField
-        value={searchText}
-        onChange={handleChangeSearchText}
-        placeholder="Найти по названию организации"
-      />
+      <div className="contractors__header">
+        <AppSearchField
+          value={searchText}
+          onChange={handleChangeSearchText}
+          placeholder="Найти по названию организации"
+        />
+        <Button
+          type="primary"
+          icon={<ReloadOutlined />}
+          size="large"
+          onClick={fetchData}
+        />
+      </div>
       <Table
         showSorterTooltip={false}
         dataSource={contractors}
@@ -196,12 +209,9 @@ const ContractorsPage = () => {
                     <Button
                       onClick={() => addCategory(category.categoryId)}
                       type="link"
+                      key={category.categoryId}
                     >
-                      <Tag
-                        color="blue"
-                        key={category.categoryId}
-                        className="order__tag"
-                      >
+                      <Tag color="blue" className="order__tag">
                         {category.categoryName}
                       </Tag>
                     </Button>

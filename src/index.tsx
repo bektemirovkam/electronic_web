@@ -9,11 +9,11 @@ import reportWebVitals from "./reportWebVitals";
 import store from "./store/store";
 
 ReactDOM.render(
-  <Router>
+  <HashRouter>
     <Provider store={store}>
       <App />
     </Provider>
-  </Router>,
+  </HashRouter>,
   document.getElementById("root")
 );
 

@@ -40,54 +40,12 @@ import {
   AddOrderFormData,
   DescriptionOrderFormData,
 } from "../../models/Orders";
-import {
-  CategoryTreeItemInputType,
-  CategoryTreeItemType,
-} from "../../models/Categories";
 
 const { Content } = Layout;
 const { Title } = Typography;
 const { SHOW_ALL } = TreeSelect;
 
-const valueMap: { [key: number]: any } = {};
-
-const getPath = (selectedCategories: CategoryTreeItemInputType[]) => {
-  const path: CategoryTreeItemInputType[] = [];
-
-  for (let category of selectedCategories) {
-    let currentCategory = valueMap[category.value];
-    while (currentCategory) {
-      if (
-        // eslint-disable-next-line no-loop-func
-        path.some((category) => category.value === currentCategory?.value)
-      ) {
-        currentCategory = currentCategory.parent;
-        continue;
-      }
-
-      path.unshift({
-        value: currentCategory.value,
-        label: currentCategory.title,
-      });
-      currentCategory = currentCategory.parent;
-    }
-  }
-
-  return path;
-};
-
-const loops = (list?: CategoryTreeItemType[], parent?: any) => {
-  return (list || []).map(({ children, value, title }) => {
-    const node = (valueMap[value] = {
-      parent,
-      value,
-      title,
-    });
-    //@ts-ignore
-    node.children = loops(children, node);
-    return node;
-  });
-};
+// TODO: БАГ С КАТЕГОРИЯМИ
 
 const OrderCreatePage = () => {
   const {
@@ -99,9 +57,9 @@ const OrderCreatePage = () => {
     resolver: yupResolver(orderSchema),
   });
 
-  const [selectedCategories, setSelectedCategories] = React.useState<
-    CategoryTreeItemInputType[]
-  >([]);
+  const [selectedCategories, setSelectedCategories] = React.useState<number[]>(
+    []
+  );
 
   const orderActionStatus = useSelector(getOrderActionStatusState);
   const orderError = useSelector(getOrdersErrorMessageState);
@@ -143,9 +101,8 @@ const OrderCreatePage = () => {
     }
   }, [currentOrder, history, orderActionStatus]);
 
-  const handleChangeCategories = (value: CategoryTreeItemInputType[]) => {
-    const path = getPath(value);
-    setSelectedCategories(path);
+  const handleChangeCategories = (value: number[]) => {
+    setSelectedCategories(value);
   };
 
   const handleRemoveImage = (imageId: number) => {
@@ -181,6 +138,10 @@ const OrderCreatePage = () => {
   };
 
   const onSubmit = handleSubmit((formData) => {
+    const categories = selectedCategories.map((categoryId) => ({
+      categoryId,
+    }));
+
     const newOrder: AddOrderFormData = {
       title: formData.title,
       description: formData.description,
@@ -191,16 +152,12 @@ const OrderCreatePage = () => {
         attachmentId: image.id,
       })),
       customerId: 1,
-      categories: selectedCategories.map((category) => ({
-        categoryId: category.value,
-      })),
+      categories,
     };
 
     dispatch(createOrder(newOrder));
     reset();
   });
-
-  React.useMemo(() => loops(categoriesTree), [categoriesTree]);
 
   if (orderLoadingState) {
     return <AppPreloader />;
@@ -227,11 +184,8 @@ const OrderCreatePage = () => {
         <TreeSelect
           treeData={categoriesTree}
           value={selectedCategories}
-          // onChange={handleChangeCategories}
           onChange={handleChangeCategories}
-          // onSelect={handleSelectCategories}
           treeCheckable={true}
-          treeCheckStrictly={true}
           showCheckedStrategy={SHOW_ALL}
           placeholder={"Выберите категории заявки"}
           style={{ width: "100%", marginBottom: 10 }}

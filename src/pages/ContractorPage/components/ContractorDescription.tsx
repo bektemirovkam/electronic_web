@@ -38,7 +38,6 @@ type ContractorDescriptionPropsType = {
         location?: FieldError;
       };
 };
-//TODO: сделать фильтр для заявок конкретного контрагента
 
 const ContractorDescription: React.FC<ContractorDescriptionPropsType> = ({
   editMode,
@@ -65,7 +64,9 @@ const ContractorDescription: React.FC<ContractorDescriptionPropsType> = ({
           )}
         </Descriptions.Item>
         <Descriptions.Item label="Заявки контрагента">
-          <NavLink to="/orders">Посмотреть</NavLink>
+          <NavLink to={`/orders/?contractor=${contractor.id}`}>
+            Посмотреть
+          </NavLink>
         </Descriptions.Item>
         <Descriptions.Item label="Контактное лицо">
           <ContractorEditableField
