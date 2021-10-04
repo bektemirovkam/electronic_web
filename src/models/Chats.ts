@@ -5,6 +5,7 @@ export type ChatType = {
   customerId: number;
   supplierName: string;
   customerName: string;
+  lastMessage: string;
 };
 export type ChatInType = {
   supplierId: number;

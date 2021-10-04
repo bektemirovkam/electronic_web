@@ -63,6 +63,7 @@ const ContractorPage = () => {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<SupplierDescrFormDataType | CustomerDescrFormDataType>({
     resolver: yupResolver(
       registeringType === ContractorTypesEnum.SUPPLIER
@@ -196,8 +197,18 @@ const ContractorPage = () => {
       );
       dispatch(contractorActions.clearContractorImages());
       dispatch(contractorActions.setContractorImages(contractor.attachments));
+      reset({
+        name: contractor.name,
+        phoneNumber: contractor.phoneNumber,
+        contactName: contractor.contactName,
+        location: contractor.location,
+        webSite: contractor.contacts.webSite,
+        eMail: contractor.contacts.eMail,
+        address: contractor.contacts.address,
+        description: contractor.description,
+      });
     }
-  }, [contractor, dispatch, toggleEditMode]);
+  }, [contractor, dispatch, reset, toggleEditMode]);
 
   const toggleShowMap = React.useCallback(() => {
     setShowMap(!showMap);

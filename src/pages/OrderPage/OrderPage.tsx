@@ -47,6 +47,7 @@ const OrderPage = () => {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<DescriptionOrderFormData>({
     resolver: yupResolver(orderSchema),
   });
@@ -150,6 +151,12 @@ const OrderPage = () => {
       );
       dispatch(ordersActions.clearOrderImages());
       dispatch(ordersActions.setOrderImages(order.attachments));
+      reset({
+        title: order.title,
+        description: order.description,
+        comment: order.comment,
+        totalSum: order.totalSum,
+      });
     }
   };
 
