@@ -78,7 +78,7 @@ const renderActiveShape = (props: any) => {
         textAnchor={textAnchor}
         fill="#999"
       >
-        {`(Процент ${(percent * 100).toFixed(2)}%)`}
+        {`${(percent * 100).toFixed(2)}%`}
       </text>
     </g>
   );
@@ -101,9 +101,9 @@ const OrdersStatistic = () => {
   const data = React.useMemo(() => {
     return [
       { name: "Активных", value: activeOrdersCount ? activeOrdersCount : 0 },
-      { name: "Архивные", value: historyOrdersCount ? historyOrdersCount : 0 },
+      { name: "Архивных", value: historyOrdersCount ? historyOrdersCount : 0 },
       {
-        name: "Удаленные",
+        name: "Удаленных",
         value: deletedOrdersCount ? deletedOrdersCount : 0,
       },
     ];

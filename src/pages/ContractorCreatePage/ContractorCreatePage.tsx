@@ -234,7 +234,7 @@ const ContractorCreatePage = () => {
         <AppMap
           containerElement={<Card className="map" />}
           mapElement={<div className="map-element" />}
-          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyCxdk4gpLGO1qZLBP8yN54kfA5wm35HWXQ&v=3.exp&libraries=geometry,drawing,places"
+          googleMapURL="https://maps.googleapis.com/maps/api/js?key=AIzaSyAF9_PSjdOnSf6dukQ6qhNMiYhKz6sMcv8&v=3.exp&libraries=geometry,drawing,places"
           loadingElement={<AppPreloader />}
           handleSelectCoords={handleSelectCoords}
           marker={latLng}

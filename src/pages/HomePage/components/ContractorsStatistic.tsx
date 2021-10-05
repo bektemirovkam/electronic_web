@@ -78,7 +78,7 @@ const renderActiveShape = (props: any) => {
         textAnchor={textAnchor}
         fill="#999"
       >
-        {`(Процент ${(percent * 100).toFixed(2)}%)`}
+        {`${(percent * 100).toFixed(2)}%`}
       </text>
     </g>
   );
@@ -103,7 +103,7 @@ const ContractorsStatistic = () => {
       { name: "Заказчиков", value: customersCount ? customersCount : 0 },
       { name: "Поставщиков", value: suppliersCount ? suppliersCount : 0 },
       {
-        name: "Удаленные",
+        name: "Удаленных",
         value: deletedContractorsCount ? deletedContractorsCount : 0,
       },
     ];

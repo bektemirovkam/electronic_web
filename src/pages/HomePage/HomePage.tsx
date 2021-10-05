@@ -1,6 +1,10 @@
 import React from "react";
 import { Card, Layout, Typography } from "antd";
-import { ContractorsStatistic, OrdersStatistic } from "./components";
+import {
+  ContractorsStatistic,
+  OrderCounter,
+  OrdersStatistic,
+} from "./components";
 import { useDispatch, useSelector } from "react-redux";
 import { AppPreloader } from "../../components";
 import { getContractorsLoadingState } from "../../store/selectors/contractors";
@@ -30,8 +34,13 @@ const HomePage = () => {
       <Card>
         <Title className="title">Статистика</Title>
         <div className="statistic">
-          <ContractorsStatistic />
-          <OrdersStatistic />
+          <div className="statistic__left-side">
+            <OrdersStatistic />
+            <OrderCounter />
+          </div>
+          <div className="statistic__right-side">
+            <ContractorsStatistic />
+          </div>
         </div>
       </Card>
     </Content>

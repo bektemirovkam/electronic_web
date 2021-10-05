@@ -1,4 +1,6 @@
 import { createSelector } from "reselect";
+import moment from "moment";
+
 import { OrdersQueryFilterType, OrderStatusEnum } from "../../models/Orders";
 
 import { AppStateType } from "./../store";
@@ -78,6 +80,40 @@ export const getDeletedOrdersCountState = createSelector(
 export const getHistoryOrdersCountState = createSelector(
   [getFilteredOrdersListState("", "archived", null, null)],
   (orders) => orders?.length
+);
+
+export const getTodayOrdersCountState = createSelector(
+  [getOrdersListState],
+  (orders) => {
+    if (orders) {
+      const startDayTime = moment().startOf("day").valueOf();
+      const endDayTime = moment().endOf("day").valueOf();
+      const createdToday = orders.filter((order) => {
+        return (
+          order.creationDate > startDayTime && order.creationDate < endDayTime
+        );
+      });
+      return createdToday.length;
+    } else {
+      return 0;
+    }
+  }
+);
+
+export const getTodayArchivedCountState = createSelector(
+  [getOrdersListState],
+  (orders) => {
+    if (orders) {
+      const startDayTime = moment().startOf("day").valueOf();
+      const endDayTime = moment().endOf("day").valueOf();
+      const archivedToday = orders.filter((order) => {
+        return order.actualDate > startDayTime && order.actualDate < endDayTime;
+      });
+      return archivedToday.length;
+    } else {
+      return 0;
+    }
+  }
 );
 
 export const getOrderImagesState = (state: AppStateType) =>
