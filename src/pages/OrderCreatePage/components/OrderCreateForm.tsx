@@ -58,7 +58,11 @@ const OrderCreateForm: React.FC<OrderCreateFormPropsType> = ({
               required
             >
               <Text className="subtitle">Сроки</Text>
-              <Input placeholder="Сроки" value={value} onChange={onChange} />
+              <Input
+                placeholder="Желаемые сроки"
+                value={value}
+                onChange={onChange}
+              />
             </Form.Item>
           )}
           name="comment"

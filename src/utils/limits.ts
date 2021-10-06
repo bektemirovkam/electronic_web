@@ -1,0 +1,11 @@
+export const COORDINATES_LENGTH = 20; // Длина полей широта и долгота в Coordinates
+export const PHONE_NUMBER_LENGTH = 11; // Длина номера телефона 7xxxNNNNNNN
+export const TITLE_LENGTH = 150; // Длина заголовка заявки, названия вложения
+export const TEXT_LENGTH = 5000; // Длина текстовых полей
+export const CONTACT_INFORMATION_LENGTH = 50; // Длина полей в Contacts
+export const ADDRESS_LENGTH = 250; // Длина поля адрес в Contractor
+export const CHAT_MESSAGE_LENGTH = 10000; // Длина текста в сообщении чата
+export const SMS_CODE_LENGTH = 4; // Длина кода регистрации
+export const EXTENSION_LENGTH = 5; // Длина расширения файла
+export const MONTH_OF_RELEVANCE = 1; // Количество месяцев актуальности заявки
+export const SMS_RESEND_PERIOD = 5; // Время повторной отправки смс, в минутах

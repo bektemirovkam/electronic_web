@@ -37,6 +37,7 @@ export type ContractorType = {
   contractorType: ContractorTypesEnum;
   categories: CategoryOutType[];
   attachments: AttachmentOutType[];
+  creationDate: number;
   rating: number;
 };
 
