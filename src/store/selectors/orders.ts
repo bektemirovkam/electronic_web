@@ -4,6 +4,7 @@ import moment from "moment";
 import { OrdersQueryFilterType, OrderStatusEnum } from "../../models/Orders";
 
 import { AppStateType } from "./../store";
+import { getMainCategoriesState } from "./categories";
 
 const getOrdersState = (state: AppStateType) => state.orders;
 const getOrdersListState = (state: AppStateType) => state.orders.orders;
@@ -112,6 +113,36 @@ export const getTodayArchivedCountState = createSelector(
       return archivedToday.length;
     } else {
       return 0;
+    }
+  }
+);
+
+//TODO сделать индексацию
+
+export const getOrdersByCategoriesState = createSelector(
+  [getMainCategoriesState, getOrdersListState],
+  (mainCategories, orders) => {
+    if (mainCategories && orders) {
+      const ordersByCategories = mainCategories.map((category) => {
+        const ordersByCurrentCategory = orders.filter((order) => {
+          const wantedCategory = order.categories.find(
+            (orderCategory) => orderCategory.categoryId === category.id
+          );
+
+          if (wantedCategory) {
+            return true;
+          }
+          return false;
+        });
+
+        return {
+          categoryName: category.name,
+          ordersCount: ordersByCurrentCategory.length,
+        };
+      });
+      return ordersByCategories;
+    } else {
+      return [];
     }
   }
 );

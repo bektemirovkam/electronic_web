@@ -1,8 +1,10 @@
 import React from "react";
 import { Card, Layout, Typography } from "antd";
 import {
+  ContractorsByCategories,
   ContractorsStatistic,
-  OrderCounter,
+  OrdersByCategories,
+  OrdersCounter,
   OrdersStatistic,
 } from "./components";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,10 +38,12 @@ const HomePage = () => {
         <div className="statistic">
           <div className="statistic__left-side">
             <OrdersStatistic />
-            <OrderCounter />
+            <OrdersByCategories />
+            <OrdersCounter />
           </div>
           <div className="statistic__right-side">
             <ContractorsStatistic />
+            <ContractorsByCategories />
           </div>
         </div>
       </Card>

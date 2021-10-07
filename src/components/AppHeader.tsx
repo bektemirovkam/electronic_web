@@ -1,6 +1,7 @@
 import React from "react";
-import { Affix, Layout, Menu } from "antd";
+import { Affix, Layout, Menu, Avatar } from "antd";
 import { NavLink, useLocation } from "react-router-dom";
+import logo from "../assets/images/logo.png";
 
 const { Header } = Layout;
 
@@ -17,7 +18,9 @@ const AppHeader = () => {
     <Affix offsetTop={0}>
       <Header className="header">
         <div className="header__logo">
-          <NavLink to="/">Логотип</NavLink>
+          <NavLink to="/">
+            <Avatar src={logo} size="large" />
+          </NavLink>
         </div>
         <Menu
           theme="dark"

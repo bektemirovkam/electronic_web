@@ -328,7 +328,7 @@ body {
     width: 100%;
     height: 400px;
   }
-  &__pie-title {
+  &__title {
     display: block;
     font-weight: bold;
     font-size: 20px;
@@ -342,7 +342,14 @@ body {
   &__orders-counters {
     display: flex;
     flex-direction: column;
-    margin-top: 15px;
+    margin-top: 40px;
+  }
+  &__chart-categories {
+    margin: 15px 0px;
+    height: 300px;
+  }
+  &__counters {
+    margin-top: 40px;
   }
 }
 .upload {
@@ -387,5 +394,17 @@ body {
     &:last-child {
       margin-right: 0;
     }
+  }
+}
+.chart-categories {
+  &__tooltip {
+    background-color: #fff;
+    border-radius: 15px;
+    -webkit-box-shadow: 0px 4px 15px 10px rgba(34, 60, 80, 0.2);
+    -moz-box-shadow: 0px 4px 15px 10px rgba(34, 60, 80, 0.2);
+    box-shadow: 0px 4px 15px 10px rgba(34, 60, 80, 0.2);
+  }
+  &__tooltip-label {
+    padding: 10px;
   }
 }

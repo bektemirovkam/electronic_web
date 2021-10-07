@@ -10,12 +10,12 @@ import {
 
 const { Text } = Typography;
 
-const OrderCounter = () => {
+const OrdersCounter = () => {
   const createdTodayCount = useSelector(getTodayOrdersCountState);
   const closedTodayCount = useSelector(getTodayArchivedCountState);
 
   return (
-    <div className="statistic__orders-counters">
+    <div className="statistic__counters">
       <div className="counters">
         <Card className="counters__item">
           <Statistic
@@ -38,4 +38,4 @@ const OrderCounter = () => {
   );
 };
 
-export default OrderCounter;
+export default OrdersCounter;

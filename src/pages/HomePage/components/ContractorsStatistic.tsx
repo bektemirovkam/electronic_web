@@ -111,7 +111,7 @@ const ContractorsStatistic = () => {
 
   return (
     <div className="statistic__pie">
-      <Text className="statistic__pie-title">Контрагенты</Text>
+      <Text className="statistic__title">Контрагенты</Text>
       <Text className="statistic__pie-subtitle">
         Всего контрагентов: {allContractorsCount}
       </Text>

@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from "react";
-import { Layout, Table, Tag, Button, Space } from "antd";
+import { Layout, Table, Tag, Button, Space, BackTop } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { ReloadOutlined } from "@ant-design/icons";
 
@@ -235,6 +235,7 @@ const OrdersPage = () => {
         />
         <Column<OrderType> title="Сроки" dataIndex="comment" key="comment" />
       </Table>
+      <BackTop />
     </Content>
   );
 };

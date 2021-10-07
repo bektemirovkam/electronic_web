@@ -111,7 +111,7 @@ const OrdersStatistic = () => {
 
   return (
     <div className="statistic__pie">
-      <Text className="statistic__pie-title">Заявки</Text>
+      <Text className="statistic__title">Заявки</Text>
       <Text className="statistic__pie-subtitle">
         Всего заявок: {allOrdersCount}
       </Text>

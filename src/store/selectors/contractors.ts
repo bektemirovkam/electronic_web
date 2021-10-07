@@ -4,6 +4,7 @@ import {
   ContractorTypesEnum,
 } from "../../models/Contractors";
 import { AppStateType } from "./../store";
+import { getMainCategoriesState } from "./categories";
 
 const getContractorsState = (state: AppStateType) => state.contractors;
 
@@ -79,3 +80,34 @@ export const getContractorImagesState = (state: AppStateType) =>
   getContractorsState(state).contractorImages;
 export const getContractorImageUploadingState = (state: AppStateType) =>
   getContractorsState(state).contractorImageUploading;
+
+export const getContractorsByCategoriesState = createSelector(
+  [getMainCategoriesState, getContractorsListState],
+  (mainCategories, contractors) => {
+    if (mainCategories && contractors) {
+      const contractorsByCategories = mainCategories.map((category) => {
+        const contractorsByCurrentCategory = contractors.filter(
+          (contractor) => {
+            const wantedCategory = contractor.categories.find(
+              (contractorCategory) =>
+                contractorCategory.categoryId === category.id
+            );
+
+            if (wantedCategory) {
+              return true;
+            }
+            return false;
+          }
+        );
+
+        return {
+          categoryName: category.name,
+          contractorsCount: contractorsByCurrentCategory.length,
+        };
+      });
+      return contractorsByCategories;
+    } else {
+      return [];
+    }
+  }
+);
