@@ -7,8 +7,6 @@ import {
   TITLE_LENGTH,
 } from "./limits";
 
-//TODO: сортировка категорий
-
 const phoneCodes = [
   "700",
   "701",

@@ -126,6 +126,7 @@ const OrdersPage = () => {
         />
       </div>
       <Table
+        pagination={{ position: ["topRight", "bottomRight"] }}
         showSorterTooltip={false}
         dataSource={orders}
         rowKey={"id"}
