@@ -6,6 +6,8 @@ import {
   Card,
   RadioChangeEvent,
   message,
+  Avatar,
+  Image,
 } from "antd";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -47,6 +49,7 @@ import {
   CustomerDescrFormDataType,
   SupplierDescrFormDataType,
 } from "../../models/Contractors";
+import { baseURL } from "../../api/axios";
 
 const { Content } = Layout;
 
@@ -166,6 +169,11 @@ const ContractorPage = () => {
         attachments: contractorImages.map((image) => ({
           attachmentId: image.id,
         })),
+        avatars: contractor?.avatars
+          ? contractor.avatars.map((image) => ({
+              attachmentId: image.id,
+            }))
+          : [],
       };
       setEditMode(false);
       dispatch(updateContractor(newContractor, contractor.id));
@@ -384,6 +392,7 @@ const ContractorPage = () => {
             handleRemoveImage={handleRemoveImage}
             handleAddImage={handleUploadImage}
             imageUploading={contractorImageUploading}
+            avatar={contractor.avatars[0]}
           />
         </>
       )}

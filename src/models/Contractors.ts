@@ -1,5 +1,6 @@
 import { AttachmentInType, AttachmentOutType } from "./Attachments";
 import { CategoryInType, CategoryOutType } from "./Categories";
+import { ChatType } from "./Chats";
 
 export type CoordinatesType = {
   coordinatesLatitude: string;
@@ -37,6 +38,8 @@ export type ContractorType = {
   contractorType: ContractorTypesEnum;
   categories: CategoryOutType[];
   attachments: AttachmentOutType[];
+  avatars: AttachmentOutType[];
+  chats: ChatType[];
   creationDate: number;
   rating: number;
 };
@@ -59,6 +62,7 @@ export type AddContractorFormDataType = {
   contractorType: ContractorTypesEnum;
   categories: CategoryInType[];
   attachments: AttachmentInType[];
+  avatars: AttachmentInType[];
 };
 
 export type SupplierDescrFormDataType = {

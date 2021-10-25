@@ -165,6 +165,7 @@ const ContractorCreatePage = () => {
       attachments: contractorImages.map((image) => ({
         attachmentId: image.id,
       })),
+      avatars: [],
     };
     dispatch(createContractorProfile(newContractor));
   });

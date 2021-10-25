@@ -1,5 +1,5 @@
 import { Content } from "antd/lib/layout/layout";
-import { List, Typography } from "antd";
+import { List, Typography, Image } from "antd";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -10,6 +10,50 @@ import {
   getChatMessagesState,
 } from "../../store/selectors/chats";
 import { formatDateWithTime } from "../../utils/formatter";
+import {
+  ChatMessageAttachmentTypesEnum,
+  ChatMessageOutType,
+  ChatTypesMessageEnum,
+} from "../../models/Chats";
+import { baseURL } from "../../api/axios";
+
+const ChatMessage = (item: ChatMessageOutType) => {
+  if (item.type === ChatTypesMessageEnum.TEXT) {
+    return (
+      <List.Item>
+        <Typography.Text>{formatDateWithTime(item.timeStamp)}</Typography.Text>
+        <Typography.Text className="message__sender" mark>
+          [{item.senderName}]
+        </Typography.Text>{" "}
+        {item.text}
+      </List.Item>
+    );
+  }
+
+  if (item.type === ChatTypesMessageEnum.ATTACHMENT) {
+    return (
+      <List.Item className="message">
+        <Typography.Text>{formatDateWithTime(item.timeStamp)}</Typography.Text>
+        <Typography.Text className="message__sender" mark>
+          [{item.senderName}]
+        </Typography.Text>{" "}
+        {item.attachmentType === ChatMessageAttachmentTypesEnum.PICTURE && (
+          <Image src={`${baseURL}${item.text}`} className="message__image" />
+        )}
+        {item.attachmentType === ChatMessageAttachmentTypesEnum.VIDEO && (
+          <video className="message__video" controls>
+            <source src={`${baseURL}${item.text}`} />
+          </video>
+        )}
+        {item.attachmentType === ChatMessageAttachmentTypesEnum.DOCUMENT && (
+          <a href={`${baseURL}${item.text}`}>Загрузить вложение</a>
+        )}
+      </List.Item>
+    );
+  }
+
+  return null;
+};
 
 const ChatPage = () => {
   const { orderId, chatId }: { orderId: string; chatId: string } = useParams();
@@ -29,19 +73,7 @@ const ChatPage = () => {
   return (
     <Content className="content">
       {messages && (
-        <List
-          bordered
-          dataSource={messages}
-          renderItem={(item) => (
-            <List.Item>
-              <Typography.Text mark>
-                {formatDateWithTime(item.timeStamp)}
-              </Typography.Text>
-              <Typography.Text mark>[{item.senderName}]</Typography.Text>{" "}
-              {item.text}
-            </List.Item>
-          )}
-        />
+        <List bordered dataSource={messages} renderItem={ChatMessage} />
       )}
     </Content>
   );

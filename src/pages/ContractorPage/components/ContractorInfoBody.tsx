@@ -1,7 +1,8 @@
-import { Card, Divider, TreeSelect } from "antd";
+import { Card, Divider, TreeSelect, Image } from "antd";
 import { DataNode } from "antd/lib/tree";
 import React from "react";
 import { Control, FieldError } from "react-hook-form";
+import { baseURL } from "../../../api/axios";
 import { ImagesList, UploadFileForm } from "../../../components";
 import { AttachmentOutType } from "../../../models/Attachments";
 import {
@@ -28,6 +29,7 @@ type ContractorInfoBodyPropsType = {
   imageUploading: boolean;
   images: AttachmentOutType[];
   registeringType: ContractorTypesEnum;
+  avatar?: AttachmentOutType;
 };
 
 const { SHOW_ALL } = TreeSelect;
@@ -45,6 +47,7 @@ const ContractorInfoBody: React.FC<ContractorInfoBodyPropsType> = ({
   imageUploading,
   images,
   registeringType,
+  avatar,
 }) => {
   return (
     <div className="contractor__body">
@@ -77,6 +80,17 @@ const ContractorInfoBody: React.FC<ContractorInfoBodyPropsType> = ({
                 disabled={!editMode}
               />
             )}
+          </>
+        )}
+        {avatar && (
+          <>
+            <Divider>Аватар</Divider>
+            <div className="avatar">
+              <Image
+                src={`${baseURL}${avatar.attachmentLink}`}
+                className="avatar__image"
+              />
+            </div>
           </>
         )}
         <Divider>Фото</Divider>

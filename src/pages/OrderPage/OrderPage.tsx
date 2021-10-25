@@ -18,6 +18,7 @@ import {
 } from "../../store/selectors/orders";
 import {
   addOrderImage,
+  createOrder,
   deleteOrder,
   getOrderById,
   ordersActions,
@@ -37,6 +38,7 @@ import { AttachmentType } from "../../models/Attachments";
 import {
   AddOrderFormData,
   DescriptionOrderFormData,
+  OrderStatusEnum,
 } from "../../models/Orders";
 
 const { Content } = Layout;
@@ -194,6 +196,28 @@ const OrderPage = () => {
     }
   };
 
+  const restoreOrder = () => {
+    const answer = window.confirm("Вы уверены что хотите повторить заявку?");
+    if (answer && order) {
+      const restoredOrder: AddOrderFormData = {
+        title: order.title,
+        comment: order.comment,
+        totalSum: order.totalSum,
+        contractors: [],
+        customerId: order.customerId,
+        description: order.description,
+        attachments: order.attachments.map((image) => ({
+          attachmentId: image.id,
+        })),
+        categories: order.categories.map((category) => ({
+          categoryId: Number(category.categoryId),
+        })),
+        orderStatus: OrderStatusEnum.NEW,
+      };
+      dispatch(createOrder(restoredOrder));
+    }
+  };
+
   const editActionsButtons = [
     <Button
       key="1"
@@ -210,18 +234,15 @@ const OrderPage = () => {
   ];
 
   const actionsButtons = [
-    <Button key="3" onClick={toggleEditMode}>
-      Редактировать
-    </Button>,
+    order?.orderStatus === OrderStatusEnum.NEW && (
+      <Button key="3" onClick={toggleEditMode}>
+        Редактировать
+      </Button>
+    ),
 
     (order?.orderStatus === "ARCHIVED" || order?.orderStatus === "DELETED") && (
-      <Button
-        key="4"
-        onClick={() => {
-          alert("В разработке");
-        }}
-      >
-        Восстановить
+      <Button key="4" onClick={restoreOrder}>
+        Повторить
       </Button>
     ),
     <Button key="5" onClick={handleDeleteOrder} danger>

@@ -5,6 +5,7 @@ export type ChatType = {
   customerId: number;
   supplierName: string;
   customerName: string;
+  orderTitle: string;
   lastMessage: string;
 };
 export type ChatInType = {
@@ -25,9 +26,18 @@ export enum ChatTypesMessageEnum {
   ADD_CHAT = "ADD_CHAT",
 }
 
+export enum ChatMessageAttachmentTypesEnum {
+  DOCUMENT = "DOCUMENT",
+  PICTURE = "PICTURE",
+  VIDEO = "VIDEO",
+  NONE = "NONE",
+}
+
 export type ChatMessageInType = {
   chatId: number;
   text: string;
+  type?: ChatTypesMessageEnum;
+  attachmentType: ChatMessageAttachmentTypesEnum;
 };
 
 export type ChatMessageOutType = {
@@ -42,4 +52,5 @@ export type ChatMessageOutType = {
   recipientName: string;
   isDelivered: boolean;
   isRead: boolean;
+  attachmentType: ChatMessageAttachmentTypesEnum;
 };

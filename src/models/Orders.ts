@@ -6,7 +6,7 @@ export type OrderType = {
   id: number;
   creationDate: number;
   actualDate: number;
-  comment?: string;
+  comment: string;
   title: string;
   description?: string;
   totalSum: number;
@@ -44,6 +44,7 @@ export type AddOrderFormData = {
   attachments: AttachmentInType[];
   customerId: number;
   description?: string;
+  orderStatus?: string;
 };
 export type DescriptionOrderFormData = {
   title: string;

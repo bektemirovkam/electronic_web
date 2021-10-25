@@ -123,7 +123,7 @@ const ContractorsPage = () => {
         />
       </div>
       <Table
-        pagination={{ position: ["topRight", "bottomRight"] }}
+        pagination={{ position: ["topRight"] }}
         showSorterTooltip={false}
         dataSource={contractors}
         rowKey={"id"}

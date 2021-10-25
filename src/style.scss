@@ -117,6 +117,30 @@ body {
   padding: 24px;
   background-color: #f5f5f5;
 }
+.avatar {
+  display: flex;
+  padding: 10px;
+  &__image {
+    max-height: 200px;
+  }
+}
+
+.message {
+  display: flex;
+  align-items: start;
+  justify-content: flex-start;
+  &__image {
+    max-height: 150px;
+  }
+  &__video {
+    max-height: 450px;
+  }
+  &__text {
+  }
+  &__sender {
+    margin: 0px 15px;
+  }
+}
 
 .orders {
   // display: flex;
@@ -290,6 +314,11 @@ body {
   }
   &__body {
     padding: 24px;
+  }
+  &__title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   &__images {
     display: flex;
