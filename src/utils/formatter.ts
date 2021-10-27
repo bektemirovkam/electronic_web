@@ -13,3 +13,6 @@ export const formatDateWithTime = (date: number) => {
 export const truncateString = (str: string, n: number) => {
   return str.length > n ? str.substr(0, n - 1) + "..." : str;
 };
+export const getDateFromNow = (date: number) => {
+  return moment(date).fromNow();
+};

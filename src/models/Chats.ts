@@ -41,7 +41,7 @@ export type ChatMessageInType = {
 };
 
 export type ChatMessageOutType = {
-  id?: number;
+  id: number;
   chatId: number;
   senderId: number;
   recipientId: number;
@@ -53,4 +53,5 @@ export type ChatMessageOutType = {
   isDelivered: boolean;
   isRead: boolean;
   attachmentType: ChatMessageAttachmentTypesEnum;
+  attachmentName: string;
 };

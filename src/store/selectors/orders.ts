@@ -1,7 +1,11 @@
 import { createSelector } from "reselect";
 import moment from "moment";
 
-import { OrdersQueryFilterType, OrderStatusEnum } from "../../models/Orders";
+import {
+  OrderResultEnum,
+  OrdersQueryFilterType,
+  OrderStatusEnum,
+} from "../../models/Orders";
 
 import { AppStateType } from "./../store";
 import { getMainCategoriesState } from "./categories";
@@ -117,7 +121,31 @@ export const getTodayArchivedCountState = createSelector(
   }
 );
 
-//TODO сделать индексацию
+export const getSuccessResultCount = createSelector(
+  [getFilteredOrdersListState("", "deleted", null, null)],
+  (orders) => {
+    if (orders) {
+      const successCompleteOrders = orders.filter(
+        (order) => order.result === OrderResultEnum.SUCCESS
+      );
+      return successCompleteOrders.length;
+    }
+    return 0;
+  }
+);
+
+export const getFailResultCount = createSelector(
+  [getFilteredOrdersListState("", "deleted", null, null)],
+  (orders) => {
+    if (orders) {
+      const failCompleteOrders = orders.filter(
+        (order) => order.result === OrderResultEnum.FAIL
+      );
+      return failCompleteOrders.length;
+    }
+    return 0;
+  }
+);
 
 export const getOrdersByCategoriesState = createSelector(
   [getMainCategoriesState, getOrdersListState],

@@ -45,8 +45,6 @@ const { Content } = Layout;
 const { Title } = Typography;
 const { SHOW_ALL } = TreeSelect;
 
-// TODO: БАГ С КАТЕГОРИЯМИ
-
 const OrderCreatePage = () => {
   const {
     control,

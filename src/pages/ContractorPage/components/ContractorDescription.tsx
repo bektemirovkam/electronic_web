@@ -8,6 +8,7 @@ import {
   CustomerDescrFormDataType,
   SupplierDescrFormDataType,
 } from "../../../models/Contractors";
+import { getDateFromNow } from "../../../utils/formatter";
 import ContractorEditableField from "./ContractorEditableField";
 
 type ContractorDescriptionPropsType = {
@@ -142,6 +143,9 @@ const ContractorDescription: React.FC<ContractorDescriptionPropsType> = ({
         </Descriptions.Item>
         <Descriptions.Item label="Идентификатор контрагента">
           {contractor.id}
+        </Descriptions.Item>
+        <Descriptions.Item label="Зарегистрировался">
+          {getDateFromNow(contractor.creationDate)}
         </Descriptions.Item>
       </Descriptions>
     </>

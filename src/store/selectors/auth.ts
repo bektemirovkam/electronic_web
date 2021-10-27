@@ -1,5 +1,9 @@
-// import { AppStateType } from "../store";
+import { AppStateType } from "../store";
 
-// const getAuthState = (state: AppStateType) => state.auth;
+const getAuthState = (state: AppStateType) => state.auth;
 
-export {};
+export const getIsAuthState = (state: AppStateType) =>
+  getAuthState(state).isAuth;
+
+export const getIsInitState = (state: AppStateType) =>
+  getAuthState(state).isInit;

@@ -18,11 +18,20 @@ import {
   OrderChatsPage,
   ChatPage,
 } from "../pages";
+import { useDispatch } from "react-redux";
+import { authActions } from "../store/actions/auth";
 
 const MainLayout = () => {
+  const dispatch = useDispatch();
+
+  const logout = () => {
+    localStorage.removeItem("isAuth");
+    dispatch(authActions.setIsAuth(false));
+  };
+
   return (
     <Layout className="wrapper">
-      <AppHeader />
+      <AppHeader logout={logout} />
       <Layout>
         <AppSideBar />
         <Layout>
@@ -72,9 +81,7 @@ const MainLayout = () => {
               <CategoryCreatePage />
             </Route>
 
-            <Route exact path="*" render={() => <Redirect to="/home" />}>
-              <HomePage />
-            </Route>
+            <Route exact path="*" render={() => <Redirect to="/" />} />
           </Switch>
         </Layout>
       </Layout>

@@ -6,8 +6,6 @@ import {
   Card,
   RadioChangeEvent,
   message,
-  Avatar,
-  Image,
 } from "antd";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -49,7 +47,6 @@ import {
   CustomerDescrFormDataType,
   SupplierDescrFormDataType,
 } from "../../models/Contractors";
-import { baseURL } from "../../api/axios";
 
 const { Content } = Layout;
 

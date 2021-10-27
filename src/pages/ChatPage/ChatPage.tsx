@@ -46,7 +46,9 @@ const ChatMessage = (item: ChatMessageOutType) => {
           </video>
         )}
         {item.attachmentType === ChatMessageAttachmentTypesEnum.DOCUMENT && (
-          <a href={`${baseURL}${item.text}`}>Загрузить вложение</a>
+          <a href={`${baseURL}${item.text}`}>
+            {item.attachmentName ? item.attachmentName : "Загрузить вложение"}
+          </a>
         )}
       </List.Item>
     );

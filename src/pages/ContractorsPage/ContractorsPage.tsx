@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from "react";
 import { ReloadOutlined } from "@ant-design/icons";
 
-import { Layout, Table, Tag, Button, Space } from "antd";
+import { Layout, Table, Tag, Button, Space, Typography } from "antd";
 import { AppAlert, AppPreloader, AppSearchField } from "../../components";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -24,9 +24,11 @@ import {
   ContractorType,
   ContractorTypesEnum,
 } from "../../models/Contractors";
+import { formatDate, truncateString } from "../../utils/formatter";
 
 const { Content } = Layout;
 const { Column } = Table;
+const { Text } = Typography;
 
 const getNumberSorter = (fieldName: ContractorNumberSortFieldsType) => ({
   compare: (a: ContractorType, b: ContractorType) =>
@@ -180,7 +182,7 @@ const ContractorsPage = () => {
           render={(_, contractor) => (
             <Space size="middle">
               <NavLink to={`contractors/${contractor.id}`}>
-                {contractor.name}
+                {truncateString(contractor.name, 50)}
               </NavLink>
             </Space>
           )}
@@ -227,9 +229,20 @@ const ContractorsPage = () => {
           key="contactName"
         />
         <Column<ContractorType>
+          title="Дата регистрации"
+          dataIndex="creationDate"
+          key="creationDate"
+          render={(_, data) => formatDate(data.creationDate)}
+          defaultSortOrder="descend"
+          sorter={getNumberSorter("creationDate")}
+        />
+        <Column<ContractorType>
           title="Рейтинг"
           dataIndex="rating"
           key="rating"
+          render={(_, data) => {
+            return <Text>{Math.ceil(data.rating * 100) / 100}</Text>;
+          }}
           sorter={getNumberSorter("rating")}
         />
       </Table>

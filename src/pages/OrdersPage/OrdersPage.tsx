@@ -19,15 +19,18 @@ import { AppAlert, AppPreloader, AppSearchField } from "../../components";
 import { useHistory, useLocation } from "react-router-dom";
 import {
   OrderNumberSortFieldsType,
+  OrderResultEnum,
   OrdersQueryFilterType,
   OrderStatusEnum,
   OrderStringSortFieldsType,
   OrderType,
 } from "../../models/Orders";
-import { formatDate } from "../../utils/formatter";
+import { formatDate, truncateString } from "../../utils/formatter";
 
 const { Content } = Layout;
 const { Column } = Table;
+
+//TODO: немного подправить адаптив
 
 const getNumberSorter = (fieldName: OrderNumberSortFieldsType) => ({
   compare: (a: OrderType, b: OrderType) => a[fieldName] - b[fieldName],
@@ -37,6 +40,22 @@ const getStringSorter = (fieldName: OrderStringSortFieldsType) => ({
   compare: (a: OrderType, b: OrderType) =>
     a[fieldName].localeCompare(b[fieldName]),
 });
+
+const getResultText = (result: OrderResultEnum) => {
+  switch (result) {
+    case OrderResultEnum.FAIL: {
+      return "Не удалось выполнить";
+    }
+
+    case OrderResultEnum.SUCCESS: {
+      return "Удалось выполнить";
+    }
+
+    default: {
+      return "Не выбрано";
+    }
+  }
+};
 
 const OrdersPage = () => {
   const [searchText, setSearchText] = React.useState<string>("");
@@ -177,13 +196,12 @@ const OrdersPage = () => {
           key="title"
           render={(_, order) => (
             <Space size="middle">
-              {/* <NavLink to={`orders/${order.id}`}>{order.title}</NavLink> */}
               <Button
                 onClick={() => handleViewOrder(order)}
                 type="link"
                 key="title"
               >
-                {order.title}
+                {truncateString(order.title, 40)}
               </Button>
             </Space>
           )}
@@ -235,6 +253,25 @@ const OrdersPage = () => {
           sorter={getNumberSorter("totalSum")}
         />
         <Column<OrderType> title="Сроки" dataIndex="comment" key="comment" />
+        <Column<OrderType>
+          title="Результат"
+          dataIndex="results"
+          key="results"
+          sorter={getStringSorter("result")}
+          render={(_, data) => {
+            const colors = {
+              [OrderResultEnum.NONE]: "geekblue",
+              [OrderResultEnum.SUCCESS]: "green",
+              [OrderResultEnum.FAIL]: "volcano",
+            };
+
+            return (
+              <Tag color={colors[data.result]} className="order__tag">
+                {getResultText(data.result)}
+              </Tag>
+            );
+          }}
+        />
       </Table>
       <BackTop />
     </Content>

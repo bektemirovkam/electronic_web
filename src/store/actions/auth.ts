@@ -3,9 +3,15 @@ import { ActionsCreatorsTypes } from "../../models/types";
 // import { AppStateType } from "../store";
 
 export const authActions = {
-  set: () => {
+  setIsAuth: (isAuth: boolean) => {
     return {
-      type: "asdas",
+      type: "SET_IS_AUTH",
+      payload: { isAuth },
+    } as const;
+  },
+  setIsInit: () => {
+    return {
+      type: "SET_IS_INIT",
     } as const;
   },
 };

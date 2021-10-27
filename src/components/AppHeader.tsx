@@ -5,7 +5,11 @@ import logo from "../assets/images/logo.png";
 
 const { Header } = Layout;
 
-const AppHeader = () => {
+type AppHeaderPropsType = {
+  logout: () => void;
+};
+
+const AppHeader: React.FC<AppHeaderPropsType> = ({ logout }) => {
   const [currentLocation, setCurrentLocation] = React.useState<string[]>(["/"]);
 
   const location = useLocation();
@@ -13,6 +17,13 @@ const AppHeader = () => {
   React.useEffect(() => {
     setCurrentLocation([location.pathname.split("/")[1]]);
   }, [location]);
+
+  const handleLogout = () => {
+    const answer = window.confirm("Вы уверены что хотите выйти?");
+    if (answer) {
+      logout();
+    }
+  };
 
   return (
     <Affix offsetTop={0}>
@@ -43,7 +54,9 @@ const AppHeader = () => {
           </Menu.Item>
         </Menu>
         <div className="header__logout">
-          <NavLink to="/suppliers">Выйти</NavLink>
+          <NavLink to="/suppliers" onClick={handleLogout}>
+            Выйти
+          </NavLink>
         </div>
       </Header>
     </Affix>

@@ -92,29 +92,28 @@ export const getAllCategories = (): ThunkAcionType => async (dispatch) => {
   }
 };
 
-// TODO: опасный метод
-export const deleteAllCategories = (): ThunkAcionType => async (dispatch) => {
-  try {
-    dispatch(categoriesActions.setIsLoadingCategories(true));
-    const response = await categoriesApi.deleteAllCategories();
-    if (response) {
-      dispatch(
-        categoriesActions.setCategoriesActionStatus(ActionStatusEnum.SUCCESS)
-      );
-      dispatch(categoriesActions.clearCategories());
-    } else {
-      showError(
-        "Не удалось удалить все категории, попробуйте еще раз",
-        dispatch
-      );
-    }
-  } catch (error) {
-    console.log("deleteAllCategories...", error);
-    showError("Ошибка сети, попробуйте еще раз", dispatch);
-  } finally {
-    dispatch(categoriesActions.setIsLoadingCategories(false));
-  }
-};
+// export const deleteAllCategories = (): ThunkAcionType => async (dispatch) => {
+//   try {
+//     dispatch(categoriesActions.setIsLoadingCategories(true));
+//     const response = await categoriesApi.deleteAllCategories();
+//     if (response) {
+//       dispatch(
+//         categoriesActions.setCategoriesActionStatus(ActionStatusEnum.SUCCESS)
+//       );
+//       dispatch(categoriesActions.clearCategories());
+//     } else {
+//       showError(
+//         "Не удалось удалить все категории, попробуйте еще раз",
+//         dispatch
+//       );
+//     }
+//   } catch (error) {
+//     console.log("deleteAllCategories...", error);
+//     showError("Ошибка сети, попробуйте еще раз", dispatch);
+//   } finally {
+//     dispatch(categoriesActions.setIsLoadingCategories(false));
+//   }
+// };
 
 export const createCategory =
   (formData: AddCategoryFormData): ThunkAcionType =>
@@ -145,7 +144,7 @@ export const createCategory =
       dispatch(categoriesActions.setIsLoadingCategories(false));
     }
   };
-//TODO: Нужно????
+
 export const getCategoryById =
   (id: number): ThunkAcionType =>
   async (dispatch) => {

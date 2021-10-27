@@ -13,7 +13,10 @@ body {
 }
 
 .app {
-  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .wrapper {
@@ -435,5 +438,25 @@ body {
   }
   &__tooltip-label {
     padding: 10px;
+  }
+}
+
+.auth {
+  height: 100%;
+  width: 100%;
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &__form {
+    width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    border-radius: 15px;
+    -webkit-box-shadow: 0px 4px 15px 10px rgba(34, 60, 80, 0.2);
+    -moz-box-shadow: 0px 4px 15px 10px rgba(34, 60, 80, 0.2);
+    box-shadow: 0px 4px 15px 10px rgba(34, 60, 80, 0.2);
   }
 }

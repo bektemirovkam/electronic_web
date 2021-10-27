@@ -16,13 +16,14 @@ export type OrderType = {
   categories: CategoryOutType[];
   contractors: ContractorOutType[];
   attachments: AttachmentOutType[];
+  result: OrderResultEnum;
 };
 
 export type OrderNumberSortFieldsType =
   | "actualDate"
   | "creationDate"
   | "totalSum";
-export type OrderStringSortFieldsType = "title" | "orderStatus";
+export type OrderStringSortFieldsType = "title" | "orderStatus" | "result";
 
 export enum OrderStatusEnum {
   NEW = "NEW",
@@ -51,6 +52,20 @@ export type DescriptionOrderFormData = {
   description?: string;
   comment: string;
   totalSum: number;
+};
+
+export enum OrderResultEnum {
+  SUCCESS = "SUCCESS",
+  FAIL = "FAIL",
+  NONE = "NONE",
+}
+
+export type OrderResultInType = {
+  OrderResult: OrderResultEnum;
+};
+
+export type OrderResultOutType = {
+  OrderResult: OrderResultEnum;
 };
 
 export type OrdersQueryFilterType = "active" | "deleted" | "archived" | null;

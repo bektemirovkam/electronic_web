@@ -49,7 +49,7 @@ export type ContractorStringSortFieldsType =
   | "name"
   | "location";
 
-export type ContractorNumberSortFieldsType = "rating";
+export type ContractorNumberSortFieldsType = "rating" | "creationDate";
 
 export type AddContractorFormDataType = {
   name: string;
