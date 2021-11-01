@@ -171,6 +171,9 @@ const ContractorPage = () => {
               attachmentId: image.id,
             }))
           : [],
+        otherPhoneNumbers: contractor?.otherPhoneNumbers
+          ? contractor.otherPhoneNumbers
+          : [],
       };
       setEditMode(false);
       dispatch(updateContractor(newContractor, contractor.id));
@@ -306,6 +309,9 @@ const ContractorPage = () => {
     toggleEditMode,
   ]);
 
+  //TODO: удаление аватара
+  //TODO: добавление доп контактов / удаление
+
   if (showMap) {
     return (
       <Content className="content">
@@ -390,6 +396,7 @@ const ContractorPage = () => {
             handleAddImage={handleUploadImage}
             imageUploading={contractorImageUploading}
             avatar={contractor.avatars[0]}
+            otherPhones={contractor.otherPhoneNumbers}
           />
         </>
       )}

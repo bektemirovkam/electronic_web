@@ -166,6 +166,7 @@ const ContractorCreatePage = () => {
         attachmentId: image.id,
       })),
       avatars: [],
+      otherPhoneNumbers: [], // TODO: добавить еще контакты
     };
     dispatch(createContractorProfile(newContractor));
   });

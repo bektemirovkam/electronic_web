@@ -1,4 +1,4 @@
-import { Card, Divider, TreeSelect, Image } from "antd";
+import { Card, Divider, TreeSelect, Image, Typography } from "antd";
 import { DataNode } from "antd/lib/tree";
 import React from "react";
 import { Control, FieldError } from "react-hook-form";
@@ -12,6 +12,8 @@ import {
 } from "../../../models/Contractors";
 
 import ContractorEditableField from "./ContractorEditableField";
+
+const { Text } = Typography;
 
 type ContractorInfoBodyPropsType = {
   defaultValue: string;
@@ -30,6 +32,7 @@ type ContractorInfoBodyPropsType = {
   images: AttachmentOutType[];
   registeringType: ContractorTypesEnum;
   avatar?: AttachmentOutType;
+  otherPhones: string[];
 };
 
 const { SHOW_ALL } = TreeSelect;
@@ -48,6 +51,7 @@ const ContractorInfoBody: React.FC<ContractorInfoBodyPropsType> = ({
   images,
   registeringType,
   avatar,
+  otherPhones,
 }) => {
   return (
     <div className="contractor__body">
@@ -107,6 +111,12 @@ const ContractorInfoBody: React.FC<ContractorInfoBodyPropsType> = ({
             />
           )}
         </div>
+        <Divider>Контактные номера</Divider>
+        {otherPhones.map((phone, index) => (
+          <div>
+            <Text key={`${phone}_${index}`}>{phone}</Text>
+          </div>
+        ))}
       </Card>
     </div>
   );

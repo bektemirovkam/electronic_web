@@ -40,6 +40,7 @@ export type ContractorType = {
   attachments: AttachmentOutType[];
   avatars: AttachmentOutType[];
   chats: ChatType[];
+  otherPhoneNumbers: string[];
   creationDate: number;
   rating: number;
 };
@@ -63,6 +64,7 @@ export type AddContractorFormDataType = {
   categories: CategoryInType[];
   attachments: AttachmentInType[];
   avatars: AttachmentInType[];
+  otherPhoneNumbers: string[];
 };
 
 export type SupplierDescrFormDataType = {
