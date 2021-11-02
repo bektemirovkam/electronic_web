@@ -5,11 +5,13 @@ import { Spin } from "antd";
 type UploadFileFormPropsType = {
   onChange: (e: Event) => void;
   isUploading: boolean;
+  buttonText: string;
 };
 
 const UploadFileForm: React.FC<UploadFileFormPropsType> = ({
   onChange,
   isUploading,
+  buttonText,
 }) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -35,7 +37,7 @@ const UploadFileForm: React.FC<UploadFileFormPropsType> = ({
             <Spin />
           ) : (
             <>
-              <PlusOutlined /> <div>Загрузить</div>
+              <PlusOutlined /> <div>{buttonText}</div>
             </>
           )}
         </div>

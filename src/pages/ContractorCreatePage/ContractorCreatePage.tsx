@@ -7,7 +7,6 @@ import {
   Typography,
   TreeSelect,
   RadioChangeEvent,
-  message,
 } from "antd";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -30,12 +29,16 @@ import {
 import { categoriesActions } from "../../store/actions/categories";
 import { useHistory } from "react-router-dom";
 import {
+  addContractorAvatar,
   addContractorImage,
   contractorActions,
   createContractorProfile,
+  removeNewContractorAvatar,
   removeNewContractorImage,
 } from "../../store/actions/contractors";
 import {
+  getContractorAvatarsState,
+  getContractorAvatarUploadingState,
   getContractorImagesState,
   getContractorImageUploadingState,
   getContractorsActionStatusState,
@@ -43,10 +46,8 @@ import {
   getContractorsLoadingState,
   getCurrentContractorState,
 } from "../../store/selectors/contractors";
-import { SupplierDescrForm } from "./components";
+import { SupplierDescrForm, SupplierSpecInfo } from "./components";
 import CustomerDescrForm from "./components/CustomerDescrForm";
-import getBase64 from "../../utils/getBase64";
-import { AttachmentType } from "../../models/Attachments";
 import {
   AddContractorFormDataType,
   ContractorTypesEnum,
@@ -54,6 +55,7 @@ import {
   CustomerDescrFormDataType,
   SupplierDescrFormDataType,
 } from "../../models/Contractors";
+import { convertingImage } from "../../utils/formatter";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -81,6 +83,9 @@ const ContractorCreatePage = () => {
 
   const [showMap, setShowMap] = React.useState(false);
   const [latLng, setLatLng] = React.useState<CoordinatesType | null>(null);
+  const [otherPhoneNumbers, setOtherPhoneNumbers] = React.useState<string[]>(
+    []
+  );
 
   const contractorActionStatus = useSelector(getContractorsActionStatusState);
   const contractorError = useSelector(getContractorsErrorMessage);
@@ -91,6 +96,9 @@ const ContractorCreatePage = () => {
   const contractorImageUploading = useSelector(
     getContractorImageUploadingState
   );
+
+  const contractorAvatars = useSelector(getContractorAvatarsState);
+  const avatarUploading = useSelector(getContractorAvatarUploadingState);
 
   const categoriesTree = useSelector(getCategoriesTreeDataState);
   const categoriesError = useSelector(getCategoriesErrorMessageState);
@@ -165,8 +173,10 @@ const ContractorCreatePage = () => {
       attachments: contractorImages.map((image) => ({
         attachmentId: image.id,
       })),
-      avatars: [],
-      otherPhoneNumbers: [], // TODO: добавить еще контакты
+      avatars: contractorAvatars.map((avatar) => ({
+        attachmentId: avatar.id,
+      })),
+      otherPhoneNumbers,
     };
     dispatch(createContractorProfile(newContractor));
   });
@@ -191,31 +201,21 @@ const ContractorCreatePage = () => {
     dispatch(removeNewContractorImage(imageId));
   };
 
+  const handleRemoveAvatar = (imageId: number) => {
+    dispatch(removeNewContractorAvatar(imageId));
+  };
+
   const handleUploadImage = async (e: Event) => {
-    const target = e.currentTarget as HTMLInputElement;
-    const file = target.files?.[0];
+    const image = await convertingImage(e);
+    if (image) {
+      dispatch(addContractorImage(image));
+    }
+  };
 
-    if (file) {
-      if (
-        file.type !== "image/png" &&
-        file.type !== "image/jpeg" &&
-        file.type !== "image/jpg"
-      ) {
-        return message.error(`${file.name} не является картинкой`);
-      } else {
-        const base64 = await getBase64(file);
-        const ext = file.name.split(".").pop();
-        const name = file.name;
-
-        if (base64 && ext && name) {
-          const image: AttachmentType = {
-            name: name,
-            ext: ext,
-            content: base64.split(",")[1],
-          };
-          dispatch(addContractorImage(image));
-        }
-      }
+  const handleUploadAvatar = async (e: Event) => {
+    const image = await convertingImage(e);
+    if (image) {
+      dispatch(addContractorAvatar(image));
     }
   };
 
@@ -262,24 +262,6 @@ const ContractorCreatePage = () => {
         <Title level={3} className="title">
           Создание контрагента
         </Title>
-        {registeringType === ContractorTypesEnum.SUPPLIER ? (
-          <SupplierDescrForm control={control} errors={errors} />
-        ) : (
-          <CustomerDescrForm control={control} errors={errors} />
-        )}
-        {registeringType === ContractorTypesEnum.SUPPLIER && (
-          <TreeSelect
-            treeData={categoriesTree}
-            value={selectedCategories}
-            onChange={handleSelectCategories}
-            treeCheckable={true}
-            showCheckedStrategy={SHOW_ALL}
-            placeholder={"Выберите категории контрагента"}
-            style={{ width: "100%", marginBottom: 10 }}
-            maxTagCount={5}
-          />
-        )}
-
         <Radio.Group
           onChange={handleSelectRegType}
           value={registeringType}
@@ -288,24 +270,37 @@ const ContractorCreatePage = () => {
           <Radio value={ContractorTypesEnum.SUPPLIER}>Поставщик</Radio>
           <Radio value={ContractorTypesEnum.CUSTOMER}>Заказчик</Radio>
         </Radio.Group>
+        <ImagesList
+          removeImage={handleRemoveAvatar}
+          images={contractorAvatars}
+          editMode={true}
+        />
+        <UploadFileForm
+          onChange={handleUploadAvatar}
+          isUploading={avatarUploading}
+          buttonText="Аватар"
+        />
+        {registeringType === ContractorTypesEnum.SUPPLIER ? (
+          <SupplierDescrForm control={control} errors={errors} />
+        ) : (
+          <CustomerDescrForm control={control} errors={errors} />
+        )}
         {registeringType === ContractorTypesEnum.SUPPLIER && (
-          <Button
-            className="map-btn"
-            type="default"
-            onClick={toggleShowMap}
-            block
-          >
-            {latLng ? "Изменить координаты" : "Отметить на карте"}
-          </Button>
+          <SupplierSpecInfo
+            categoriesTree={categoriesTree}
+            selectedCategories={selectedCategories}
+            handleSelectCategories={handleSelectCategories}
+            toggleShowMap={toggleShowMap}
+            latLng={latLng}
+            handleUploadImage={handleUploadImage}
+            contractorImageUploading={contractorImageUploading}
+            setOtherPhoneNumbers={setOtherPhoneNumbers}
+          />
         )}
         <ImagesList
           removeImage={handleRemoveImage}
           images={contractorImages}
           editMode={true}
-        />
-        <UploadFileForm
-          onChange={handleUploadImage}
-          isUploading={contractorImageUploading}
         />
         <Button
           className="order__save-btn"

@@ -1,15 +1,8 @@
 import React from "react";
-import {
-  Layout,
-  PageHeader,
-  Button,
-  Card,
-  RadioChangeEvent,
-  message,
-} from "antd";
+import { Layout, PageHeader, Button, Card, RadioChangeEvent, Rate } from "antd";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ActionStatusEnum } from "../../models/types";
+import { ActionStatusEnum, SaveContactsResponse } from "../../models/types";
 import { customerSchema, supplierSchema } from "../../utils/validatorsSchemes";
 import { useHistory, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,6 +11,8 @@ import { AppAlert, AppMap, AppPreloader } from "../../components";
 
 import { getCategoriesTreeDataState } from "../../store/selectors/categories";
 import {
+  getContractorAvatarsState,
+  getContractorAvatarUploadingState,
   getContractorImagesState,
   getContractorImageUploadingState,
   getContractorsActionStatusState,
@@ -26,10 +21,12 @@ import {
   getCurrentContractorState,
 } from "../../store/selectors/contractors";
 import {
+  addContractorAvatar,
   addContractorImage,
   contractorActions,
   deleteContractor,
   getContractorById,
+  removeContractorAvatar,
   removeContractorImage,
   updateContractor,
 } from "../../store/actions/contractors";
@@ -38,8 +35,6 @@ import {
   ContractorEditableField,
   ContractorInfoBody,
 } from "./components";
-import { AttachmentType } from "../../models/Attachments";
-import getBase64 from "../../utils/getBase64";
 import {
   AddContractorFormDataType,
   ContractorTypesEnum,
@@ -47,6 +42,7 @@ import {
   CustomerDescrFormDataType,
   SupplierDescrFormDataType,
 } from "../../models/Contractors";
+import { convertingImage } from "../../utils/formatter";
 
 const { Content } = Layout;
 
@@ -72,10 +68,15 @@ const ContractorPage = () => {
     ),
   });
 
+  const [otherPhoneNumbers, setOtherPhoneNumber] = React.useState<string[]>([]);
+
   const contractor = useSelector(getCurrentContractorState);
   const contractorActionStatus = useSelector(getContractorsActionStatusState);
   const contractorError = useSelector(getContractorsErrorMessage);
   const contractorLoadingState = useSelector(getContractorsLoadingState);
+
+  const contractorAvatars = useSelector(getContractorAvatarsState);
+  const avatarUploading = useSelector(getContractorAvatarUploadingState);
 
   const contractorImages = useSelector(getContractorImagesState);
   const contractorImageUploading = useSelector(
@@ -124,6 +125,8 @@ const ContractorPage = () => {
         coordinatesLongitude: contractor.coordinates.coordinatesLongitude,
       });
       dispatch(contractorActions.setContractorImages(contractor.attachments));
+      dispatch(contractorActions.addContractorAvatar(contractor.avatars));
+      setOtherPhoneNumber(contractor.otherPhoneNumbers);
     }
   }, [contractor, dispatch]);
 
@@ -166,14 +169,10 @@ const ContractorPage = () => {
         attachments: contractorImages.map((image) => ({
           attachmentId: image.id,
         })),
-        avatars: contractor?.avatars
-          ? contractor.avatars.map((image) => ({
-              attachmentId: image.id,
-            }))
-          : [],
-        otherPhoneNumbers: contractor?.otherPhoneNumbers
-          ? contractor.otherPhoneNumbers
-          : [],
+        avatars: contractorAvatars.map((image) => ({
+          attachmentId: image.id,
+        })),
+        otherPhoneNumbers,
       };
       setEditMode(false);
       dispatch(updateContractor(newContractor, contractor.id));
@@ -205,6 +204,8 @@ const ContractorPage = () => {
       );
       dispatch(contractorActions.clearContractorImages());
       dispatch(contractorActions.setContractorImages(contractor.attachments));
+      dispatch(contractorActions.addContractorAvatar(contractor.avatars));
+      setOtherPhoneNumber(contractor.otherPhoneNumbers);
       reset({
         name: contractor.name,
         phoneNumber: contractor.phoneNumber,
@@ -235,36 +236,28 @@ const ContractorPage = () => {
   );
 
   const handleUploadImage = async (e: Event) => {
-    const target = e.currentTarget as HTMLInputElement;
-    const file = target.files?.[0];
+    const image = await convertingImage(e);
+    if (image) {
+      dispatch(addContractorImage(image));
+    }
+  };
 
-    if (file) {
-      if (
-        file.type !== "image/png" &&
-        file.type !== "image/jpeg" &&
-        file.type !== "image/jpg"
-      ) {
-        return message.error(`${file.name} не является картинкой`);
-      } else {
-        const base64 = await getBase64(file);
-        const ext = file.name.split(".").pop();
-        const name = file.name;
-
-        if (base64 && ext && name) {
-          const image: AttachmentType = {
-            name: name,
-            ext: ext,
-            content: base64.split(",")[1],
-          };
-          dispatch(addContractorImage(image));
-        }
-      }
+  const handleUploadAvatar = async (e: Event) => {
+    const image = await convertingImage(e);
+    if (image) {
+      dispatch(addContractorAvatar(image));
     }
   };
 
   const handleRemoveImage = (imageId: number) => {
     if (contractor) {
       dispatch(removeContractorImage(contractor.id, imageId));
+    }
+  };
+
+  const handleRemoveAvatar = (imageId: number) => {
+    if (contractor) {
+      dispatch(removeContractorAvatar(contractor.id, imageId));
     }
   };
 
@@ -276,6 +269,11 @@ const ContractorPage = () => {
     }
     return Object.keys(errors).length !== 0;
   }, [errors, registeringType, selectedCategories.length]);
+
+  const handleSaveOtherPhones = (values: SaveContactsResponse) => {
+    const parsedPhones = values.contacts.map((phone) => phone.phoneNumber);
+    setOtherPhoneNumber(parsedPhones);
+  };
 
   const getEditActionsButtons = () => {
     return [
@@ -290,7 +288,13 @@ const ContractorPage = () => {
 
   const getActionsButtons = () => {
     return [
-      <Button key="3" onClick={toggleEditMode}>
+      <Rate
+        defaultValue={contractor?.rating ? contractor.rating : 0}
+        disabled
+        key={"3"}
+      />,
+
+      <Button key="4" onClick={toggleEditMode}>
         Редактировать
       </Button>,
       <Button key="5" onClick={handleDeleteContractor} danger>
@@ -305,12 +309,10 @@ const ContractorPage = () => {
     onSubmit,
   ]);
   const actionButtons = React.useMemo(getActionsButtons, [
+    contractor?.rating,
     handleDeleteContractor,
     toggleEditMode,
   ]);
-
-  //TODO: удаление аватара
-  //TODO: добавление доп контактов / удаление
 
   if (showMap) {
     return (
@@ -395,8 +397,12 @@ const ContractorPage = () => {
             handleRemoveImage={handleRemoveImage}
             handleAddImage={handleUploadImage}
             imageUploading={contractorImageUploading}
-            avatar={contractor.avatars[0]}
+            avatars={contractorAvatars}
             otherPhones={contractor.otherPhoneNumbers}
+            handleRemoveAvatar={handleRemoveAvatar}
+            avatarUploading={avatarUploading}
+            handleAddAvatar={handleUploadAvatar}
+            setOtherPhone={handleSaveOtherPhones}
           />
         </>
       )}

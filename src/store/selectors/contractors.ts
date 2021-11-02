@@ -111,3 +111,9 @@ export const getContractorsByCategoriesState = createSelector(
     }
   }
 );
+
+export const getContractorAvatarUploadingState = (state: AppStateType) =>
+  getContractorsState(state).contractorAvatarUploading;
+
+export const getContractorAvatarsState = (state: AppStateType) =>
+  getContractorsState(state).contractorAvatars;

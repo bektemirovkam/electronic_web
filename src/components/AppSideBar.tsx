@@ -22,7 +22,11 @@ const AppSideBar = () => {
 
   return (
     <Affix offsetTop={64}>
-      <Sider width={200} className="site-layout-background sidebar">
+      <Sider
+        // width={200}
+        breakpoint="xxl"
+        className="site-layout-background sidebar"
+      >
         <Menu
           mode="inline"
           className="sidebar__menu"

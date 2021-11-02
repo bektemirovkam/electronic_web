@@ -11,6 +11,8 @@ const initialState = {
   errorMessage: null as string | null,
   contractorImages: [] as AttachmentOutType[],
   contractorImageUploading: false,
+  contractorAvatarUploading: false,
+  contractorAvatars: [] as AttachmentOutType[],
 };
 
 type initStateType = typeof initialState;
@@ -25,7 +27,8 @@ const contractorsReducer = (
     case "SET_CONTRACTORS_ACTION_STATUS":
     case "SET_CONTRACTORS_ERROR_MESSAGE":
     case "SET_CONTRACTORS":
-    case "SET_CONTRACTOR_IMAGE_UPLOADING": {
+    case "SET_CONTRACTOR_IMAGE_UPLOADING":
+    case "SET_CONTRACTOR_AVATAR_UPLOADING": {
       return {
         ...state,
         ...action.payload,
@@ -55,6 +58,13 @@ const contractorsReducer = (
       };
     }
 
+    case "ADD_CONTRACTOR_AVATARS": {
+      return {
+        ...state,
+        contractorAvatars: action.payload.images,
+      };
+    }
+
     case "REMOVE_CONTRACTOR_IMAGE": {
       return {
         ...state,
@@ -63,11 +73,18 @@ const contractorsReducer = (
         ),
       };
     }
+    case "REMOVE_CONTRACTOR_AVATAR": {
+      return {
+        ...state,
+        contractorAvatars: [],
+      };
+    }
 
     case "CLEAR_CONTRACTOR_IMAGES": {
       return {
         ...state,
         contractorImages: [],
+        contractorAvatars: [],
       };
     }
     default:

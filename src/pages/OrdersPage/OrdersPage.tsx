@@ -26,11 +26,10 @@ import {
   OrderType,
 } from "../../models/Orders";
 import { formatDate, truncateString } from "../../utils/formatter";
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 
 const { Content } = Layout;
 const { Column } = Table;
-
-//TODO: немного подправить адаптив
 
 const getNumberSorter = (fieldName: OrderNumberSortFieldsType) => ({
   compare: (a: OrderType, b: OrderType) => a[fieldName] - b[fieldName],
@@ -64,6 +63,7 @@ const OrdersPage = () => {
     return new URLSearchParams(useLocation().search);
   };
   const query = useQuery();
+  const { xxl } = useBreakpoint();
 
   const orders = useSelector(
     getFilteredOrdersListState(
@@ -149,19 +149,22 @@ const OrdersPage = () => {
         showSorterTooltip={false}
         dataSource={orders}
         rowKey={"id"}
+        size={xxl ? "middle" : "small"}
         expandable={{
           expandedRowRender: (order) => (
             <div className="order__expanded">
-              <p className="order__tab-descr">{order.description}</p>
+              <p className="order__tab-descr table-value">
+                {order.description}
+              </p>
               <div className="order__expanded-action">
                 <Button
-                  className="order__expanded-btn"
+                  className="order__expanded-btn table-value"
                   onClick={() => handleViewOrder(order)}
                 >
                   Посмотреть
                 </Button>
                 <Button
-                  className="order__expanded-btn"
+                  className="order__expanded-btn table-value"
                   onClick={() => handleDeleteOrder(order.id)}
                   danger
                 >
@@ -184,7 +187,7 @@ const OrdersPage = () => {
             };
 
             return (
-              <Tag color={colors[status]} key={status}>
+              <Tag color={colors[status]} key={status} className="table-tag">
                 {status}
               </Tag>
             );
@@ -200,6 +203,7 @@ const OrdersPage = () => {
                 onClick={() => handleViewOrder(order)}
                 type="link"
                 key="title"
+                className="table-value"
               >
                 {truncateString(order.title, 40)}
               </Button>
@@ -214,6 +218,7 @@ const OrdersPage = () => {
           render={(_, data) => formatDate(data.creationDate)}
           defaultSortOrder="descend"
           sorter={getNumberSorter("creationDate")}
+          className="table-value"
         />
         <Column<OrderType>
           title="Дата закрытия"
@@ -221,6 +226,7 @@ const OrdersPage = () => {
           key="actualDate"
           render={(_, data) => formatDate(data.actualDate)}
           sorter={getNumberSorter("actualDate")}
+          className="table-value"
         />
         <Column<OrderType>
           title="Категории"
@@ -237,7 +243,7 @@ const OrdersPage = () => {
                       type="link"
                       key={category.categoryId}
                     >
-                      <Tag color="blue" className="order__tag">
+                      <Tag color="blue" className="order__tag table-tag">
                         {category.categoryName}
                       </Tag>
                     </Button>
@@ -251,8 +257,14 @@ const OrdersPage = () => {
           dataIndex="totalSum"
           key="totalSum"
           sorter={getNumberSorter("totalSum")}
+          className="table-value"
         />
-        <Column<OrderType> title="Сроки" dataIndex="comment" key="comment" />
+        <Column<OrderType>
+          title="Сроки"
+          dataIndex="comment"
+          key="comment"
+          className="table-value"
+        />
         <Column<OrderType>
           title="Результат"
           dataIndex="results"
@@ -266,7 +278,7 @@ const OrdersPage = () => {
             };
 
             return (
-              <Tag color={colors[data.result]} className="order__tag">
+              <Tag color={colors[data.result]} className="order__tag table-tag">
                 {getResultText(data.result)}
               </Tag>
             );

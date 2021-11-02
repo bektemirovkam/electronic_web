@@ -74,6 +74,7 @@ const OrderInfoBody: React.FC<OrderInfoBodyPropsType> = ({
             <UploadFileForm
               onChange={handleAddImage}
               isUploading={imageUploading}
+              buttonText="Фото"
             />
           )}
         </div>

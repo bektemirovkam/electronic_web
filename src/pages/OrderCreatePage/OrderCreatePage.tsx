@@ -197,6 +197,7 @@ const OrderCreatePage = () => {
         <UploadFileForm
           onChange={handleUploadImage}
           isUploading={orderUploading}
+          buttonText="Фото"
         />
         <Button
           className="order__save-btn"

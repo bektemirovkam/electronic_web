@@ -39,3 +39,7 @@ export type Result = {
   id: number;
   error: string;
 };
+
+export type SaveContactsResponse = {
+  contacts: { phoneNumber: string }[];
+};

@@ -23,7 +23,7 @@ const fields = [
   {
     id: "7",
     fieldName: "phoneNumber",
-    subtitle: "Номер телефона",
+    subtitle: "Номер телефона для авторизации",
     maxLength: 12,
     required: true,
     defaultValue: "+7",

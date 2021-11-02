@@ -7,3 +7,4 @@ export { default as SelectParentCategory } from "./SelectParentCategory";
 export { default as AppMap } from "./AppMap";
 export { default as ImagesList } from "./ImagesList";
 export { default as AppSearchField } from "./AppSearchField";
+export { default as ContactsForm } from "./ContactsForm";

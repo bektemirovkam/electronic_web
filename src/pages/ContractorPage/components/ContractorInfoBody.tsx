@@ -3,13 +3,14 @@ import { DataNode } from "antd/lib/tree";
 import React from "react";
 import { Control, FieldError } from "react-hook-form";
 import { baseURL } from "../../../api/axios";
-import { ImagesList, UploadFileForm } from "../../../components";
+import { ContactsForm, ImagesList, UploadFileForm } from "../../../components";
 import { AttachmentOutType } from "../../../models/Attachments";
 import {
   ContractorTypesEnum,
   CustomerDescrFormDataType,
   SupplierDescrFormDataType,
 } from "../../../models/Contractors";
+import { SaveContactsResponse } from "../../../models/types";
 
 import ContractorEditableField from "./ContractorEditableField";
 
@@ -27,12 +28,16 @@ type ContractorInfoBodyPropsType = {
   selectedCategories: number[];
   handleSelectCategories: (value: number[]) => void;
   handleRemoveImage: (imageId: number) => void;
+  handleRemoveAvatar: (imageId: number) => void;
   handleAddImage: (e: Event) => void;
+  handleAddAvatar: (e: Event) => void;
   imageUploading: boolean;
   images: AttachmentOutType[];
   registeringType: ContractorTypesEnum;
-  avatar?: AttachmentOutType;
+  avatars?: AttachmentOutType[];
   otherPhones: string[];
+  avatarUploading: boolean;
+  setOtherPhone: (values: SaveContactsResponse) => void;
 };
 
 const { SHOW_ALL } = TreeSelect;
@@ -47,11 +52,15 @@ const ContractorInfoBody: React.FC<ContractorInfoBodyPropsType> = ({
   handleSelectCategories,
   handleRemoveImage,
   handleAddImage,
+  handleRemoveAvatar,
   imageUploading,
   images,
   registeringType,
-  avatar,
+  avatars,
+  handleAddAvatar,
+  avatarUploading,
   otherPhones,
+  setOtherPhone,
 }) => {
   return (
     <div className="contractor__body">
@@ -86,14 +95,22 @@ const ContractorInfoBody: React.FC<ContractorInfoBodyPropsType> = ({
             )}
           </>
         )}
-        {avatar && (
+        {avatars && (
           <>
             <Divider>Аватар</Divider>
-            <div className="avatar">
-              <Image
-                src={`${baseURL}${avatar.attachmentLink}`}
-                className="avatar__image"
+            <div className="contractor__images">
+              <ImagesList
+                removeImage={handleRemoveAvatar}
+                images={avatars}
+                editMode={editMode}
               />
+              {editMode && (
+                <UploadFileForm
+                  onChange={handleAddAvatar}
+                  isUploading={avatarUploading}
+                  buttonText="Аватар"
+                />
+              )}
             </div>
           </>
         )}
@@ -108,15 +125,25 @@ const ContractorInfoBody: React.FC<ContractorInfoBodyPropsType> = ({
             <UploadFileForm
               onChange={handleAddImage}
               isUploading={imageUploading}
+              buttonText="Фото"
             />
           )}
         </div>
         <Divider>Контактные номера</Divider>
-        {otherPhones.map((phone, index) => (
-          <div>
-            <Text key={`${phone}_${index}`}>{phone}</Text>
-          </div>
-        ))}
+        {editMode ? (
+          <ContactsForm
+            onFinish={setOtherPhone}
+            initialValues={{
+              contacts: otherPhones.map((phone) => ({ phoneNumber: phone })),
+            }}
+          />
+        ) : (
+          otherPhones.map((phone, index) => (
+            <div key={`${phone}_${index}`}>
+              <Text>{phone}</Text>
+            </div>
+          ))
+        )}
       </Card>
     </div>
   );

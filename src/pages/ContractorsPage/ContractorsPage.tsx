@@ -25,6 +25,7 @@ import {
   ContractorTypesEnum,
 } from "../../models/Contractors";
 import { formatDate, truncateString } from "../../utils/formatter";
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 
 const { Content } = Layout;
 const { Column } = Table;
@@ -61,6 +62,7 @@ const ContractorsPage = () => {
 
   const dispatch = useDispatch();
   const history = useHistory();
+  const { xxl } = useBreakpoint();
 
   const clearState = React.useCallback(() => {
     dispatch(
@@ -129,19 +131,22 @@ const ContractorsPage = () => {
         showSorterTooltip={false}
         dataSource={contractors}
         rowKey={"id"}
+        size={xxl ? "middle" : "small"}
         expandable={{
           expandedRowRender: (order) => (
             <div className="contractor__expanded">
-              <p className="contractor__tab-descr">{order.description}</p>
+              <p className="contractor__tab-descr table-value">
+                {order.description}
+              </p>
               <div className="contractor__expanded-action">
                 <Button
-                  className="contractor__expanded-btn"
+                  className="contractor__expanded-btn table-value"
                   onClick={() => handleViewContractor(order)}
                 >
                   Посмотреть
                 </Button>
                 <Button
-                  className="contractor__expanded-btn"
+                  className="contractor__expanded-btn table-value"
                   onClick={() => handleDeleteContractor(order.id)}
                   danger
                 >
@@ -167,6 +172,7 @@ const ContractorsPage = () => {
               <Tag
                 color={colors[contractor.contractorType]}
                 key={contractor.contractorType}
+                className="table-tag"
               >
                 {contractor.contractorType === ContractorTypesEnum.CUSTOMER
                   ? "Заказчик"
@@ -181,7 +187,10 @@ const ContractorsPage = () => {
           key="name"
           render={(_, contractor) => (
             <Space size="middle">
-              <NavLink to={`contractors/${contractor.id}`}>
+              <NavLink
+                to={`contractors/${contractor.id}`}
+                className="table-value"
+              >
                 {truncateString(contractor.name, 50)}
               </NavLink>
             </Space>
@@ -192,12 +201,14 @@ const ContractorsPage = () => {
           title="Номер телефона"
           dataIndex="phoneNumber"
           key="phoneNumber"
+          className="table-value"
         />
         <Column<ContractorType>
           title="Город"
           dataIndex="location"
           key="location"
           sorter={getStringSorter("location")}
+          className="table-value"
         />
         <Column<ContractorType>
           title="Категории"
@@ -214,7 +225,7 @@ const ContractorsPage = () => {
                       type="link"
                       key={category.categoryId}
                     >
-                      <Tag color="blue" className="order__tag">
+                      <Tag color="blue" className="order__tag table-tag">
                         {category.categoryName}
                       </Tag>
                     </Button>
@@ -227,6 +238,7 @@ const ContractorsPage = () => {
           title="Контактное лицо"
           dataIndex="contactName"
           key="contactName"
+          className="table-value"
         />
         <Column<ContractorType>
           title="Дата регистрации"
@@ -235,13 +247,18 @@ const ContractorsPage = () => {
           render={(_, data) => formatDate(data.creationDate)}
           defaultSortOrder="descend"
           sorter={getNumberSorter("creationDate")}
+          className="table-value"
         />
         <Column<ContractorType>
           title="Рейтинг"
           dataIndex="rating"
           key="rating"
           render={(_, data) => {
-            return <Text>{Math.ceil(data.rating * 100) / 100}</Text>;
+            return (
+              <Text className="table-value">
+                {Math.ceil(data.rating * 100) / 100}
+              </Text>
+            );
           }}
           sorter={getNumberSorter("rating")}
         />

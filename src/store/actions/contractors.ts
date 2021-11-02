@@ -55,6 +55,12 @@ export const contractorActions = {
       payload: { contractorImageUploading },
     } as const;
   },
+  setContractorAvatarUploading: (contractorAvatarUploading: boolean) => {
+    return {
+      type: "SET_CONTRACTOR_AVATAR_UPLOADING",
+      payload: { contractorAvatarUploading },
+    } as const;
+  },
   setContractorImages: (images: AttachmentOutType[]) => {
     return {
       type: "SET_CONTRACTOR_IMAGES",
@@ -67,9 +73,21 @@ export const contractorActions = {
       payload: { images },
     } as const;
   },
+  addContractorAvatar: (images: AttachmentOutType[]) => {
+    return {
+      type: "ADD_CONTRACTOR_AVATARS",
+      payload: { images },
+    } as const;
+  },
   removeContractorImage: (imageId: number) => {
     return {
       type: "REMOVE_CONTRACTOR_IMAGE",
+      payload: { imageId },
+    } as const;
+  },
+  removeContractorAvatar: (imageId: number) => {
+    return {
+      type: "REMOVE_CONTRACTOR_AVATAR",
       payload: { imageId },
     } as const;
   },
@@ -213,6 +231,29 @@ export const addContractorImage =
     }
   };
 
+export const addContractorAvatar =
+  (image: AttachmentType): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(contractorActions.setContractorAvatarUploading(true));
+      const imageOut = await attachmentsApi.addAttachment(image);
+
+      if (imageOut.length > 0) {
+        dispatch(contractorActions.addContractorAvatar(imageOut));
+      } else {
+        showError(
+          "Не удалось загрузить вложение, попробуйте еще раз",
+          dispatch
+        );
+      }
+    } catch (error) {
+      console.log("addContractorImage ===> ", error);
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
+    } finally {
+      dispatch(contractorActions.setContractorAvatarUploading(false));
+    }
+  };
+
 export const removeContractorImage =
   (contractorId: number, imageId: number): ThunkAcionType =>
   async (dispatch) => {
@@ -237,6 +278,30 @@ export const removeContractorImage =
     }
   };
 
+export const removeContractorAvatar =
+  (contractorId: number, imageId: number): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(contractorActions.setContractorAvatarUploading(true));
+
+      const response = await contractorsApi.removeContractorAttachment(
+        contractorId,
+        imageId
+      );
+
+      if (response) {
+        dispatch(contractorActions.removeContractorAvatar(imageId));
+      } else {
+        showError("Не удалось удалить вложение, попробуйте еще раз", dispatch);
+      }
+    } catch (error) {
+      console.log("removeContractorImage ===> ", error);
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
+    } finally {
+      dispatch(contractorActions.setContractorAvatarUploading(false));
+    }
+  };
+
 export const removeNewContractorImage =
   (imageId: number): ThunkAcionType =>
   async (dispatch) => {
@@ -255,6 +320,26 @@ export const removeNewContractorImage =
       showError("Ошибка сети, попробуйте еще раз", dispatch);
     } finally {
       dispatch(contractorActions.setContractorImageUploading(false));
+    }
+  };
+export const removeNewContractorAvatar =
+  (imageId: number): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(contractorActions.setContractorAvatarUploading(true));
+
+      const response = await attachmentsApi.removeAttachment(imageId);
+
+      if (response) {
+        dispatch(contractorActions.removeContractorAvatar(imageId));
+      } else {
+        showError("Не удалось удалить вложение, попробуйте еще раз", dispatch);
+      }
+    } catch (error) {
+      console.log("removeNewContractorImage ===> ", error);
+      showError("Ошибка сети, попробуйте еще раз", dispatch);
+    } finally {
+      dispatch(contractorActions.setContractorAvatarUploading(false));
     }
   };
 export type ContractorsActionTypes = ReturnType<

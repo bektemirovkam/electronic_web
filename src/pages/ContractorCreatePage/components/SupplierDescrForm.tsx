@@ -1,3 +1,4 @@
+import { Typography } from "antd";
 import React from "react";
 import { Control, FieldError } from "react-hook-form";
 import {
@@ -6,6 +7,8 @@ import {
   SupplierFieldsNameType,
 } from "../../../models/Contractors";
 import ContractorField from "./ContractorField";
+
+const { Text } = Typography;
 
 const fields = [
   {
@@ -27,7 +30,7 @@ const fields = [
   {
     id: "7",
     fieldName: "phoneNumber",
-    subtitle: "Номер телефона",
+    subtitle: "Номер телефона для авторизации",
     maxLength: 12,
     required: true,
     defaultValue: "+7",

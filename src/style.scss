@@ -50,7 +50,7 @@ body {
   color: #8c8c8c;
 }
 .form {
-  width: 40%;
+  width: 600px;
   margin: 0 auto;
   &__input {
     margin-bottom: 15px;
@@ -423,6 +423,10 @@ body {
   justify-content: center;
   &__item {
     margin-right: 10px;
+    align-self: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     &:last-child {
       margin-right: 0;
     }
@@ -458,5 +462,14 @@ body {
     -webkit-box-shadow: 0px 4px 15px 10px rgba(34, 60, 80, 0.2);
     -moz-box-shadow: 0px 4px 15px 10px rgba(34, 60, 80, 0.2);
     box-shadow: 0px 4px 15px 10px rgba(34, 60, 80, 0.2);
+  }
+}
+
+@media (max-width: 1300px) {
+  .table-value {
+    font-size: 12px;
+  }
+  .table-tag {
+    font-size: 10px;
   }
 }

@@ -9,8 +9,7 @@ import {
   getTodayArchivedCountState,
   getTodayOrdersCountState,
 } from "../../../store/selectors/orders";
-
-const { Text } = Typography;
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 
 const OrdersCounter = () => {
   const createdTodayCount = useSelector(getTodayOrdersCountState);
@@ -18,10 +17,12 @@ const OrdersCounter = () => {
   const successResultCount = useSelector(getSuccessResultCount);
   const failResultCount = useSelector(getFailResultCount);
 
+  const { xl } = useBreakpoint();
+
   return (
     <div className="statistic__counters">
       <div className="counters">
-        <Card className="counters__item">
+        <Card className="counters__item" bodyStyle={{ padding: xl ? 20 : 10 }}>
           <Statistic
             title="Заявок сегодня"
             value={createdTodayCount}
@@ -29,7 +30,7 @@ const OrdersCounter = () => {
             valueStyle={{ color: "#3f8600" }}
           />
         </Card>
-        <Card className="counters__item">
+        <Card className="counters__item" bodyStyle={{ padding: xl ? 20 : 10 }}>
           <Statistic
             title="Сегодня закроются"
             value={closedTodayCount}
@@ -37,7 +38,7 @@ const OrdersCounter = () => {
             valueStyle={{ color: "#cf1322" }}
           />
         </Card>
-        <Card className="counters__item">
+        <Card className="counters__item" bodyStyle={{ padding: xl ? 20 : 10 }}>
           <Statistic
             title="Удалось выполнить"
             value={successResultCount}
@@ -45,7 +46,7 @@ const OrdersCounter = () => {
             valueStyle={{ color: "#3f8600" }}
           />
         </Card>
-        <Card className="counters__item">
+        <Card className="counters__item" bodyStyle={{ padding: xl ? 20 : 10 }}>
           <Statistic
             title="Не удалось выполнить"
             value={failResultCount}
