@@ -1,3 +1,4 @@
+import moment from "moment";
 import { createSelector } from "reselect";
 import {
   ContractorsQueryFilterType,
@@ -117,3 +118,22 @@ export const getContractorAvatarUploadingState = (state: AppStateType) =>
 
 export const getContractorAvatarsState = (state: AppStateType) =>
   getContractorsState(state).contractorAvatars;
+
+export const getTodayContractorsCountState = createSelector(
+  [getContractorsListState],
+  (contractors) => {
+    if (contractors) {
+      const startDayTime = moment().startOf("day").valueOf();
+      const endDayTime = moment().endOf("day").valueOf();
+      const createdToday = contractors.filter((contractor) => {
+        return (
+          contractor.creationDate > startDayTime &&
+          contractor.creationDate < endDayTime
+        );
+      });
+      return createdToday.length;
+    } else {
+      return 0;
+    }
+  }
+);

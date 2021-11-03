@@ -2,6 +2,7 @@ import React from "react";
 import { Card, Layout, Typography } from "antd";
 import {
   ContractorsByCategories,
+  ContractorsCounter,
   ContractorsStatistic,
   OrdersByCategories,
   OrdersCounter,
@@ -44,6 +45,7 @@ const HomePage = () => {
           <div className="statistic__right-side">
             <ContractorsStatistic />
             <ContractorsByCategories />
+            <ContractorsCounter />
           </div>
         </div>
       </Card>
