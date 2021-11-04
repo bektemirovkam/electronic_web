@@ -23,7 +23,7 @@ const OrderDescription: React.FC<OrderDescriptionPropsType> = ({
   control,
 }) => {
   return (
-    <Descriptions size="small" column={3}>
+    <Descriptions size="small" column={3} labelStyle={{ fontWeight: "bold" }}>
       <Descriptions.Item label="Дата создания">
         {formatDate(order.creationDate)}
       </Descriptions.Item>

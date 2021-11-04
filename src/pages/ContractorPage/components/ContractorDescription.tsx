@@ -1,4 +1,5 @@
 import { Button, Descriptions, Radio, RadioChangeEvent } from "antd";
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import React from "react";
 import { Control, FieldError } from "react-hook-form";
 import { NavLink } from "react-router-dom";
@@ -49,9 +50,17 @@ const ContractorDescription: React.FC<ContractorDescriptionPropsType> = ({
   errors,
   toggleShowMap,
 }) => {
+  const { xxl } = useBreakpoint();
+
   return (
     <>
-      <Descriptions size="small" column={4}>
+      <Descriptions
+        size="small"
+        column={xxl ? 4 : 3}
+        // layout={xl ? "horizontal" : "vertical"}
+        layout={"vertical"}
+        labelStyle={{ fontWeight: "bold" }}
+      >
         <Descriptions.Item label="Тип контрагента">
           {editMode ? (
             <Radio.Group onChange={handleSelectRegType} value={registeringType}>
