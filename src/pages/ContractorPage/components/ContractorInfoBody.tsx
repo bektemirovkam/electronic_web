@@ -1,8 +1,7 @@
-import { Card, Divider, TreeSelect, Image, Typography } from "antd";
+import { Card, Divider, TreeSelect, Typography } from "antd";
 import { DataNode } from "antd/lib/tree";
 import React from "react";
 import { Control, FieldError } from "react-hook-form";
-import { baseURL } from "../../../api/axios";
 import { ContactsForm, ImagesList, UploadFileForm } from "../../../components";
 import { AttachmentOutType } from "../../../models/Attachments";
 import {

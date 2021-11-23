@@ -206,16 +206,18 @@ const ContractorCreatePage = () => {
   };
 
   const handleUploadImage = async (e: Event) => {
-    const image = await convertingImage(e);
-    if (image) {
-      dispatch(addContractorImage(image));
+    const target = e.currentTarget as HTMLInputElement;
+    const file = target.files?.[0];
+    if (file) {
+      dispatch(addContractorImage(file));
     }
   };
 
   const handleUploadAvatar = async (e: Event) => {
-    const image = await convertingImage(e);
-    if (image) {
-      dispatch(addContractorAvatar(image));
+    const target = e.currentTarget as HTMLInputElement;
+    const file = target.files?.[0];
+    if (file) {
+      dispatch(addContractorAvatar(file));
     }
   };
 

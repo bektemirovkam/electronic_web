@@ -203,7 +203,7 @@ export const getOrderById =
   };
 
 export const addOrderImage =
-  (image: AttachmentType): ThunkAcionType =>
+  (image: File): ThunkAcionType =>
   async (dispatch) => {
     try {
       dispatch(ordersActions.setOrderImageUploading(true));

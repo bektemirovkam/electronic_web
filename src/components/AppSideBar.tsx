@@ -80,6 +80,10 @@ const AppSideBar = () => {
               <NavLink to="/categories/create">Создать категорию</NavLink>
             </Menu.Item>
           </SubMenu>
+
+          <Menu.Item key="/profile/1">
+            <NavLink to="/profile/1">Профиль</NavLink>
+          </Menu.Item>
         </Menu>
       </Sider>
     </Affix>

@@ -17,6 +17,7 @@ export type OrderType = {
   contractors: ContractorOutType[];
   attachments: AttachmentOutType[];
   result: OrderResultEnum;
+  customerName: string;
 };
 
 export type OrderNumberSortFieldsType =

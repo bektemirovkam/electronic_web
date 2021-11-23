@@ -9,6 +9,7 @@ export type AttachmentOutType = {
   name: string;
   ext: string;
   attachmentLink: string;
+  uuid: string;
 };
 
 export type AttachmentInType = {

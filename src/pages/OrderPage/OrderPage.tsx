@@ -172,18 +172,7 @@ const OrderPage = () => {
       ) {
         return message.error(`${file.name} не является картинкой`);
       } else {
-        const base64 = await getBase64(file);
-        const ext = file.name.split(".").pop();
-        const name = file.name;
-
-        if (base64 && ext && name) {
-          const image: AttachmentType = {
-            name: name,
-            ext: ext,
-            content: base64.split(",")[1],
-          };
-          dispatch(addOrderImage(image));
-        }
+        dispatch(addOrderImage(file));
       }
     }
   };

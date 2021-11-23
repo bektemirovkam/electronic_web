@@ -68,6 +68,8 @@ const ContractorPage = () => {
     ),
   });
 
+  console.log("errors --- ", errors);
+
   const [otherPhoneNumbers, setOtherPhoneNumber] = React.useState<string[]>([]);
 
   const contractor = useSelector(getCurrentContractorState);
@@ -202,6 +204,10 @@ const ContractorPage = () => {
       setSelectedCategories(
         contractor.categories?.map((category) => category.categoryId)
       );
+      setLatLng({
+        coordinatesLatitude: contractor.coordinates.coordinatesLatitude,
+        coordinatesLongitude: contractor.coordinates.coordinatesLongitude,
+      });
       dispatch(contractorActions.clearContractorImages());
       dispatch(contractorActions.setContractorImages(contractor.attachments));
       dispatch(contractorActions.addContractorAvatar(contractor.avatars));
@@ -236,16 +242,18 @@ const ContractorPage = () => {
   );
 
   const handleUploadImage = async (e: Event) => {
-    const image = await convertingImage(e);
-    if (image) {
-      dispatch(addContractorImage(image));
+    const target = e.currentTarget as HTMLInputElement;
+    const file = target.files?.[0];
+    if (file) {
+      dispatch(addContractorImage(file));
     }
   };
 
   const handleUploadAvatar = async (e: Event) => {
-    const image = await convertingImage(e);
-    if (image) {
-      dispatch(addContractorAvatar(image));
+    const target = e.currentTarget as HTMLInputElement;
+    const file = target.files?.[0];
+    if (file) {
+      dispatch(addContractorAvatar(file));
     }
   };
 

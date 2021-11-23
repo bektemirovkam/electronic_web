@@ -209,7 +209,7 @@ export const getContractorById =
   };
 
 export const addContractorImage =
-  (image: AttachmentType): ThunkAcionType =>
+  (image: File): ThunkAcionType =>
   async (dispatch) => {
     try {
       dispatch(contractorActions.setContractorImageUploading(true));
@@ -232,7 +232,7 @@ export const addContractorImage =
   };
 
 export const addContractorAvatar =
-  (image: AttachmentType): ThunkAcionType =>
+  (image: File): ThunkAcionType =>
   async (dispatch) => {
     try {
       dispatch(contractorActions.setContractorAvatarUploading(true));

@@ -78,7 +78,11 @@ const MainLayout = () => {
             </Route>
 
             <Route exact path="/categories/create">
-              <CategoryCreatePage />
+              <ContractorsPage />
+            </Route>
+
+            <Route exact path="/profile/:contractorId">
+              <ContractorPage />
             </Route>
 
             <Route exact path="*" render={() => <Redirect to="/" />} />

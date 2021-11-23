@@ -1,13 +1,13 @@
 import axios from "axios";
-import { AttachmentOutType, AttachmentType } from "../models/Attachments";
+import { AttachmentOutType } from "../models/Attachments";
 
 export const attachmentsApi = {
-  addAttachment: async (
-    attachment: AttachmentType
-  ): Promise<AttachmentOutType[]> => {
+  addAttachment: async (file: File): Promise<AttachmentOutType[]> => {
+    const formData = new FormData();
+    formData.append("file", file);
     const { data } = await axios.post<AttachmentOutType[]>(
       "attachments",
-      attachment
+      formData
     );
     return data;
   },
