@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Statistic, Typography } from "antd";
+import { Card, Statistic } from "antd";
 import { useSelector } from "react-redux";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 

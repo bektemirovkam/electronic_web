@@ -12,7 +12,6 @@ import {
   OrderCreatePage,
   OrdersPage,
   OrderPage,
-  CategoryCreatePage,
   DeletedCategoriesPage,
   ContractorPage,
   OrderChatsPage,

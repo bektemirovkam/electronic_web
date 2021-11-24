@@ -33,8 +33,6 @@ import {
   getCategoriesTreeDataState,
 } from "../../store/selectors/categories";
 import { categoriesActions } from "../../store/actions/categories";
-import getBase64 from "../../utils/getBase64";
-import { AttachmentType } from "../../models/Attachments";
 import { OrderCreateForm } from "./components";
 import {
   AddOrderFormData,

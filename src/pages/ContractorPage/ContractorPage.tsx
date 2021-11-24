@@ -42,7 +42,6 @@ import {
   CustomerDescrFormDataType,
   SupplierDescrFormDataType,
 } from "../../models/Contractors";
-import { convertingImage } from "../../utils/formatter";
 
 const { Content } = Layout;
 
@@ -55,20 +54,6 @@ const ContractorPage = () => {
   const [registeringType, setRegisteringType] =
     React.useState<ContractorTypesEnum>(ContractorTypesEnum.SUPPLIER);
   const [showMap, setShowMap] = React.useState(false);
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<SupplierDescrFormDataType | CustomerDescrFormDataType>({
-    resolver: yupResolver(
-      registeringType === ContractorTypesEnum.SUPPLIER
-        ? supplierSchema
-        : customerSchema
-    ),
-  });
-
-  console.log("errors --- ", errors);
 
   const [otherPhoneNumbers, setOtherPhoneNumber] = React.useState<string[]>([]);
 
@@ -89,8 +74,23 @@ const ContractorPage = () => {
 
   const { contractorId }: { contractorId?: string } = useParams();
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<SupplierDescrFormDataType | CustomerDescrFormDataType>({
+    resolver: yupResolver(
+      registeringType === ContractorTypesEnum.SUPPLIER
+        ? supplierSchema
+        : customerSchema
+    ),
+  });
+
   const dispatch = useDispatch();
   const history = useHistory();
+
+  // console.log("error ---> ", errors.phoneNumber);
 
   const clearState = React.useCallback(() => {
     dispatch(

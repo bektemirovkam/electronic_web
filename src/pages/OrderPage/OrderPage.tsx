@@ -33,8 +33,7 @@ import {
   OrderInfoBody,
 } from "./components";
 import { getCategoriesTreeDataState } from "../../store/selectors/categories";
-import getBase64 from "../../utils/getBase64";
-import { AttachmentType } from "../../models/Attachments";
+
 import {
   AddOrderFormData,
   DescriptionOrderFormData,

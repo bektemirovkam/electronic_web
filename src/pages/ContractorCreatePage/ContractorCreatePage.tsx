@@ -5,7 +5,6 @@ import {
   Radio,
   Layout,
   Typography,
-  TreeSelect,
   RadioChangeEvent,
 } from "antd";
 import { useForm } from "react-hook-form";
@@ -55,11 +54,9 @@ import {
   CustomerDescrFormDataType,
   SupplierDescrFormDataType,
 } from "../../models/Contractors";
-import { convertingImage } from "../../utils/formatter";
 
 const { Content } = Layout;
 const { Title } = Typography;
-const { SHOW_ALL } = TreeSelect;
 
 const ContractorCreatePage = () => {
   const [selectedCategories, setSelectedCategories] = React.useState<number[]>(

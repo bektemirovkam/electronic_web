@@ -9,7 +9,7 @@ import {
   OrdersStatistic,
 } from "./components";
 import { useDispatch, useSelector } from "react-redux";
-import { AppPreloader, UploadFileForm } from "../../components";
+import { AppPreloader } from "../../components";
 import { getContractorsLoadingState } from "../../store/selectors/contractors";
 import { getContractors } from "../../store/actions/contractors";
 import { getOrders } from "../../store/actions/orders";
@@ -17,8 +17,6 @@ import { getOrders } from "../../store/actions/orders";
 const { Title } = Typography;
 
 const { Content } = Layout;
-
-//TODO: ошибки с обязательными полями у контрагента
 
 const HomePage = () => {
   const contractorsLoading = useSelector(getContractorsLoadingState);

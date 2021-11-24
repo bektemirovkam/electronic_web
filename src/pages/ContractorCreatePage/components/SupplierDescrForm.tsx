@@ -1,4 +1,3 @@
-import { Typography } from "antd";
 import React from "react";
 import { Control, FieldError } from "react-hook-form";
 import {
@@ -7,8 +6,6 @@ import {
   SupplierFieldsNameType,
 } from "../../../models/Contractors";
 import ContractorField from "./ContractorField";
-
-const { Text } = Typography;
 
 const fields = [
   {

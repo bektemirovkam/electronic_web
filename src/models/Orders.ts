@@ -18,6 +18,8 @@ export type OrderType = {
   attachments: AttachmentOutType[];
   result: OrderResultEnum;
   customerName: string;
+  customerUnread: number;
+  supplierUnread: number;
 };
 
 export type OrderNumberSortFieldsType =

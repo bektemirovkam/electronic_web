@@ -54,4 +54,5 @@ export type ChatMessageOutType = {
   isRead: boolean;
   attachmentType: ChatMessageAttachmentTypesEnum;
   attachmentName: string;
+  isDeleted: boolean;
 };

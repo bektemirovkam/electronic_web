@@ -27,6 +27,10 @@ const ContractorEditableField: React.FC<
   isTextArea = false,
   maxLength,
 }) => {
+  // if (fieldName === "phoneNumber") {
+  //   console.log("defaultValue ---> ", defaultValue);
+  // }
+
   if (editMode) {
     return (
       <Controller
