@@ -16,6 +16,7 @@ import {
   ContractorPage,
   OrderChatsPage,
   ChatPage,
+  CategoryCreatePage,
 } from "../pages";
 import { useDispatch } from "react-redux";
 import { authActions } from "../store/actions/auth";
@@ -77,7 +78,7 @@ const MainLayout = () => {
             </Route>
 
             <Route exact path="/categories/create">
-              <ContractorsPage />
+              <CategoryCreatePage />
             </Route>
 
             <Route exact path="/profile/:contractorId">

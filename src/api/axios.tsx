@@ -1,6 +1,7 @@
 import axios from "axios";
 
-export const baseURL = "https://atm.e-health.kz:8889";
+// export const baseURL = "https://atm.e-health.kz:8889";
+export const baseURL = "https://atm.e-health.kz:9889";
 // export const baseURL = "http://192.168.10.246:8888";
 
 axios.interceptors.request.use((config) => {
