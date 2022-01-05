@@ -73,9 +73,9 @@ const AppSideBar = () => {
             <Menu.Item key="/categories">
               <NavLink to="/categories">Все категории</NavLink>
             </Menu.Item>
-            <Menu.Item key="/categories/deleted">
+            {/* <Menu.Item key="/categories/deleted">
               <NavLink to="/categories/deleted">Удаленные категории</NavLink>
-            </Menu.Item>
+            </Menu.Item> */}
             <Menu.Item key="/categories/create">
               <NavLink to="/categories/create">Создать категорию</NavLink>
             </Menu.Item>

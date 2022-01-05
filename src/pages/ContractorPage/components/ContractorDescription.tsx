@@ -142,7 +142,7 @@ const ContractorDescription: React.FC<ContractorDescriptionPropsType> = ({
         <Descriptions.Item label="Телефон">
           <ContractorEditableField
             defaultValue={`+${contractor.phoneNumber}`}
-            editMode={false}
+            editMode={editMode}
             control={control}
             error={errors.phoneNumber}
             fieldName="phoneNumber"

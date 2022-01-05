@@ -91,6 +91,7 @@ const ContractorPage = () => {
   const history = useHistory();
 
   // console.log("error ---> ", errors.phoneNumber);
+  // console.log("watch ---> ", watch("phoneNumber"));
 
   const clearState = React.useCallback(() => {
     dispatch(
@@ -148,7 +149,8 @@ const ContractorPage = () => {
       const newContractor: AddContractorFormDataType = {
         name: formData.name,
         contactName: formData.contactName,
-        phoneNumber: `7${String(formData.phoneNumber).slice(-10)}`,
+        // phoneNumber: `7${String(formData.phoneNumber).slice(-10)}`,
+        phoneNumber: contractor.phoneNumber,
         //@ts-ignore
         description: formData.description ? formData.description : "",
         location: formData.location,
