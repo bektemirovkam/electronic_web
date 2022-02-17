@@ -1,5 +1,13 @@
 import React from "react";
-import { Button, Card, Layout, Typography, TreeSelect, message } from "antd";
+import {
+  Button,
+  Card,
+  Layout,
+  Typography,
+  TreeSelect,
+  message,
+  Select,
+} from "antd";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,10 +46,17 @@ import {
   AddOrderFormData,
   DescriptionOrderFormData,
 } from "../../models/Orders";
+import {
+  getContractorsListState,
+  getContractorsLoadingState,
+} from "../../store/selectors/contractors";
+import { ContractorTypesEnum } from "../../models/Contractors";
+import { getContractors } from "../../store/actions/contractors";
 
 const { Content } = Layout;
 const { Title } = Typography;
 const { SHOW_ALL } = TreeSelect;
+const { Option } = Select;
 
 const OrderCreatePage = () => {
   const {
@@ -57,6 +72,8 @@ const OrderCreatePage = () => {
     []
   );
 
+  const [customerId, setCustomerId] = React.useState<number | null>(null);
+
   const orderActionStatus = useSelector(getOrderActionStatusState);
   const orderError = useSelector(getOrdersErrorMessageState);
   const orderLoadingState = useSelector(getOrdersLoadingState);
@@ -67,6 +84,9 @@ const OrderCreatePage = () => {
   const categoriesTree = useSelector(getCategoriesTreeDataState);
   const categoriesError = useSelector(getCategoriesErrorMessageState);
   const categoriesActionStatus = useSelector(getCategoriesActionStatusState);
+
+  const contractors = useSelector(getContractorsListState);
+  const contractorsLoading = useSelector(getContractorsLoadingState);
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -92,6 +112,12 @@ const OrderCreatePage = () => {
   }, [clearCategoriesState, clearOrderState]);
 
   React.useEffect(() => {
+    if (!contractors) {
+      dispatch(getContractors());
+    }
+  }, [contractors, dispatch]);
+
+  React.useEffect(() => {
     if (currentOrder && orderActionStatus === ActionStatusEnum.SUCCESS) {
       history.push(`/orders/${currentOrder.id}`);
     }
@@ -104,6 +130,9 @@ const OrderCreatePage = () => {
   const handleRemoveImage = (imageId: number) => {
     dispatch(removeNewOrderImage(imageId));
   };
+
+  const handleSelectCustomerId = (value: string) =>
+    setCustomerId(Number(value));
 
   const handleUploadImage = async (e: Event) => {
     const target = e.currentTarget as HTMLInputElement;
@@ -127,22 +156,30 @@ const OrderCreatePage = () => {
       categoryId,
     }));
 
-    const newOrder: AddOrderFormData = {
-      title: formData.title,
-      description: formData.description,
-      comment: formData.comment,
-      totalSum: formData.totalSum,
-      contractors: [],
-      attachments: orderImages.map((image) => ({
-        attachmentId: image.id,
-      })),
-      customerId: 1,
-      categories,
-    };
+    if (customerId) {
+      const newOrder: AddOrderFormData = {
+        title: formData.title,
+        description: formData.description,
+        comment: formData.comment,
+        totalSum: formData.totalSum,
+        contractors: [],
+        attachments: orderImages.map((image) => ({
+          attachmentId: image.id,
+        })),
+        customerId,
+        categories,
+      };
 
-    dispatch(createOrder(newOrder));
-    reset();
+      dispatch(createOrder(newOrder));
+      reset();
+    }
   });
+
+  const suppliers = React.useMemo(() => {
+    return contractors?.filter(
+      (contractor) => contractor.contractorType === ContractorTypesEnum.SUPPLIER
+    );
+  }, [contractors]);
 
   if (orderLoadingState) {
     return <AppPreloader />;
@@ -165,6 +202,7 @@ const OrderCreatePage = () => {
         <Title level={3} className="title">
           Создание заявки
         </Title>
+
         <OrderCreateForm control={control} errors={errors} />
         <TreeSelect
           treeData={categoriesTree}
@@ -176,6 +214,27 @@ const OrderCreatePage = () => {
           style={{ width: "100%", marginBottom: 10 }}
           maxTagCount={5}
         />
+        <Select
+          showSearch
+          style={{ width: "100%", marginBottom: 10 }}
+          placeholder="Выберите автора заявки"
+          optionFilterProp="children"
+          filterOption={(input, option) =>
+            option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }
+          filterSort={(optionA, optionB) =>
+            optionA.children
+              .toLowerCase()
+              .localeCompare(optionB.children.toLowerCase())
+          }
+          onChange={handleSelectCustomerId}
+          loading={contractorsLoading}
+        >
+          {suppliers &&
+            suppliers.map((contractor) => {
+              return <Option value={contractor.id}>{contractor.name}</Option>;
+            })}
+        </Select>
         <ImagesList
           removeImage={handleRemoveImage}
           images={orderImages}
@@ -190,7 +249,9 @@ const OrderCreatePage = () => {
           className="order__save-btn"
           onClick={onSubmit}
           disabled={
-            Object.keys(errors).length > 0 || selectedCategories.length === 0
+            Object.keys(errors).length > 0 ||
+            selectedCategories.length === 0 ||
+            !customerId
           }
         >
           Сохранить

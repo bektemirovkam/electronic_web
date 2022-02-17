@@ -52,8 +52,8 @@ const AppHeader: React.FC<AppHeaderPropsType> = ({ logout }) => {
           <Menu.Item key="categories">
             <NavLink to="/categories">Категории</NavLink>
           </Menu.Item>
-          <Menu.Item key="profile">
-            <NavLink to="/profile/1">Профиль</NavLink>
+          <Menu.Item key="admins">
+            <NavLink to="/admins">Администраторы</NavLink>
           </Menu.Item>
         </Menu>
         <div className="header__logout">

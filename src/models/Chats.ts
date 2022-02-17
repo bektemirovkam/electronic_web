@@ -1,3 +1,6 @@
+import { AttachmentOutType } from "./Attachments";
+import { OrderStatusEnum } from "./Orders";
+
 export type ChatType = {
   id: number;
   orderId: number;
@@ -7,6 +10,16 @@ export type ChatType = {
   customerName: string;
   orderTitle: string;
   lastMessage: string;
+  orderStatus: OrderStatusEnum;
+  customerAvatar: AttachmentOutType;
+  supplierAvatar: AttachmentOutType;
+  supplierUnread: number;
+  customerUnread: number;
+  lastMessageDate: number;
+  isDeletedBySupplier: boolean;
+  deletedBySupplierAt: number;
+  isDeletedByCustomer: boolean;
+  deletedByCustomerAt: number;
 };
 export type ChatInType = {
   supplierId: number;

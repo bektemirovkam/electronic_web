@@ -9,7 +9,7 @@ import { getMainCategoriesState } from "./categories";
 
 const getContractorsState = (state: AppStateType) => state.contractors;
 
-const getContractorsListState = (state: AppStateType) =>
+export const getContractorsListState = (state: AppStateType) =>
   state.contractors.contractors;
 
 export const getCurrentContractorState = (state: AppStateType) =>

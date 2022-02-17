@@ -5,6 +5,7 @@ import {
   UserOutlined,
   ClusterOutlined,
   GroupOutlined,
+  UserSwitchOutlined,
 } from "@ant-design/icons";
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -81,9 +82,18 @@ const AppSideBar = () => {
             </Menu.Item>
           </SubMenu>
 
-          <Menu.Item key="/profile/1">
-            <NavLink to="/profile/1">Профиль</NavLink>
-          </Menu.Item>
+          <SubMenu
+            key="sub5"
+            icon={<UserSwitchOutlined />}
+            title="Администраторы"
+          >
+            <Menu.Item key="/admins">
+              <NavLink to="/admins">Все администраторы</NavLink>
+            </Menu.Item>
+            <Menu.Item key="/admins/create">
+              <NavLink to="/admins/create">Создать</NavLink>
+            </Menu.Item>
+          </SubMenu>
         </Menu>
       </Sider>
     </Affix>
