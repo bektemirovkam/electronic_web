@@ -14,3 +14,11 @@ export type AdministratorCredentialsType = {
   phoneNumber: string;
   password: string;
 };
+
+export type AdminFormDataType = {
+  phoneNumber: string;
+  password: string;
+  confirm: string;
+};
+
+export type AdminFieldsNameType = "phoneNumber" | "password" | "confirm";

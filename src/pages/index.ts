@@ -11,3 +11,5 @@ export { default as CategoryCreatePage } from "./CategoryCreatePage/CategoryCrea
 export { default as DeletedCategoriesPage } from "./DeletedCategoriesPage/DeletedCategoriesPage";
 export { default as OrderChatsPage } from "./OrderChatsPage/OrderChatsPage";
 export { default as ChatPage } from "./ChatPage/ChatPage";
+export { default as AdminCreatePage } from "./AdminCreatePage/AdminCreatePage";
+export { default as AdminsPage } from "./AdminsPage/AdminsPage";
