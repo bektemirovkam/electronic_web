@@ -1,38 +1,31 @@
 import React from "react";
 import { Control, FieldError } from "react-hook-form";
-import { AdminField } from ".";
 import {
   AdminFieldsNameType,
-  AdminFormDataType,
+  AdministratorCredentialsType,
+  AuthFieldsNameType,
 } from "../../../models/Administrator";
+import AuthField from "./AuthField";
 
 const fields = [
   {
     id: "1",
     fieldName: "phoneNumber",
-    subtitle: "Номер телефона для авторизации",
-    maxLength: 12,
+    subtitle: "Телефон",
     required: true,
     defaultValue: "+7",
   },
   {
     id: "2",
     fieldName: "password",
-    subtitle: "Пароль",
-    required: true,
-    password: true,
-  },
-  {
-    id: "3",
-    fieldName: "confirm",
     subtitle: "Повторите пароль",
     required: true,
     password: true,
   },
 ];
 
-type AdminFormPropsType = {
-  control?: Control<AdminFormDataType, object>;
+type AuthFormPropsType = {
+  control?: Control<AdministratorCredentialsType, object>;
   errors: {
     phoneNumber?: FieldError;
     password?: FieldError;
@@ -40,21 +33,20 @@ type AdminFormPropsType = {
   };
 };
 
-const AdminForm: React.FC<AdminFormPropsType> = ({ control, errors }) => {
+const AuthForm: React.FC<AuthFormPropsType> = ({ control, errors }) => {
   return (
     <>
       {fields.map((field) => {
         return (
-          <AdminField
+          <AuthField
             key={field.id}
             control={control}
-            error={errors[field.fieldName as AdminFieldsNameType]}
+            error={errors[field.fieldName as AuthFieldsNameType]}
             subtitle={field.subtitle}
-            fieldName={field.fieldName as AdminFieldsNameType}
+            fieldName={field.fieldName as AuthFieldsNameType}
             required={field.required}
-            maxLength={field.maxLength}
-            defaultValue={field.defaultValue}
             password={field.password}
+            defaultValue={field.defaultValue}
           />
         );
       })}
@@ -62,4 +54,4 @@ const AdminForm: React.FC<AdminFormPropsType> = ({ control, errors }) => {
   );
 };
 
-export default AdminForm;
+export default AuthForm;

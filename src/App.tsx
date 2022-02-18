@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppPreloader } from "./components";
 
 import { AuthLayout, MainLayout } from "./layouts";
-import { authActions } from "./store/actions/auth";
+import { adminActions } from "./store/actions/admin";
+
 import { getAllCategories } from "./store/actions/categories";
-import { getIsAuthState, getIsInitState } from "./store/selectors/auth";
+import { getIsAuthState, getIsInitState } from "./store/selectors/admin";
 
 function App() {
   const dispatch = useDispatch();
@@ -21,10 +22,10 @@ function App() {
     const isAuth = localStorage.getItem("isAuth");
 
     if (isAuth) {
-      dispatch(authActions.setIsAuth(true));
+      dispatch(adminActions.setIsAuth(true));
     }
 
-    dispatch(authActions.setIsInit());
+    dispatch(adminActions.setIsInit(true));
   }, [dispatch]);
 
   if (!isInit) {

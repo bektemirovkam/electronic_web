@@ -161,6 +161,53 @@ export const customerSchema = yup.object().shape({
       }
     ),
 });
+export const adminSchema = yup.object().shape({
+  phoneNumber: yup
+    .number()
+    .typeError("Введите корректный номер телефона")
+    .min(PHONE_NUMBER_LENGTH, "Введите корректный номер телефона")
+    .required("Обязательное поле")
+    .test(
+      "Ok",
+      "Введенный номер не является телефоном сотовых операторов РК!",
+      (value) => {
+        const code = String(value).slice(-10).slice(0, 3);
+
+        if (!phoneCodes.includes(code)) {
+          return false;
+        }
+        return true;
+      }
+    ),
+  password: yup
+    .string()
+    .min(5, `Минимальная длина 5 символов`)
+    .required("Обязательное поле"),
+  confirm: yup
+    .string()
+    .oneOf([yup.ref("password")], "Пароли не совпадают")
+    .required("Обязательное поле"),
+});
+
+export const authSchema = yup.object().shape({
+  phoneNumber: yup
+    .number()
+    .typeError("Введите корректный номер телефона")
+    .min(PHONE_NUMBER_LENGTH, "Введите корректный номер телефона")
+    .required("Обязательное поле"),
+  password: yup.string().required("Обязательное поле"),
+});
+
+export const changePasswordSchema = yup.object().shape({
+  password: yup
+    .string()
+    .min(5, `Минимальная длина 5 символов`)
+    .required("Обязательное поле"),
+  confirm: yup
+    .string()
+    .oneOf([yup.ref("password")], "Пароли не совпадают")
+    .required("Обязательное поле"),
+});
 
 export const categorySchema = yup.object().shape({
   name: yup

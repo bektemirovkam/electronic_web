@@ -2,28 +2,20 @@ import React from "react";
 import { Control, FieldError } from "react-hook-form";
 import { AdminField } from ".";
 import {
-  AdminFieldsNameType,
-  AdminFormDataType,
+  ChangePasswordFieldsNameType,
+  ChangePasswordFormDataType,
 } from "../../../models/Administrator";
 
 const fields = [
   {
     id: "1",
-    fieldName: "phoneNumber",
-    subtitle: "Номер телефона для авторизации",
-    maxLength: 12,
-    required: true,
-    defaultValue: "+7",
-  },
-  {
-    id: "2",
     fieldName: "password",
-    subtitle: "Пароль",
+    subtitle: "Новый пароль",
     required: true,
     password: true,
   },
   {
-    id: "3",
+    id: "2",
     fieldName: "confirm",
     subtitle: "Повторите пароль",
     required: true,
@@ -32,7 +24,7 @@ const fields = [
 ];
 
 type AdminFormPropsType = {
-  control?: Control<AdminFormDataType, object>;
+  control?: Control<ChangePasswordFormDataType, object>;
   errors: {
     phoneNumber?: FieldError;
     password?: FieldError;
@@ -48,12 +40,10 @@ const AdminForm: React.FC<AdminFormPropsType> = ({ control, errors }) => {
           <AdminField
             key={field.id}
             control={control}
-            error={errors[field.fieldName as AdminFieldsNameType]}
+            error={errors[field.fieldName as ChangePasswordFieldsNameType]}
             subtitle={field.subtitle}
-            fieldName={field.fieldName as AdminFieldsNameType}
+            fieldName={field.fieldName as ChangePasswordFieldsNameType}
             required={field.required}
-            maxLength={field.maxLength}
-            defaultValue={field.defaultValue}
             password={field.password}
           />
         );

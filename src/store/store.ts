@@ -3,7 +3,7 @@ import thunk from "redux-thunk";
 import {
   categoriesReducer,
   contractorsReducer,
-  authReducer,
+  adminReducer,
   ordersReducer,
   chatsReducer,
 } from "./reducers";
@@ -17,7 +17,7 @@ declare global {
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const rootReducer = combineReducers({
-  auth: authReducer,
+  admin: adminReducer,
   categories: categoriesReducer,
   contractors: contractorsReducer,
   orders: ordersReducer,

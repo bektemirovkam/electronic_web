@@ -19,16 +19,17 @@ import {
   CategoryCreatePage,
   AdminCreatePage,
   AdminsPage,
+  ChangePasswordPage,
 } from "../pages";
 import { useDispatch } from "react-redux";
-import { authActions } from "../store/actions/auth";
+import { adminActions } from "../store/actions/admin";
 
 const MainLayout = () => {
   const dispatch = useDispatch();
 
   const logout = () => {
     localStorage.removeItem("isAuth");
-    dispatch(authActions.setIsAuth(false));
+    dispatch(adminActions.setIsAuth(false));
   };
 
   return (
@@ -93,6 +94,9 @@ const MainLayout = () => {
 
             <Route exact path="/admins/create">
               <AdminCreatePage />
+            </Route>
+            <Route exact path="/admins/password">
+              <ChangePasswordPage />
             </Route>
 
             <Route exact path="*" render={() => <Redirect to="/" />} />

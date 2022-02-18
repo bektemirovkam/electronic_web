@@ -5,45 +5,38 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 
 import { AppAlert, AppPreloader } from "../../components";
-import { adminSchema } from "../../utils/validatorsSchemes";
+import { changePasswordSchema } from "../../utils/validatorsSchemes";
 
-import { useHistory } from "react-router-dom";
-
-import { AdminFormDataType } from "../../models/Administrator";
+import { ChangePasswordFormDataType } from "../../models/Administrator";
 import { AdminForm } from "./components";
 import {
   getAdminActionStatusState,
   getAdminErrorMessageState,
   getAdminLoadingState,
+  getCurrentAdminState,
 } from "../../store/selectors/admin";
-import { clearAdminState, createAdmin } from "../../store/actions/admin";
+import { clearAdminState } from "../../store/actions/admin";
 
 const { Content } = Layout;
 const { Title } = Typography;
 
-const AdminCreatePage = () => {
+const ChangePasswordPage = () => {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<AdminFormDataType>({
-    resolver: yupResolver(adminSchema),
+  } = useForm<ChangePasswordFormDataType>({
+    resolver: yupResolver(changePasswordSchema),
   });
 
   const adminLoading = useSelector(getAdminLoadingState);
   const adminErrorMessage = useSelector(getAdminErrorMessageState);
   const adminActionStatus = useSelector(getAdminActionStatusState);
+  const currentAdmin = useSelector(getCurrentAdminState);
 
   const dispatch = useDispatch();
 
-  const onSubmit = handleSubmit((formData) => {
-    dispatch(
-      createAdmin({
-        ...formData,
-        phoneNumber: `7${String(formData.phoneNumber).slice(-10)}`,
-      })
-    );
-  });
+  const onSubmit = handleSubmit((formData) => {});
 
   const handleCloseAlert = () => {
     dispatch(clearAdminState());
@@ -64,7 +57,7 @@ const AdminCreatePage = () => {
 
       <Card className="form">
         <Title level={3} className="title">
-          Создание администратора
+          Смена пароля
         </Title>
 
         <AdminForm errors={errors} control={control} />
@@ -81,4 +74,4 @@ const AdminCreatePage = () => {
   );
 };
 
-export default AdminCreatePage;
+export default ChangePasswordPage;

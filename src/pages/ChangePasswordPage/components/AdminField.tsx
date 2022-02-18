@@ -1,18 +1,17 @@
 import { Form, Typography, Input } from "antd";
 import React from "react";
 import { Control, Controller, FieldError } from "react-hook-form";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import {
-  AdminFieldsNameType,
-  AdminFormDataType,
+  ChangePasswordFieldsNameType,
+  ChangePasswordFormDataType,
 } from "../../../models/Administrator";
 
 type AdminFieldPropsType = {
   subtitle: string;
-  fieldName: AdminFieldsNameType;
+  fieldName: ChangePasswordFieldsNameType;
   required: boolean;
   maxLength?: number;
-  control?: Control<AdminFormDataType, object>;
+  control?: Control<ChangePasswordFormDataType, object>;
   error?: FieldError;
   password?: boolean;
   defaultValue?: string;

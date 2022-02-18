@@ -3,16 +3,16 @@ import React from "react";
 import { Control, Controller, FieldError } from "react-hook-form";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import {
-  AdminFieldsNameType,
-  AdminFormDataType,
+  AdministratorCredentialsType,
+  AuthFieldsNameType,
 } from "../../../models/Administrator";
 
-type AdminFieldPropsType = {
+type AuthFieldPropsType = {
   subtitle: string;
-  fieldName: AdminFieldsNameType;
+  fieldName: AuthFieldsNameType;
   required: boolean;
   maxLength?: number;
-  control?: Control<AdminFormDataType, object>;
+  control?: Control<AdministratorCredentialsType, object>;
   error?: FieldError;
   password?: boolean;
   defaultValue?: string;
@@ -20,7 +20,7 @@ type AdminFieldPropsType = {
 
 const { Text } = Typography;
 
-const AdminField: React.FC<AdminFieldPropsType> = ({
+const AuthField: React.FC<AuthFieldPropsType> = ({
   control,
   error,
   subtitle,
@@ -58,4 +58,4 @@ const AdminField: React.FC<AdminFieldPropsType> = ({
   );
 };
 
-export default AdminField;
+export default AuthField;

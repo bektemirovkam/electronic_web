@@ -153,7 +153,10 @@ export const deleteContractor =
         dispatch(contractorActions.removeContractor(contractorId));
         dispatch(contractorActions.setCurrentContractor(null));
       } else {
-        showError("Не удалось удалить заявку, попробуйте еще раз", dispatch);
+        showError(
+          "Не удалось удалить контрагента, попробуйте еще раз",
+          dispatch
+        );
       }
     } catch (error) {
       console.log("deleteContractor ===> ", error);

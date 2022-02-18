@@ -91,7 +91,10 @@ const AppSideBar = () => {
               <NavLink to="/admins">Все администраторы</NavLink>
             </Menu.Item>
             <Menu.Item key="/admins/create">
-              <NavLink to="/admins/create">Создать</NavLink>
+              <NavLink to="/admins/create">Создать администратора</NavLink>
+            </Menu.Item>
+            <Menu.Item key="/admins/password">
+              <NavLink to="/admins/password">Изменить пароль</NavLink>
             </Menu.Item>
           </SubMenu>
         </Menu>

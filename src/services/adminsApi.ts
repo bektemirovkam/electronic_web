@@ -4,7 +4,6 @@ import {
   AdministratorOutType,
 } from "./../models/Administrator";
 import { axios } from "../api/axios";
-import { Result } from "../models/types";
 
 export const adminsApi = {
   getAllAdmin: async (): Promise<AdministratorOutType[]> => {
@@ -22,11 +21,14 @@ export const adminsApi = {
   },
   checkAdmin: async (
     formData: AdministratorCredentialsType
-  ): Promise<Result> => {
-    const { data } = await axios.post<Result>("/admins", formData);
+  ): Promise<AdministratorOutType[]> => {
+    const { data } = await axios.post<AdministratorOutType[]>(
+      "/checkAdmin",
+      formData
+    );
     return data;
   },
-  deleteAdmin: async (id: number): Promise<boolean> => {
+  banAdmin: async (id: number): Promise<boolean> => {
     const { data } = await axios.delete<boolean>(`admins/${id}`);
     return data;
   },
