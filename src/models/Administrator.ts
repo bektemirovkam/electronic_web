@@ -1,6 +1,7 @@
 export type AdministratorInType = {
   phoneNumber: string;
   password: string;
+  isBlocked: boolean;
 };
 
 export type AdministratorOutType = {
@@ -20,11 +21,5 @@ export type AdminFormDataType = {
   password: string;
   confirm: string;
 };
-export type ChangePasswordFormDataType = {
-  password: string;
-  confirm: string;
-};
 
 export type AdminFieldsNameType = "phoneNumber" | "password" | "confirm";
-export type ChangePasswordFieldsNameType = "password" | "confirm";
-export type AuthFieldsNameType = "phoneNumber" | "password";

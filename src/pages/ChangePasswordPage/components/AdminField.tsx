@@ -2,16 +2,16 @@ import { Form, Typography, Input } from "antd";
 import React from "react";
 import { Control, Controller, FieldError } from "react-hook-form";
 import {
-  ChangePasswordFieldsNameType,
-  ChangePasswordFormDataType,
+  AdminFieldsNameType,
+  AdminFormDataType,
 } from "../../../models/Administrator";
 
 type AdminFieldPropsType = {
   subtitle: string;
-  fieldName: ChangePasswordFieldsNameType;
+  fieldName: Exclude<AdminFieldsNameType, "phoneNumber">;
   required: boolean;
   maxLength?: number;
-  control?: Control<ChangePasswordFormDataType, object>;
+  control?: Control<Exclude<AdminFormDataType, "phoneNumber">, object>;
   error?: FieldError;
   password?: boolean;
   defaultValue?: string;

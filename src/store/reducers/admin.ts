@@ -36,12 +36,12 @@ const adminReducer = (
       };
     }
 
-    case "BAN_ADMIN": {
+    case "CHANGE_BAN_STATUS": {
       return {
         ...state,
         admins: state.admins.map((admin) => {
-          if (admin.id === action.payload) {
-            return { ...admin, isBlocked: true };
+          if (admin.id === action.payload.id) {
+            return { ...admin, isBlocked: action.payload.value };
           } else {
             return admin;
           }

@@ -7,8 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppAlert, AppPreloader } from "../../components";
 import { adminSchema } from "../../utils/validatorsSchemes";
 
-import { useHistory } from "react-router-dom";
-
 import { AdminFormDataType } from "../../models/Administrator";
 import { AdminForm } from "./components";
 import {
@@ -41,6 +39,7 @@ const AdminCreatePage = () => {
       createAdmin({
         ...formData,
         phoneNumber: `7${String(formData.phoneNumber).slice(-10)}`,
+        isBlocked: false,
       })
     );
   });

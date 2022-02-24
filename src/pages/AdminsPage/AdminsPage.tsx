@@ -10,6 +10,7 @@ import {
   clearAdminState,
   banAdmin,
   getAllAdmins,
+  unBan,
 } from "../../store/actions/admin";
 import {
   getAdminActionStatusState,
@@ -36,13 +37,22 @@ const AdminsPage = () => {
     dispatch(clearAdminState());
   }, [dispatch]);
 
-  const handleBanAdmin = (administrator: AdministratorOutType) => {
+  const handleChangeBanStatus = (administrator: AdministratorOutType) => {
     if (administrator.isBlocked) {
       const confirm = window.confirm(
         "Вы действительно хотите разбанить администратора?"
       );
       if (confirm) {
-        dispatch(banAdmin(administrator.id));
+        const newPassword = window.prompt("Придумайте новый пароль");
+        if (newPassword) {
+          dispatch(
+            unBan(administrator.id, {
+              phoneNumber: administrator.phoneNumber,
+              password: newPassword,
+              isBlocked: false,
+            })
+          );
+        }
       }
     } else {
       const confirm = window.confirm(
@@ -114,7 +124,7 @@ const AdminsPage = () => {
           className="table-value"
           render={(_, administrator) => (
             <Button
-              onClick={() => handleBanAdmin(administrator)}
+              onClick={() => handleChangeBanStatus(administrator)}
               danger={!administrator.isBlocked}
             >
               {administrator.isBlocked ? "Разбанить" : "Забанить"}

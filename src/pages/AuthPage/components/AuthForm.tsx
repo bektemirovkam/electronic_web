@@ -3,7 +3,6 @@ import { Control, FieldError } from "react-hook-form";
 import {
   AdminFieldsNameType,
   AdministratorCredentialsType,
-  AuthFieldsNameType,
 } from "../../../models/Administrator";
 import AuthField from "./AuthField";
 
@@ -41,9 +40,13 @@ const AuthForm: React.FC<AuthFormPropsType> = ({ control, errors }) => {
           <AuthField
             key={field.id}
             control={control}
-            error={errors[field.fieldName as AuthFieldsNameType]}
+            error={
+              errors[field.fieldName as Exclude<AdminFieldsNameType, "confirm">]
+            }
             subtitle={field.subtitle}
-            fieldName={field.fieldName as AuthFieldsNameType}
+            fieldName={
+              field.fieldName as Exclude<AdminFieldsNameType, "confirm">
+            }
             required={field.required}
             password={field.password}
             defaultValue={field.defaultValue}

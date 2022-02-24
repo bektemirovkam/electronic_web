@@ -28,7 +28,7 @@ const MainLayout = () => {
   const dispatch = useDispatch();
 
   const logout = () => {
-    localStorage.removeItem("isAuth");
+    localStorage.removeItem("adminId");
     dispatch(adminActions.setIsAuth(false));
   };
 

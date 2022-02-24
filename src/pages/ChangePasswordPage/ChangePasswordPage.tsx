@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppAlert, AppPreloader } from "../../components";
 import { changePasswordSchema } from "../../utils/validatorsSchemes";
 
-import { ChangePasswordFormDataType } from "../../models/Administrator";
+import { AdminFormDataType } from "../../models/Administrator";
 import { AdminForm } from "./components";
 import {
   getAdminActionStatusState,
@@ -15,7 +15,8 @@ import {
   getAdminLoadingState,
   getCurrentAdminState,
 } from "../../store/selectors/admin";
-import { clearAdminState } from "../../store/actions/admin";
+import { clearAdminState, updateAdmin } from "../../store/actions/admin";
+import { ActionStatusEnum } from "../../models/types";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -25,7 +26,8 @@ const ChangePasswordPage = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<ChangePasswordFormDataType>({
+    reset,
+  } = useForm<Exclude<AdminFormDataType, "phoneNumber">>({
     resolver: yupResolver(changePasswordSchema),
   });
 
@@ -36,11 +38,23 @@ const ChangePasswordPage = () => {
 
   const dispatch = useDispatch();
 
-  const onSubmit = handleSubmit((formData) => {});
+  const onSubmit = handleSubmit((formData) => {
+    if (currentAdmin) {
+      const password = formData.password;
+      const { id, phoneNumber, isBlocked } = currentAdmin;
+      dispatch(updateAdmin(id, { password, phoneNumber, isBlocked }));
+    }
+  });
 
   const handleCloseAlert = () => {
     dispatch(clearAdminState());
   };
+
+  React.useEffect(() => {
+    if (adminActionStatus === ActionStatusEnum.SUCCESS) {
+      reset();
+    }
+  }, [adminActionStatus, reset]);
 
   if (adminLoading) {
     return <AppPreloader />;
@@ -65,7 +79,7 @@ const ChangePasswordPage = () => {
         <Button
           className="order__save-btn"
           onClick={onSubmit}
-          disabled={Object.keys(errors).length > 0}
+          disabled={Object.keys(errors).length > 0 || !currentAdmin}
         >
           Сохранить
         </Button>

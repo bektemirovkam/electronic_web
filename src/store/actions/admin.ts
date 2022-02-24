@@ -56,12 +56,12 @@ export const adminActions = {
     return {
       type: "SET_ADMIN_ACTION_STATUS",
       payload: { adminActionStatus },
-    };
+    } as const;
   },
-  banAdmin: (id: number) => {
+  changeBanStatus: (id: number, value: boolean) => {
     return {
-      type: "BAN_ADMIN",
-      payload: id,
+      type: "CHANGE_BAN_STATUS",
+      payload: { id, value },
     } as const;
   },
   setCurrentAdmin: (admin: AdministratorOutType | null) => {
@@ -84,6 +84,7 @@ export const createAdmin =
       dispatch(adminActions.setAdminLoading(true));
 
       const resp = await adminsApi.createAdmin(formData);
+      console.log("resp --> ", resp);
       if (resp.length > 0) {
         dispatch(adminActions.setAdminActionStatus(ActionStatusEnum.SUCCESS));
       } else {
@@ -95,7 +96,6 @@ export const createAdmin =
         );
       }
     } catch (error) {
-      console.log("createAdmin error ---> ", error);
       dispatch(adminActions.setAdminActionStatus(ActionStatusEnum.ERROR));
       dispatch(
         adminActions.setAdminErrorMessage("Ошибка сети! Попробуйте еще раз.")
@@ -105,15 +105,17 @@ export const createAdmin =
     }
   };
 
-export const updatedAdmin =
-  (formData: AdministratorInType): ThunkAcionType =>
+export const updateAdmin =
+  (id: number, formData: AdministratorInType): ThunkAcionType =>
   async (dispatch) => {
     try {
       dispatch(adminActions.setAdminLoading(true));
 
-      const resp = await adminsApi.createAdmin(formData);
+      const resp = await adminsApi.updateAdmin(id, formData);
+
       if (resp.length > 0) {
         dispatch(adminActions.setAdminActionStatus(ActionStatusEnum.SUCCESS));
+        dispatch(adminActions.setCurrentAdmin(resp[0]));
       } else {
         dispatch(adminActions.setAdminActionStatus(ActionStatusEnum.ERROR));
         dispatch(
@@ -123,7 +125,6 @@ export const updatedAdmin =
         );
       }
     } catch (error) {
-      console.log("updatedAdmin error ---> ", error);
       dispatch(adminActions.setAdminActionStatus(ActionStatusEnum.ERROR));
       dispatch(
         adminActions.setAdminErrorMessage("Ошибка сети! Попробуйте еще раз.")
@@ -139,8 +140,6 @@ export const getAllAdmins = (): ThunkAcionType => async (dispatch) => {
     dispatch(adminActions.setAdminLoading(true));
 
     const admins = await adminsApi.getAllAdmin();
-
-    console.log("admins --> ", admins);
 
     dispatch(adminActions.setAdmins(admins));
   } catch (error) {
@@ -162,7 +161,36 @@ export const banAdmin =
 
       if (resp) {
         dispatch(adminActions.setAdminActionStatus(ActionStatusEnum.SUCCESS));
-        dispatch(adminActions.banAdmin(id));
+        dispatch(adminActions.changeBanStatus(id, true));
+      } else {
+        dispatch(adminActions.setAdminActionStatus(ActionStatusEnum.ERROR));
+        dispatch(
+          adminActions.setAdminErrorMessage(
+            "Не удалось удалить администратора! Попробуйте еще раз."
+          )
+        );
+      }
+    } catch (error) {
+      dispatch(adminActions.setAdminActionStatus(ActionStatusEnum.ERROR));
+      dispatch(
+        adminActions.setAdminErrorMessage("Ошибка сети! Попробуйте еще раз.")
+      );
+    } finally {
+      dispatch(adminActions.setAdminLoading(false));
+    }
+  };
+
+export const unBan =
+  (id: number, formData: AdministratorInType): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      dispatch(adminActions.setAdminLoading(true));
+
+      const resp = await adminsApi.updateAdmin(id, formData);
+      console.log("resp --> ", resp);
+      if (resp) {
+        dispatch(adminActions.setAdminActionStatus(ActionStatusEnum.SUCCESS));
+        dispatch(adminActions.changeBanStatus(id, false));
       } else {
         dispatch(adminActions.setAdminActionStatus(ActionStatusEnum.ERROR));
         dispatch(
@@ -190,12 +218,9 @@ export const auth =
 
       const admin = await adminsApi.checkAdmin(formData);
 
-      console.log("admin ---> ", admin);
-
-      // if (admin.length > 0) {
       if (admin) {
-        dispatch(adminActions.setCurrentAdmin(admin[0]));
-        localStorage.setItem("isAuth", "true");
+        dispatch(adminActions.setCurrentAdmin(admin));
+        localStorage.setItem("adminId", String(admin.id));
         dispatch(adminActions.setIsAuth(true));
       } else {
         dispatch(adminActions.setAuthErrorMessage("Ошибка авторизации"));
@@ -204,6 +229,26 @@ export const auth =
       dispatch(adminActions.setAuthErrorMessage("Ошибка авторизации"));
     } finally {
       dispatch(adminActions.setAuthLoading(false));
+    }
+  };
+
+export const checkMe =
+  (id: number): ThunkAcionType =>
+  async (dispatch) => {
+    try {
+      const resp = await adminsApi.getAdminById(id);
+      if (resp.length > 0 && !resp[0].isBlocked) {
+        dispatch(adminActions.setCurrentAdmin(resp[0]));
+        dispatch(adminActions.setIsAuth(true));
+      } else {
+        dispatch(adminActions.setAuthErrorMessage("Ошибка авторизации"));
+        dispatch(adminActions.setIsAuth(false));
+      }
+    } catch (error) {
+      dispatch(adminActions.setAuthErrorMessage("Ошибка авторизации"));
+      dispatch(adminActions.setIsAuth(false));
+    } finally {
+      dispatch(adminActions.setIsInit(true));
     }
   };
 

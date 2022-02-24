@@ -14,7 +14,7 @@ export const contractorsApi = {
     formData: AddContractorFormDataType
   ): Promise<ContractorType[]> => {
     const { data } = await axios.post<ContractorType[]>(
-      "contractors",
+      "/admins/contractors",
       formData
     );
     return data;

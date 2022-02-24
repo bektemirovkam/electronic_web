@@ -2,8 +2,8 @@ import React from "react";
 import { Control, FieldError } from "react-hook-form";
 import { AdminField } from ".";
 import {
-  ChangePasswordFieldsNameType,
-  ChangePasswordFormDataType,
+  AdminFieldsNameType,
+  AdminFormDataType,
 } from "../../../models/Administrator";
 
 const fields = [
@@ -24,7 +24,7 @@ const fields = [
 ];
 
 type AdminFormPropsType = {
-  control?: Control<ChangePasswordFormDataType, object>;
+  control?: Control<Exclude<AdminFormDataType, "phoneNumber">, object>;
   errors: {
     phoneNumber?: FieldError;
     password?: FieldError;
@@ -40,9 +40,15 @@ const AdminForm: React.FC<AdminFormPropsType> = ({ control, errors }) => {
           <AdminField
             key={field.id}
             control={control}
-            error={errors[field.fieldName as ChangePasswordFieldsNameType]}
+            error={
+              errors[
+                field.fieldName as Exclude<AdminFieldsNameType, "phoneNumber">
+              ]
+            }
             subtitle={field.subtitle}
-            fieldName={field.fieldName as ChangePasswordFieldsNameType}
+            fieldName={
+              field.fieldName as Exclude<AdminFieldsNameType, "phoneNumber">
+            }
             required={field.required}
             password={field.password}
           />

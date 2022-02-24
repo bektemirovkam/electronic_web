@@ -1,15 +1,14 @@
 import { Form, Typography, Input } from "antd";
 import React from "react";
 import { Control, Controller, FieldError } from "react-hook-form";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import {
+  AdminFieldsNameType,
   AdministratorCredentialsType,
-  AuthFieldsNameType,
 } from "../../../models/Administrator";
 
 type AuthFieldPropsType = {
   subtitle: string;
-  fieldName: AuthFieldsNameType;
+  fieldName: Exclude<AdminFieldsNameType, "confirm">;
   required: boolean;
   maxLength?: number;
   control?: Control<AdministratorCredentialsType, object>;

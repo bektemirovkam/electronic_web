@@ -232,7 +232,11 @@ const OrderCreatePage = () => {
         >
           {suppliers &&
             suppliers.map((contractor) => {
-              return <Option value={contractor.id}>{contractor.name}</Option>;
+              return (
+                <Option value={contractor.id} key={contractor.id}>
+                  {contractor.name}
+                </Option>
+              );
             })}
         </Select>
         <ImagesList

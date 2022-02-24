@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppPreloader } from "./components";
 
 import { AuthLayout, MainLayout } from "./layouts";
-import { adminActions } from "./store/actions/admin";
+import { adminActions, checkMe } from "./store/actions/admin";
 
 import { getAllCategories } from "./store/actions/categories";
 import { getIsAuthState, getIsInitState } from "./store/selectors/admin";
@@ -19,13 +19,13 @@ function App() {
   }, [dispatch]);
 
   React.useEffect(() => {
-    const isAuth = localStorage.getItem("isAuth");
-
-    if (isAuth) {
-      dispatch(adminActions.setIsAuth(true));
+    const adminId = localStorage.getItem("adminId");
+    if (adminId) {
+      dispatch(checkMe(Number(adminId)));
+    } else {
+      dispatch(adminActions.setIsAuth(false));
+      dispatch(adminActions.setIsInit(true));
     }
-
-    dispatch(adminActions.setIsInit(true));
   }, [dispatch]);
 
   if (!isInit) {

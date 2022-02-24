@@ -111,6 +111,7 @@ export const createContractorProfile =
     try {
       dispatch(contractorActions.setContractorsLoading(true));
       const contractorsList = await contractorsApi.createContractor(formData);
+
       if (contractorsList.length > 0) {
         dispatch(
           contractorActions.setContractorsActionstatus(ActionStatusEnum.SUCCESS)
